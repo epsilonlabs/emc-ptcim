@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Epsilon EMC Artisan Jawin Bridge
+Bundle-SymbolicName: org.eclipse.epsilon.emc.artisan.jawin
+Bundle-Version: 1.4.0
+Bundle-Vendor: Epsilon
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.epsilon.emc.COM,
+ org.jawin_2.0-alpha1;bundle-version="2.0.0"
