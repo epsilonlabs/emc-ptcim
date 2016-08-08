@@ -46,6 +46,26 @@ public class DelME {
 		for (Object n : names) {
 			System.out.println(n);
 		}
+		allClasses.invoke("ResetQueryItems");
+		while (hasMore(allClasses)) {
+			DispatchPtr clzz = next(allClasses);
+			Object name = getAttr(clzz, "Name");
+			if (name.equals("AutomotiveDomain")) {
+				// For multivalue properties, Property only returns the first element (name)
+				Object cargo = clzz.getN("Property", new Object[] { "parts", null });
+				// Blocks have parts
+				DispatchPtr allParts = new DispatchPtr();
+				Variant.ByrefHolder varArgument = new Variant.ByrefHolder("*");
+				DispatchPtr classDispPtr = (DispatchPtr) clzz.invokeN("Items", new Object[] {"Association", varArgument}, 2);
+				allParts.stealUnknown(classDispPtr);
+				
+				names = collect(allParts, "Aggregate");
+				for (Object n : names) {
+					System.out.println(n);
+				}
+				break;
+			}
+		}
 		Ole32.CoUninitialize();
 		System.out.println("Success");
 	}
@@ -91,7 +111,6 @@ public class DelME {
 		while (hasMore(allClasses)) {
 			DispatchPtr clzz = next(allClasses);
 			res.add(getAttr(clzz, attr));
-			System.out.println(getAttr2(clzz, attr));
 		}
 		return res;
 	}
@@ -112,13 +131,6 @@ public class DelME {
 	private static Object getAttr(DispatchPtr clzz, String name) throws COMException {
 		Object o = clzz.getN("Property", new Object[] { name, null });
 		return o;
-	}
-	
-	private static Object getAttr2(DispatchPtr clzz, String name) throws COMException {
-		Object o = clzz.get(name, 1);
-		return o;
-	}
-
-	
+	}	
 
 }
