@@ -5,4 +5,10 @@ Bundle-SymbolicName: org.eclipse.epsilon.emc.artisan.test
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: Eclipse.org
-Require-Bundle: org.junit
+Require-Bundle: org.junit,
+ org.jawin_2.0-alpha1;bundle-version="2.0.0",
+ org.eclipse.epsilon.emc.artisan;bundle-version="1.4.0",
+ org.eclipse.epsilon.emc.artisan.jawin;bundle-version="1.4.0",
+ org.eclipse.epsilon.eol.engine,
+ org.eclipse.epsilon.emc.COM;bundle-version="1.4.0"
+Export-Package: org.eclipse.epsilon.emc.artisan

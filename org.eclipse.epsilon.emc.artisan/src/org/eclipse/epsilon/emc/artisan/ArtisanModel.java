@@ -1,46 +1,57 @@
 package org.eclipse.epsilon.emc.artisan;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.epsilon.emc.COM.COMBridge;
 import org.eclipse.epsilon.emc.COM.COMModel;
 import org.eclipse.epsilon.emc.COM.COMObject;
 import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
+import org.eclipse.epsilon.emc.artisan.jawin.JawinCollection;
+import org.eclipse.epsilon.emc.artisan.jawin.JawinObject;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
 import org.eclipse.epsilon.eol.exceptions.models.EolNotInstantiableModelElementTypeException;
+import org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter;
+import org.eclipse.epsilon.eol.execute.introspection.IPropertySetter;
 import org.eclipse.epsilon.eol.models.CachedModel;
 
-public class ArtisanModel extends CachedModel<Object> {
+public class ArtisanModel extends CachedModel<COMObject> {
 	
 	// FIXME How to inject the correct implementation?
-	COMBridge<?, ?> bridge;
+	COMBridge<COMObject, COMObject> bridge;
 	
 	private boolean isInitialized = false;
 	
 	/** The ArtisanModel */
-	private COMModel model;
+	private COMModel model = null;
 	
+	
+	// FIXME How to inject the corect implementation?
+	private IPropertyGetter propertyGetter;
+
+	private IPropertySetter propertySetter;
+	
+	
+	public ArtisanModel(COMBridge<COMObject, COMObject> bridge) {
+		super();
+		// Can we have an extension point for this?
+		this.bridge = bridge;
+		cachingEnabled = false;
+	}
+
 	@Override
-	protected Collection<? extends Object> allContentsFromModel() {
+	protected Collection<COMObject> allContentsFromModel() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private void connectToModel(String name) {
-		COMObject artisanApp = bridge.connectToCOM(name);
-		
-	}
-
-	private void connectToModelviaReference(String name) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	@Override
-	protected Object createInstanceInModel(String type)
+	protected COMObject createInstanceInModel(String type)
 			throws EolModelElementTypeNotFoundException, EolNotInstantiableModelElementTypeException {
 		// TODO Auto-generated method stub
 		return null;
@@ -62,18 +73,37 @@ public class ArtisanModel extends CachedModel<Object> {
 				//e.printStackTrace();
 			}
 		}
-		
 	}
 
 	@Override
-	protected Collection<? extends Object> getAllOfKindFromModel(String kind)
+	protected Collection<COMObject> getAllOfKindFromModel(String kind)
 			throws EolModelElementTypeNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public Collection<COMObject> getAllOfType(String type) throws EolModelElementTypeNotFoundException {
+		if (!isInitialized) {
+			// FIXME through exception?
+			return Collections.emptyList();
+		}
+		assert model != null;
+		JawinCollection<COMObject> elements;
+		List<Object> args = new ArrayList<Object>();
+		args.add("*");
+		try {
+			COMObject res = model.invoke("Items", "Class", args, 2);
+			elements = new JawinCollection<COMObject>((JawinObject) res);
+		} catch (EpsilonCOMException e) {
+			throw new EolModelElementTypeNotFoundException(name, type);
+		}
+		return elements;
+	}
+
 
 	@Override
-	protected Collection<? extends Object> getAllOfTypeFromModel(String type)
+	protected Collection<? extends COMObject> getAllOfTypeFromModel(String type)
 			throws EolModelElementTypeNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
@@ -87,8 +117,7 @@ public class ArtisanModel extends CachedModel<Object> {
 
 	@Override
 	protected Object getCacheKeyForType(String type) throws EolModelElementTypeNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		return type;
 	}
 
 	@Override
@@ -110,6 +139,17 @@ public class ArtisanModel extends CachedModel<Object> {
 	}
 
 	@Override
+	public IPropertyGetter getPropertyGetter() {
+		return propertyGetter;
+	}
+	
+
+	@Override
+	public IPropertySetter getPropertySetter() {
+		return propertySetter;
+	}
+
+	@Override
 	public String getTypeNameOf(Object instance) {
 		// TODO Auto-generated method stub
 		return null;
@@ -120,7 +160,6 @@ public class ArtisanModel extends CachedModel<Object> {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
 
 	@Override
 	public boolean isInstantiable(String type) {
@@ -137,12 +176,29 @@ public class ArtisanModel extends CachedModel<Object> {
 				throw new EolModelLoadingException(e, this);
 			}
 		}
-		if(name.contains("\\")) {
-			connectToModelviaReference(name);
+		isInitialized = true;
+		COMObject artisanApp;
+		try {
+			artisanApp = bridge.connectToCOM("OMTE.Projects");
+		} catch (EpsilonCOMException e) {
+			throw new EolModelLoadingException(e, this);
 		}
-		else {
-			connectToModel(name);
+		COMObject modelRef;
+		try {
+			modelRef = bridge.openModel(artisanApp, name);
+		} catch (EpsilonCOMException e) {
+			throw new EolModelLoadingException(e, this);
 		}
+		
+		List<Object> args = new ArrayList<Object>();
+		args.add("Dictionary");
+		try {
+			COMObject res = modelRef.invoke("Item", "Dictionary", args);
+			model = bridge.wrapModel(res);
+		} catch (EpsilonCOMException e) {
+			throw new EolModelLoadingException(e, this);
+		}
+		
 	}
 
 	@Override
@@ -157,17 +213,24 @@ public class ArtisanModel extends CachedModel<Object> {
 		
 	}
 
+	public void setPropertyGetter(IPropertyGetter propertyGetter) {
+		this.propertyGetter = propertyGetter;
+	}
+
+	public void setPropertySetter(IPropertySetter propertySetter) {
+		this.propertySetter = propertySetter;
+	}
+
 	@Override
 	public boolean store() {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
 	@Override
 	public boolean store(String location) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
 
 }

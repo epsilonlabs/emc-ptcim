@@ -1,30 +1,24 @@
 package org.eclipse.epsilon.emc.COM;
 
+import java.util.Collection;
 
 public interface COMBridge<S extends COMObject, T extends COMObject> {
-	/**
-	 * Invoke a method in the COMObject
-	 * @param comObject
-	 * @param methodName
-	 * @param args
-	 * @return
-	 */
-	T invoke(S comObject, String methodName, Object... args);
 	
-	/**
-	 * Returns the value of the given property in the COMObject
-	 * @param comObject
-	 * @param attrName
-	 * @param args
-	 * @return
-	 */
-	T get(S comObject, String attrName, Object... args);
+	Collection<T> castToCollection(COMObject obj); 
 	
-	T connectToCOM(String progid);
+	T connectToCOM(COMGuid clsid) throws EpsilonCOMException;
 	
-	T connectToCOM(COMGuid clsid);
+	T connectToCOM(String progid) throws EpsilonCOMException;
+
 	
+	/** Initalize a new COMModel from the given COMObject result 
+	 * @return */
+	COMModel wrapModel(COMObject res);
+
 	void initialiseCOM() throws EpsilonCOMException;
+	
+	// FIXME move this to COMApp (create the class)
+	T openModel(S app, String name) throws EpsilonCOMException;
 	
 	void uninitializeCOM() throws EpsilonCOMException;
 	
