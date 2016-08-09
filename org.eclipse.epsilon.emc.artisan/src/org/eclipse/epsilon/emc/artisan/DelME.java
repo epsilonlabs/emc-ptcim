@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.epsilon.emc.COM.COMObject;
 import org.jawin.COMException;
 import org.jawin.DispatchPtr;
 import org.jawin.Variant;
@@ -38,7 +39,8 @@ public class DelME {
 //	}
 	
 	private static void usingJawin() throws COMException {
-		DispatchPtr model = load("EmcTest");
+		DispatchPtr modelRef = getActiveProject("EmcTest");
+		DispatchPtr model = load(modelRef);
 		//DispatchPtr model = load("HSUV");
 		DispatchPtr allClasses = allofType(model, "Class");
 		// Size
@@ -50,21 +52,41 @@ public class DelME {
 			System.out.println(n);
 		}
 		allClasses.invoke("ResetQueryItems");
+		String old_props = null;
+		String props = null;
 		while (hasMore(allClasses)) {
 			DispatchPtr clzz = next(allClasses);
-			Object name = getAttr(clzz, "Attribute Order");
+			Object name = getAttr(clzz, "Name");
 			System.out.println(name);
-			
-			//if (name.equals("C1")) {
-				Object cargo = clzz.getN("Property", new Object[] { "All Property Descriptors", null });
-				String props = (String) cargo;
-				List<String> list = Arrays.asList(((String) props ).split("\\n"));
-				for (String type : list) {
-					String[] info = type.split(",");
-					//String name1 = info[0];
-					//name1 = name1.replaceAll("^\"|\"$", "");
-					System.out.print(type);
-				}
+			if (name.equals("C1")) {
+				clzz.invokeN("PropertySet", new Object[] {"Name", 0, "C3"});
+			}
+			if (name.equals("C3")) {
+				clzz.invokeN("PropertySet", new Object[] {"Name", 0, "C1"});
+			} 
+//				Object cargo = clzz.getN("Property", new Object[] {"All Property Descriptors", null });
+//				props = (String) cargo;
+//				if (old_props != null) {
+//					System.out.println(props.equals(old_props));
+//				}
+//				old_props = props;
+//				List<String> list = Arrays.asList(((String) props ).split("\\n"));
+//				for (String type : list) {
+//					String[] info = type.split(",");
+//					//String name1 = info[0];
+//					//name1 = name1.replaceAll("^\"|\"$", "");
+//					System.out.print(type);
+//				}
+//				Object type = clzz.getN("Property", new Object[] {"Type"});
+//				Variant.ByrefHolder varArgument = new Variant.ByrefHolder(type);
+//				Object classDispPtr = modelRef.invokeN("GetClassProperties", new Object[] {type});
+//				List<String> list = Arrays.asList(((String) classDispPtr ).split("\\n"));
+//				for (String type1 : list) {
+//					String[] info = type1.split(",");
+//					//String name1 = info[0];
+//					//name1 = name1.replaceAll("^\"|\"$", "");
+//					System.out.print(type1);
+//				}
 //				// For multivalue properties, Property only returns the first element (name)
 //				Object cargo = clzz.getN("Property", new Object[] { "parts", null });
 //				// Blocks have parts
@@ -76,7 +98,7 @@ public class DelME {
 //				for (Object n : names) {
 //					System.out.println(n);
 //				}
-				break;
+//				break;
 			//}
 		}
 		Ole32.CoUninitialize();
@@ -84,14 +106,22 @@ public class DelME {
 	}
 	
 	private static int size(DispatchPtr allClasses) throws COMException {
-		DispatchPtr count = new DispatchPtr();
 		Variant.ByrefHolder varArgument = new Variant.ByrefHolder("*");
 		Object classDispPtr = allClasses.invokeN("ItemCount", new Object[] {"Id"});
 		//count.stealUnknown(classDispPtr);
 		return (Integer)classDispPtr;
 	}
 
-	private static DispatchPtr load(String name) throws COMException {
+	private static DispatchPtr load(DispatchPtr modelRef) throws COMException {
+		DispatchPtr model = new DispatchPtr();
+		Variant.ByrefHolder varIndex = new Variant.ByrefHolder("Dictionary");
+		DispatchPtr dirDispPtr = (DispatchPtr) modelRef.invokeN("Item", new Object[] {
+				"Dictionary", varIndex });
+		model.stealUnknown(dirDispPtr);
+		return model;
+	}
+
+	private static DispatchPtr getActiveProject(String name) throws COMException {
 		Ole32.CoInitialize();
 		DispatchPtr app = new DispatchPtr("OMTE.Projects");
 		String Index = name;
@@ -101,12 +131,7 @@ public class DelME {
 				Role, varIndex });
 		DispatchPtr modelRef = new DispatchPtr();
 		modelRef.stealUnknown(dispPtr);
-		DispatchPtr model = new DispatchPtr();
-		varIndex = new Variant.ByrefHolder("Dictionary");
-		DispatchPtr dirDispPtr = (DispatchPtr) modelRef.invokeN("Item", new Object[] {
-				"Dictionary", varIndex });
-		model.stealUnknown(dirDispPtr);
-		return model;
+		return modelRef;
 	}
 	
 	
