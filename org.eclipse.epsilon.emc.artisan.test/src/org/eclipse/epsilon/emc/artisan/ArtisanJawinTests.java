@@ -94,7 +94,7 @@ public class ArtisanJawinTests {
 	}
 	
 	@Test
-	public void testGetProperty_AttributeSingle() throws Exception {
+	public void testGetProperty_Attribute() throws Exception {
 		COMBridge<COMObject, COMObject> bridge = new JawinComBridge();
 		ArtisanModel model = new ArtisanModel(bridge);
 		JawinPropertyGetter pg = new JawinPropertyGetter();
@@ -116,30 +116,6 @@ public class ArtisanJawinTests {
 		model.disposeModel();
 	}
 	
-	@Test
-	public void testGetProperty_AttributeMultiple() throws Exception {
-		COMBridge<COMObject, COMObject> bridge = new JawinComBridge();
-		ArtisanModel model = new ArtisanModel(bridge);
-		JawinPropertyGetter pg = new JawinPropertyGetter();
-		model.setName("EmcTest");
-		try {
-			model.load();
-		} catch (EolModelLoadingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Collection<COMObject> clss = model.getAllOfType("Class");
-		Iterator<COMObject> it = clss.iterator();
-		while(it.hasNext()) {
-			// FIXME Either filter by class, or get the attributes by type, not by element...
-			// because it is possible that not always C1 is returned first?
-			COMObject next = it.next();
-			Object id = pg.invoke(next, "Attribute Order");
-			Assert.assertTrue(id instanceof List);
-			break;
-		}
-		model.disposeModel();
-	}
 	
 	@Test
 	public void testHasProperty() throws Exception {
