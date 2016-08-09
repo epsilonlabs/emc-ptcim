@@ -44,7 +44,6 @@ public class JawinObject implements COMObject {
 	public Object get(String name, List<Object> args) throws EpsilonCOMException {
 		Object res;	// = new JawinObject();
 		try {
-			// FIXME is is DispatchPtr?
 			//Object o = delegate.getN("Property", new Object[] { name, null });
 			Object comres = delegate.getN(name, args.toArray());
 			if (comres instanceof DispatchPtr) {
@@ -65,7 +64,6 @@ public class JawinObject implements COMObject {
 	public Object get(String name, Object arg) throws EpsilonCOMException {
 		Object res;	// = new JawinObject();
 		try {
-			// FIXME is is DispatchPtr?
 			//Object o = delegate.getN("Property", new Object[] { name, null });
 			Object comres = delegate.get(name, arg);
 			if (comres instanceof DispatchPtr) {

@@ -7,13 +7,20 @@ import org.eclipse.epsilon.emc.COM.COMObject;
 import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
 
 
-public class JawinIterator implements Iterator<COMObject> {
+public class JawinIterator<E extends COMObject> implements Iterator<E> {
 	
 	private final JawinObject source;
 	
 	public JawinIterator(JawinObject source) {
 		super();
 		this.source = source;
+		try {
+			// Make sure the iterator
+			source.invoke("ResetQueryItems");
+		} catch (EpsilonCOMException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -31,14 +38,14 @@ public class JawinIterator implements Iterator<COMObject> {
 	}
 
 	@Override
-	public JawinObject next() {
+	public E next() {
 		JawinObject res = new JawinObject();
 		try {
 			res = source.invoke("NextItem");
 		} catch (EpsilonCOMException e) {
 			throw new NoSuchElementException(e.getMessage());
 		}
-		return res;
+		return (E) res;
 	}
 
 	@Override

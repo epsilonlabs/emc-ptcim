@@ -77,9 +77,9 @@ public class JawinComBridge implements COMBridge<COMObject, COMObject> {
 	}
 
 	@Override
+	@Deprecated
 	public Collection<COMObject> castToCollection(COMObject obj) {
-		assert obj instanceof JawinObject;
-		return new JawinCollection((JawinObject) obj);
+		throw new UnsupportedOperationException("Deprecated");
 	}
 
 

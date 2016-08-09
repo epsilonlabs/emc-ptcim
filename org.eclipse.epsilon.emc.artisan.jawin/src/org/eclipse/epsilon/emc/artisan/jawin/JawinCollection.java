@@ -1,28 +1,40 @@
 package org.eclipse.epsilon.emc.artisan.jawin;
 
 import java.util.AbstractCollection;
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.eclipse.epsilon.emc.COM.COMObject;
+import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
 
 public class JawinCollection<E extends COMObject> extends AbstractCollection<E> {
 	
 	private final E source;
+	private final E owner;
+	private final String association;
 	
-	public JawinCollection(E source) {
+	public JawinCollection(E source, E owner, String association) {
+		assert source instanceof JawinObject;
 		assert source instanceof JawinObject;
 		this.source = source;
+		this.owner = owner;
+		this.association = association;
 	}
 
 	@Override
 	public Iterator<E> iterator() {
-		return (Iterator<E>) new JawinIterator((JawinObject) source);
+		Iterator<E> iterator = new JawinIterator<E>((JawinObject) source);
+		return iterator;
 	}
 
 	@Override
 	public int size() {
-		// objItem.ItemCount("Operation")
-		//source.invoke("ItemCount", "Operation", new Object[]{});
-		throw new UnsupportedOperationException("Artisan Collections don't support size querying");
+		COMObject resCount;
+		try {
+			resCount = owner.invoke("ItemCount", association, Collections.emptyList());
+		} catch (EpsilonCOMException e) {
+			throw new IllegalStateException(e);
+		}
+		return (Integer) ((JawinPrimitive) resCount).getPrimitive();
 	}
 }

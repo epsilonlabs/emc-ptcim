@@ -5,13 +5,13 @@ package org.eclipse.epsilon.emc.artisan;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.epsilon.emc.COM.COMBridge;
 import org.eclipse.epsilon.emc.COM.COMObject;
 import org.eclipse.epsilon.emc.artisan.jawin.JawinComBridge;
 import org.eclipse.epsilon.emc.artisan.jawin.JawinPropertyGetter;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,7 +41,7 @@ public class ArtisanJawinTests {
 	public void testLoad() {
 		COMBridge<COMObject, COMObject> bridge = new JawinComBridge();
 		ArtisanModel model = new ArtisanModel(bridge);
-		model.setName("HSUV");
+		model.setName("EmcTest");
 		try {
 			model.load();
 		} catch (EolModelLoadingException e) {
@@ -56,7 +56,7 @@ public class ArtisanJawinTests {
 	public void testAllOfType() throws Exception {
 		COMBridge<COMObject, COMObject> bridge = new JawinComBridge();
 		ArtisanModel model = new ArtisanModel(bridge);
-		model.setName("HSUV");
+		model.setName("EmcTest");
 		try {
 			model.load();
 		} catch (EolModelLoadingException e) {
@@ -74,7 +74,7 @@ public class ArtisanJawinTests {
 	public void testIterateAllOfType() throws Exception {
 		COMBridge<COMObject, COMObject> bridge = new JawinComBridge();
 		ArtisanModel model = new ArtisanModel(bridge);
-		model.setName("HSUV");
+		model.setName("EmcTest");
 		try {
 			model.load();
 		} catch (EolModelLoadingException e) {
@@ -83,19 +83,22 @@ public class ArtisanJawinTests {
 		}
 		Collection<COMObject> clss = model.getAllOfType("Class");
 		Iterator<COMObject> it = clss.iterator();
+		int i = 0;
 		while(it.hasNext()) {
+			i++;
 			COMObject next = it.next();
 			Assert.assertNotNull(next);
 		}
+		assert i == 2;
 		model.disposeModel();
 	}
 	
 	@Test
-	public void testGetProperty() throws Exception {
+	public void testGetProperty_AttributeSingle() throws Exception {
 		COMBridge<COMObject, COMObject> bridge = new JawinComBridge();
 		ArtisanModel model = new ArtisanModel(bridge);
 		JawinPropertyGetter pg = new JawinPropertyGetter();
-		model.setName("HSUV");
+		model.setName("EmcTest");
 		try {
 			model.load();
 		} catch (EolModelLoadingException e) {
@@ -108,7 +111,32 @@ public class ArtisanJawinTests {
 			COMObject next = it.next();
 			Object id = pg.invoke(next, "Name");
 			Assert.assertTrue(id instanceof String);
-			//System.out.println(id);
+			break;
+		}
+		model.disposeModel();
+	}
+	
+	@Test
+	public void testGetProperty_AttributeMultiple() throws Exception {
+		COMBridge<COMObject, COMObject> bridge = new JawinComBridge();
+		ArtisanModel model = new ArtisanModel(bridge);
+		JawinPropertyGetter pg = new JawinPropertyGetter();
+		model.setName("EmcTest");
+		try {
+			model.load();
+		} catch (EolModelLoadingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Collection<COMObject> clss = model.getAllOfType("Class");
+		Iterator<COMObject> it = clss.iterator();
+		while(it.hasNext()) {
+			// FIXME Either filter by class, or get the attributes by type, not by element...
+			// because it is possible that not always C1 is returned first?
+			COMObject next = it.next();
+			Object id = pg.invoke(next, "Attribute Order");
+			Assert.assertTrue(id instanceof List);
+			break;
 		}
 		model.disposeModel();
 	}
@@ -129,9 +157,11 @@ public class ArtisanJawinTests {
 		Iterator<COMObject> it = clss.iterator();
 		while(it.hasNext()) {
 			COMObject next = it.next();
+			// FIXME Either filter by class, or get the attributes by type, not by element...
+			// because it is possible that not always C1 is returned first?
 			boolean hasName = pg.hasProperty(next, "Name");
 			Assert.assertTrue(hasName);
-			System.out.println(hasName);
+			break;
 		}
 		model.disposeModel();
 	}

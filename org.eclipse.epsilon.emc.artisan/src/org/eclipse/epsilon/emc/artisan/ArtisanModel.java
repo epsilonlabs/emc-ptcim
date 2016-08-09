@@ -93,8 +93,8 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		List<Object> args = new ArrayList<Object>();
 		args.add("*");
 		try {
-			COMObject res = model.invoke("Items", "Class", args, 2);
-			elements = new JawinCollection<COMObject>((JawinObject) res);
+			COMObject res = model.invoke("Items", type, args, 2);
+			elements = new JawinCollection<COMObject>(res, model, type);
 		} catch (EpsilonCOMException e) {
 			throw new EolModelElementTypeNotFoundException(name, type);
 		}

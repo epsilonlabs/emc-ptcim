@@ -2,7 +2,9 @@ package org.eclipse.epsilon.emc.artisan;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.jawin.COMException;
 import org.jawin.DispatchPtr;
@@ -36,7 +38,8 @@ public class DelME {
 //	}
 	
 	private static void usingJawin() throws COMException {
-		DispatchPtr model = load("HSUV");
+		DispatchPtr model = load("EmcTest");
+		//DispatchPtr model = load("HSUV");
 		DispatchPtr allClasses = allofType(model, "Class");
 		// Size
 		//int i = size(allClasses);
@@ -49,22 +52,32 @@ public class DelME {
 		allClasses.invoke("ResetQueryItems");
 		while (hasMore(allClasses)) {
 			DispatchPtr clzz = next(allClasses);
-			Object name = getAttr(clzz, "Name");
-			if (name.equals("AutomotiveDomain")) {
-				// For multivalue properties, Property only returns the first element (name)
-				Object cargo = clzz.getN("Property", new Object[] { "parts", null });
-				// Blocks have parts
-				DispatchPtr allParts = new DispatchPtr();
-				Variant.ByrefHolder varArgument = new Variant.ByrefHolder("*");
-				DispatchPtr classDispPtr = (DispatchPtr) clzz.invokeN("Items", new Object[] {"Association", varArgument}, 2);
-				allParts.stealUnknown(classDispPtr);
-				
-				names = collect(allParts, "Aggregate");
-				for (Object n : names) {
-					System.out.println(n);
+			Object name = getAttr(clzz, "Attribute Order");
+			System.out.println(name);
+			
+			//if (name.equals("C1")) {
+				Object cargo = clzz.getN("Property", new Object[] { "All Property Descriptors", null });
+				String props = (String) cargo;
+				List<String> list = Arrays.asList(((String) props ).split("\\n"));
+				for (String type : list) {
+					String[] info = type.split(",");
+					//String name1 = info[0];
+					//name1 = name1.replaceAll("^\"|\"$", "");
+					System.out.print(type);
 				}
+//				// For multivalue properties, Property only returns the first element (name)
+//				Object cargo = clzz.getN("Property", new Object[] { "parts", null });
+//				// Blocks have parts
+//				DispatchPtr allParts = new DispatchPtr();
+//				Variant.ByrefHolder varArgument = new Variant.ByrefHolder("*");
+//				DispatchPtr classDispPtr = (DispatchPtr) clzz.invokeN("Items", new Object[] {"All Property Descriptors", varArgument}, 2);
+//				allParts.stealUnknown(classDispPtr);
+//				names = collect(allParts, "Aggregate");
+//				for (Object n : names) {
+//					System.out.println(n);
+//				}
 				break;
-			}
+			//}
 		}
 		Ole32.CoUninitialize();
 		System.out.println("Success");
@@ -100,7 +113,7 @@ public class DelME {
 	private static DispatchPtr allofType(DispatchPtr model, String type) throws COMException {
 		DispatchPtr allInstances = new DispatchPtr();
 		Variant.ByrefHolder varArgument = new Variant.ByrefHolder("*");
-		DispatchPtr classDispPtr = (DispatchPtr) model.invokeN("Items", new Object[] {"Class", varArgument}, 2);
+		DispatchPtr classDispPtr = (DispatchPtr) model.invokeN("Items", new Object[] {type, varArgument}, 2);
 		allInstances.stealUnknown(classDispPtr);
 		return allInstances;
 	}
