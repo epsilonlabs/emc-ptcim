@@ -15,10 +15,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.COM.COMBridge;
 import org.eclipse.epsilon.emc.COM.COMModel;
 import org.eclipse.epsilon.emc.COM.COMObject;
 import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
+import org.eclipse.epsilon.emc.artisan.jawin.JawinComBridge;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
@@ -27,6 +29,7 @@ import org.eclipse.epsilon.eol.exceptions.models.EolNotInstantiableModelElementT
 import org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter;
 import org.eclipse.epsilon.eol.execute.introspection.IPropertySetter;
 import org.eclipse.epsilon.eol.models.CachedModel;
+import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 
 /**
  * The Class ArtisanModel.
@@ -55,7 +58,9 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	private IPropertySetter propertySetter;
 
 	
-	
+	public ArtisanModel() {
+		this(new JawinComBridge());
+	}
 	
 	/**
 	 * Instantiates a new artisan model.
@@ -267,6 +272,12 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		return true;
 	}
 
+	@Override
+	public void load(StringProperties properties, IRelativePathResolver resolver) throws EolModelLoadingException {
+		super.load(properties, resolver);
+		load();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#loadModel()
 	 */
