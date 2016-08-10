@@ -79,18 +79,46 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	protected Collection<COMObject> allContentsFromModel() {
-		// TODO Auto-generated method stub
-		return null;
+		if (!isInitialized) {
+			// FIXME throw exception?
+			return Collections.emptyList();
+		}
+		assert model != null;
+		Collection<? extends COMObject> elements;
+		List<Object> args = new ArrayList<Object>();
+		args.add("*");
+		try {
+			COMObject res = (COMObject) model.invoke("Items", "Owned Contents", args, 2);
+			elements = model.wrapInColleciton(res, model, "Owned Contents");
+		} catch (EpsilonCOMException e) {
+			throw new IllegalStateException(e);
+		}
+		return (Collection<COMObject>) elements;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.eol.models.CachedModel#createInstanceInModel(java.lang.String)
+	/**
+	 * In Artisan the type is the same name as the association name in the model (dictionary)
+	 * Specialised classes are obtained by using attribute settings (see AddByType)
 	 */
 	@Override
 	protected COMObject createInstanceInModel(String type)
 			throws EolModelElementTypeNotFoundException, EolNotInstantiableModelElementTypeException {
-		// TODO Auto-generated method stub
-		return null;
+		if (!isInstantiable(type)) {
+			throw new EolNotInstantiableModelElementTypeException(getName(), type);
+		}
+		List<Object> args = new ArrayList<Object>();
+		args.add(type);
+		args.add(type.toUpperCase());
+		Object newInstance = null;
+		String id;
+		try {
+			newInstance = model.invoke("AddByType", args);
+			id = (String) ((COMObject) newInstance).get("Property", args);
+			((COMObject) newInstance).setId(id);
+		} catch (EpsilonCOMException e) {
+			throw new EolModelElementTypeNotFoundException(getName(), type);
+		}
+		return (COMObject) newInstance;
 	}
 
 	/* (non-Javadoc)
@@ -127,13 +155,18 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		return null;
 	}
 	
+	@Override
+	public Collection<COMObject> getAllOfKind(String kind) throws EolModelElementTypeNotFoundException {
+		throw new UnsupportedOperationException("Access to the Artisan Model Metamodel is restricted.");
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllOfType(java.lang.String)
 	 */
 	@Override
 	public Collection<COMObject> getAllOfType(String type) throws EolModelElementTypeNotFoundException {
 		if (!isInitialized) {
-			// FIXME through exception?
+			// FIXME throw exception?
 			return Collections.emptyList();
 		}
 		assert model != null;
@@ -165,8 +198,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	protected Collection<String> getAllTypeNamesOf(Object instance) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Artisan Model does not support enumerations");
 	}
 
 	/* (non-Javadoc)
@@ -198,16 +230,24 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	public String getElementId(Object instance) {
-		List<Object> args = new ArrayList<Object>();
-		args.add("Id");
-		String id = null;
-		try {
-			id = (String) ((COMObject) instance).get("Property", args);
-		} catch (EpsilonCOMException e) {
-			// FIXME Log me!
-			e.printStackTrace();
+		assert instance instanceof COMObject;
+		if (((COMObject) instance).getId() != null) {
+			return ((COMObject) instance).getId();
 		}
-		return id;
+		else {
+			List<Object> args = new ArrayList<Object>();
+			args.add("Id");
+			String id = null;
+			try {
+				id = (String) ((COMObject) instance).get("Property", args);
+				((COMObject) instance).setId(id);
+			} catch (EpsilonCOMException e) {
+				// FIXME Log me!
+				e.printStackTrace();
+			}
+			return id;
+		}
+		
 	}
 
 	/* (non-Javadoc)
@@ -215,8 +255,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	public Object getEnumerationValue(String enumeration, String label) throws EolEnumerationValueNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Artisan Model does not support enumerations");
 	}
 
 	/* (non-Javadoc)
@@ -242,7 +281,15 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	@Override
 	public String getTypeNameOf(Object instance) {
 		// TODO Auto-generated method stub
-		return null;
+		assert instance instanceof COMObject;
+		String typeName;
+		try {
+			typeName = (String) ((COMObject) instance).get("Property", "Type");
+		} catch (EpsilonCOMException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		}
+		return typeName;
 	}
 
 	/* (non-Javadoc)
@@ -269,7 +316,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	public boolean isInstantiable(String type) {
 		// TODO I think all types in the Artisan metamodel are instatiatable, we would need to make
 		// sure that the name is actually valid. 
-		return true;
+		return hasType(type);
 	}
 
 	@Override
@@ -283,6 +330,11 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	protected void loadModel() throws EolModelLoadingException {
+		// TODO if the model is not read on load we need to create it
+		/*
+		 * Set objManager = CreateObject("Studio.ModelManager")
+		 * objManager.AddModel("\\Enabler\MyServer\MyRepository","MyModel")
+		 */
 		if (!isInitialized) {
 			try {
 				bridge.initialiseCOM();
@@ -319,8 +371,8 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	public boolean owns(Object instance) {
-		// TODO Auto-generated method stub
-		return false;
+		Collection<COMObject> all = allContentsFromModel();
+		return all.contains(instance);
 	}
 
 	/* (non-Javadoc)
@@ -328,7 +380,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	public void setElementId(Object instance, String newId) {
-		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Artisan objects' Id is read only.");
 		
 	}
 
@@ -355,8 +407,8 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	public boolean store() {
-		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException("Artisan models are updated per invocation.");
+
 	}
 	
 	/* (non-Javadoc)
@@ -364,8 +416,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	public boolean store(String location) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException("Artisan models are updated per invocation.");
 	}
 
 }

@@ -42,7 +42,8 @@ public class DelME {
 		DispatchPtr theProject = getActiveProject("EmcTest");
 		DispatchPtr model = load(theProject);
 		//DispatchPtr model = load("HSUV");
-		DispatchPtr allClasses = allofType(model, "Class");
+		String type = "Class";
+		DispatchPtr allClasses = allofType(model, type);
 		// Size
 		//int i = size(allClasses);
 		//System.out.println(i);
@@ -62,16 +63,35 @@ public class DelME {
 		
 		// Create a new element by type, use the project
 		DispatchPtr allPckItem = allofType(theProject, "Package Item");
-		Object classDispPtr = allPckItem.invokeN("AddByType", new Object[] {"Activity"});
+		while (hasMore(allPckItem)) {
+			DispatchPtr pItem = next(allPckItem);
+			Object name = getAttr(pItem, "Name");
+			System.out.println(name);
+			
+		}
+//		Variant.ByrefHolder varArgument = new Variant.ByrefHolder("*");
 		
+		//DispatchPtr newclassDispPtr = (DispatchPtr) model.invokeN("AddByType", new Object[] {type, "UNSCOPEDITEM"}, 2);
+		DispatchPtr newclassDispPtr = (DispatchPtr) model.invokeN("AddByType", new Object[] {type, "CLASS"}, 2);
+		newclassDispPtr.toString();
+		Object name = getAttr(newclassDispPtr, "Full Name");
+		System.out.println(name);
+//		Object name = getAttr(newclassDispPtr, "Name");
+//		type = "Actor";
+//		DispatchPtr newactorDispPtr = (DispatchPtr) theProject.invokeN("AddByType", new Object[] {type, "PACKAGEITEM"});
+//		name = getAttr(newclassDispPtr, "Name");
 		
 		
 //		String old_props = null;
 //		String props = null;
 		while (hasMore(allClasses)) {
-//			DispatchPtr clzz = next(allClasses);
-//			Object name = getAttr(clzz, "Name");
-//			System.out.println(name);
+			DispatchPtr clzz = next(allClasses);
+			//DispatchPtr newclass = (DispatchPtr) clzz.invokeN("AddByType", new Object[] {"Class", "CONTAINEDCLASS"}, 2);
+			// Add the new class to the class
+			DispatchPtr newclass = (DispatchPtr) clzz.invokeN("Add", new Object[] {"Contained Class", newclassDispPtr});
+			/*Object*/ name = getAttr(newclass, "Full Name");
+			System.out.println(name);
+			break;
 //			if (name.equals("C1")) {
 //				clzz.invokeN("PropertySet", new Object[] {"Name", 0, "C3"});
 //			}
