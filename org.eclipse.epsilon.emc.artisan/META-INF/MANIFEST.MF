@@ -6,9 +6,9 @@ Bundle-Version: 1.4.0.qualifier
 Export-Package: org.eclipse.epsilon.emc.artisan
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.eclipse.epsilon.eol.engine;bundle-version="1.4.0",
+Require-Bundle: org.eclipse.epsilon.eol.engine,
  com.sun.jna_4.2.2;bundle-version="4.2.2",
  com.sun.jna.platform_4.2.2;bundle-version="4.2.2",
  org.eclipse.epsilon.emc.artisan.jawin,
- com.rraec.jawin,
- org.eclipse.epsilon.emc.COM
+ org.eclipse.epsilon.emc.COM,
+ org.jawin_2.0-alpha1
