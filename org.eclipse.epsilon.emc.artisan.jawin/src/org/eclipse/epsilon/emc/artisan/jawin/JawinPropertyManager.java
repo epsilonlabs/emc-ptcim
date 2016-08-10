@@ -128,9 +128,15 @@ public class JawinPropertyManager {
 //		return prop;
 //	}
 	
+	/**
+	 * Remove spaces from the Artisan name and compare case insensitive
+	 * @param name
+	 * @param property
+	 * @return
+	 */
 	private boolean nameMatches(String name, String property) {
-		// TODO Auto-generated method stub
-		return false;
+		String noBlanks = name.replaceAll("\\s","");
+		return noBlanks.compareToIgnoreCase(property) == 0;
 	}
 
 

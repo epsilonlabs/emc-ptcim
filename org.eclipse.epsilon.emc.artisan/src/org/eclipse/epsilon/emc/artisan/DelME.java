@@ -39,8 +39,8 @@ public class DelME {
 //	}
 	
 	private static void usingJawin() throws COMException {
-		DispatchPtr modelRef = getActiveProject("EmcTest");
-		DispatchPtr model = load(modelRef);
+		DispatchPtr theProject = getActiveProject("EmcTest");
+		DispatchPtr model = load(theProject);
 		//DispatchPtr model = load("HSUV");
 		DispatchPtr allClasses = allofType(model, "Class");
 		// Size
@@ -52,18 +52,35 @@ public class DelME {
 			System.out.println(n);
 		}
 		allClasses.invoke("ResetQueryItems");
-		String old_props = null;
-		String props = null;
+		
+		// Do we have the type, do a GetClassProperties assume error means calss is not present
+//		Object classDispPtr = theProject.invokeN("GetClassProperties", new Object[] {"Class"});
+//		List<String> list = Arrays.asList(((String) classDispPtr ).split("\\n"));
+//		Object errDispPtr = theProject.invokeN("GetClassProperties", new Object[] {"MyClass"});
+//		List<String> errlist = Arrays.asList(((String) classDispPtr ).split("\\n"));
+		
+		
+		// Create a new element by type, use the project
+		DispatchPtr allPckItem = allofType(theProject, "Package Item");
+		Object classDispPtr = allPckItem.invokeN("AddByType", new Object[] {"Activity"});
+		
+		
+		
+//		String old_props = null;
+//		String props = null;
 		while (hasMore(allClasses)) {
-			DispatchPtr clzz = next(allClasses);
-			Object name = getAttr(clzz, "Name");
-			System.out.println(name);
-			if (name.equals("C1")) {
-				clzz.invokeN("PropertySet", new Object[] {"Name", 0, "C3"});
-			}
-			if (name.equals("C3")) {
-				clzz.invokeN("PropertySet", new Object[] {"Name", 0, "C1"});
-			} 
+//			DispatchPtr clzz = next(allClasses);
+//			Object name = getAttr(clzz, "Name");
+//			System.out.println(name);
+//			if (name.equals("C1")) {
+//				clzz.invokeN("PropertySet", new Object[] {"Name", 0, "C3"});
+//			}
+//			if (name.equals("C3")) {
+//				clzz.invokeN("PropertySet", new Object[] {"Name", 0, "C1"});
+//			} 
+			// How to set associations? How to set multivalue associations?
+			
+			
 //				Object cargo = clzz.getN("Property", new Object[] {"All Property Descriptors", null });
 //				props = (String) cargo;
 //				if (old_props != null) {

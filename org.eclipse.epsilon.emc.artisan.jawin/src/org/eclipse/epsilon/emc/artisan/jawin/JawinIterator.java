@@ -1,19 +1,46 @@
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Hoacio Hoyos Rodriguez - Initial API and implementation
+ *******************************************************************************/
 package org.eclipse.epsilon.emc.artisan.jawin;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.eclipse.epsilon.emc.COM.COMObject;
 import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
 
 
-public class JawinIterator<E extends COMObject> implements Iterator<E> {
+/**
+ * The Class JawinIterator.
+ *
+ * @param <E> the element type
+ */
+public class JawinIterator implements Iterator<JawinObject> {
 	
+	/**
+	 * The COMObject that points to the collection.
+	 */
 	private final JawinObject source;
 	
+	/** The next object returned from {@link #next()}. */
+	private JawinObject next;
+	
+	/**
+	 * Instantiates a new jawin iterator.
+	 *
+	 * @param source the source
+	 * @param owner the owner
+	 * @param association the association
+	 */
 	public JawinIterator(JawinObject source) {
 		super();
-		this.source = source;
+		this.source = (JawinObject) source;
 		try {
 			// Make sure the iterator
 			source.invoke("ResetQueryItems");
@@ -23,31 +50,42 @@ public class JawinIterator<E extends COMObject> implements Iterator<E> {
 		}
 	}
 
+
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#hasNext()
+	 */
 	@Override
 	public boolean hasNext() {
 		
-		JawinPrimitive next;
+		Object more;
 		try {
-			next = (JawinPrimitive) source.invoke("MoreItems");
+			more = source.invoke("MoreItems");
 		} catch (EpsilonCOMException e) {
 			// FIXME this should be logged
 			return false;
 		}
-		int val = ((Integer)next.getPrimitive());
+		int val = (Integer)more;
 		return val != 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#next()
+	 */
 	@Override
-	public E next() {
-		JawinObject res = new JawinObject();
+	public JawinObject next() {
 		try {
-			res = source.invoke("NextItem");
+			next = (JawinObject) source.invoke("NextItem");
+			String strId = (String) next.get("Property", "Id");
+			next.setId(strId);
 		} catch (EpsilonCOMException e) {
 			throw new NoSuchElementException(e.getMessage());
 		}
-		return (E) res;
+		return next;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#remove()
+	 */
 	@Override
 	public void remove() {
 		// TODO Auto-generated method stub

@@ -5,7 +5,6 @@ package org.eclipse.epsilon.emc.artisan;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.epsilon.emc.COM.COMBridge;
 import org.eclipse.epsilon.emc.COM.COMObject;
@@ -21,7 +20,7 @@ import org.junit.Test;
  * @author Horacio Hoyos
  *
  */
-public class ArtisanJawinTests {
+public class ArtisanModelJawinTests {
 
 	/**
 	 * @throws java.lang.Exception

@@ -1,19 +1,34 @@
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Hoacio Hoyos Rodriguez - Initial API and implementation
+ *******************************************************************************/
 package org.eclipse.epsilon.emc.artisan.jawin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.COM.COMObject;
 import org.eclipse.epsilon.emc.COM.COMProperty;
 import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter;
 
+/**
+ * The Class JawinPropertyGetter.
+ */
 public class JawinPropertyGetter extends AbstractPropertyGetter {
 
+	/** The manager. */
 	private final JawinPropertyManager manager = JawinPropertyManager.INSTANCE;
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter#invoke(java.lang.Object, java.lang.String)
+	 */
 	@Override
 	public Object invoke(Object object, String property) throws EolRuntimeException {
 		assert object instanceof JawinObject;
@@ -25,12 +40,13 @@ public class JawinPropertyGetter extends AbstractPropertyGetter {
 				throw new EolRuntimeException("No such property");
 			}
 			if (p.isMultiple()) {
-				JawinCollection<COMObject> elements;
+				JawinCollection elements;
 				List<Object> args = new ArrayList<Object>();
 				args.add("*");
 				try {
-					COMObject res = jObject.invoke("Items", property, args, 2);
-					elements = new JawinCollection<COMObject>(res, jObject, property);
+					Object res = jObject.invoke("Items", property, args, 2);
+					assert res instanceof JawinObject;
+					elements = new JawinCollection((JawinObject) res, jObject, property);
 				} catch (EpsilonCOMException e) {
 					throw new EolRuntimeException(e.getMessage());
 				}
@@ -50,6 +66,9 @@ public class JawinPropertyGetter extends AbstractPropertyGetter {
 		return o;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter#hasProperty(java.lang.Object, java.lang.String)
+	 */
 	@Override
 	public boolean hasProperty(Object object, String property) {
 		assert object instanceof JawinObject;
