@@ -50,20 +50,48 @@ public class JawinCollection extends AbstractCollection<JawinObject> {
 	}
 	
 
+	
+	/**
+	 * Important:  If you remove objects from an association that has its Propagate Delete flag set to TRUE,
+	 * the objects will be deleted from the model. For example, a Class is related to its child Attributes
+	 * through the Attribute association, which has its Propagate Delete flag set to TRUE.
+	 * If you use the Remove function to remove owned Attributes from a Class, those Attributes will be
+	 * deleted from the Model.
+	 */
+	@Override
+	public void clear() {
+		try {
+			owner.invoke("Remove", association);
+		} catch (EpsilonCOMException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+
 	/* (non-Javadoc)
 	 * @see java.util.AbstractCollection#add(java.lang.Object)
 	 */
 	@Override
 	public boolean add(JawinObject e) {
 		assert e.getId() != null;
+		JawinObject ret = null;
 		try {
 			List<Object> args = new ArrayList<Object>();
-			args.add(e);
-			owner.invoke("Add", association, args);
+			args.add(e.getDelegate());
+			ret = (JawinObject) owner.invoke("Add", association, args);
 		} catch (EpsilonCOMException ex) {
 			// TODO Can we check if message has 'Failed to add item' and do a
 			// objItem.Property("ExtendedErrorInfo") to get more info?
-			throw new IllegalStateException(ex);
+			// Assuming owner and association are correct an exception means the item can not be added
+			// But it would be nice to differentiate between, e.g. item already exists and wrong type.
+			// FIXME Log the error?
+			if (ex.getMessage().contains("Failed to add item")) {
+				return false;
+			}
+			else {
+				throw new IllegalArgumentException(ex);
+			}
+			
 		}
 		return true;
 	}
@@ -103,8 +131,15 @@ public class JawinCollection extends AbstractCollection<JawinObject> {
 	 */
 	@Override
 	public boolean removeAll(Collection<?> c) {
-		throw new UnsupportedOperationException("This collection does not allow this operation");
+		boolean modified = false;
+		Iterator<?> e = c.iterator();
+		while (e.hasNext()) {
+			modified |= remove(e.next());
+		}
+		return modified;
 	}
+
+
 
 	/* (non-Javadoc)
 	 * @see java.util.AbstractCollection#size()

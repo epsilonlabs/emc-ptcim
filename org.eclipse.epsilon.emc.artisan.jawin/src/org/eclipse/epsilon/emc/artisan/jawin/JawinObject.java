@@ -156,6 +156,27 @@ public class JawinObject implements COMObject {
 		}
 		return res;
 	}
+	
+	@Override
+	public Object invoke(String methodName, String arg) throws EpsilonCOMException {
+		Object res;
+		try {
+			// FIXME is it DispatchPtr?
+			// FIXME it seems args is always just one, at least for artisan
+			Object comres = delegate.invoke(methodName, arg);
+			if (comres instanceof DispatchPtr) {
+				res = new JawinObject();
+				((JawinObject) res).stealUnknown((DispatchPtr) comres);
+			}
+			else {
+				//res = new JawinPrimitive(comres);
+				res = comres;
+			}
+		} catch (COMException e) {
+			throw new EpsilonCOMException(e);
+		}
+		return res;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.emc.COM.COMObject#invoke(java.lang.String, java.util.List)

@@ -88,8 +88,7 @@ public class JawinIterator implements Iterator<JawinObject> {
 	 */
 	@Override
 	public void remove() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not implemented yet");
+		throw new UnsupportedOperationException("Not supported");
 	}
 
 }

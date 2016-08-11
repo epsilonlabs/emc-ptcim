@@ -2,11 +2,8 @@ package org.eclipse.epsilon.emc.artisan;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
-import org.eclipse.epsilon.emc.COM.COMObject;
 import org.jawin.COMException;
 import org.jawin.DispatchPtr;
 import org.jawin.Variant;
@@ -69,10 +66,15 @@ public class DelME {
 			System.out.println(name);
 			
 		}
-//		Variant.ByrefHolder varArgument = new Variant.ByrefHolder("*");
+		
+		// Transaction?
+		//ArtisanProject("Transaction") = "Begin"
+		theProject.invoke("PropertySet", "Transaction", 0, "Begin");
+		
+		
 		
 		//DispatchPtr newclassDispPtr = (DispatchPtr) model.invokeN("AddByType", new Object[] {type, "UNSCOPEDITEM"}, 2);
-		DispatchPtr newclassDispPtr = (DispatchPtr) model.invokeN("AddByType", new Object[] {type, "CLASS"}, 2);
+		DispatchPtr newclassDispPtr = (DispatchPtr) model.invokeN("AddByType", new Object[] {type, "CLASS"});
 		newclassDispPtr.toString();
 		Object name = getAttr(newclassDispPtr, "Full Name");
 		System.out.println(name);
@@ -90,6 +92,8 @@ public class DelME {
 			// Add the new class to the class
 			DispatchPtr newclass = (DispatchPtr) clzz.invokeN("Add", new Object[] {"Contained Class", newclassDispPtr});
 			/*Object*/ name = getAttr(newclass, "Full Name");
+			Object owner = getAttr(newclass, "Scoping Item");
+			
 			System.out.println(name);
 			break;
 //			if (name.equals("C1")) {
@@ -138,6 +142,9 @@ public class DelME {
 //				break;
 			//}
 		}
+		//ArtisanProject("Transaction") = "Abort"
+		theProject.invoke("PropertySet", "Transaction", 0, "Abort");
+		
 		Ole32.CoUninitialize();
 		System.out.println("Success");
 	}

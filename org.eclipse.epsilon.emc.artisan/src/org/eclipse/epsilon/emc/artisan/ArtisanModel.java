@@ -58,6 +58,14 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	private IPropertySetter propertySetter;
 
 	
+	protected void setTheProject(COMObject theProject) {
+		this.theProject = theProject;
+	}
+
+	protected void setModel(COMModel model) {
+		this.model = model;
+	}
+
 	public ArtisanModel() {
 		this(new JawinComBridge());
 	}
@@ -113,7 +121,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		String id;
 		try {
 			newInstance = model.invoke("AddByType", args);
-			id = (String) ((COMObject) newInstance).get("Property", args);
+			id = (String) ((COMObject) newInstance).get("Property", "Id");
 			((COMObject) newInstance).setId(id);
 		} catch (EpsilonCOMException e) {
 			throw new EolModelElementTypeNotFoundException(getName(), type);
@@ -354,7 +362,6 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		} catch (EpsilonCOMException e) {
 			throw new EolModelLoadingException(e, this);
 		}
-		
 		List<Object> args = new ArrayList<Object>();
 		args.add("Dictionary");
 		try {

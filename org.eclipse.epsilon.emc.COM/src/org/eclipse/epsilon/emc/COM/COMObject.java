@@ -94,6 +94,8 @@ public interface COMObject {
 	 */
 	Object invoke(String string, List<Object> args) throws EpsilonCOMException;
 
+	Object invoke(String methodName, String arg) throws EpsilonCOMException;
+
 	/**
 	 * Invoke a method in the COMObject.
 	 *
