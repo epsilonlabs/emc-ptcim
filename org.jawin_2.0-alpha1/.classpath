@@ -3,6 +3,7 @@
 	<classpathentry exported="true" kind="lib" path="" sourcepath="C:/jawin-2.0-alpha1/src">
 		<attributes>
 			<attribute name="javadoc_location" value="file:/C:/jawin-2.0-alpha1/docs/api/"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="org.jawin_2.0-alpha1"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
