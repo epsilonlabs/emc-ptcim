@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.epsilon.emc.COM.COMProperty;
+import org.eclipse.epsilon.emc.COM.COMPropertyManager;
 import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter;
@@ -24,7 +25,7 @@ import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter;
 public class JawinPropertyGetter extends AbstractPropertyGetter {
 
 	/** The manager. */
-	private final JawinPropertyManager manager = JawinPropertyManager.INSTANCE;
+	private final COMPropertyManager manager = JawinPropertyManager.INSTANCE;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter#invoke(java.lang.Object, java.lang.String)

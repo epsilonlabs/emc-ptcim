@@ -15,8 +15,6 @@ import org.jawin.win32.Ole32;
 
 public class JawinComBridge implements COMBridge<COMObject, COMObject> {
 	
-	/** The Constant DIID. */
-	public static final GUID DIID = new GUID("{c9ff8402-bb2e-11d0-8475-0080C82BFA0C}");
 	
 	@Override
 	public COMObject connectToCOM(COMGuid clsid) throws EpsilonCOMException {

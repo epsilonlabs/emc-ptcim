@@ -3,7 +3,6 @@ package org.eclipse.epsilon.emc.COM;
 import java.util.List;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface COMObject.
  */

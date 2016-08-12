@@ -95,7 +95,7 @@ public class ArtisanModelFactory {
 		} catch (EpsilonCOMException e) {
 			throw new EolRuntimeException(e.getMessage());
 		}
-		ArtisanModel model = new ArtisanModel(bridge);
+		ArtisanModel model = new ArtisanModel();
 		model.setTheProject(res);
 		args.clear();
 		args.add("Dictionary");

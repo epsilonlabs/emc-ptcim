@@ -39,7 +39,7 @@ public class ArtisanModelJawinTests {
 	@Test
 	public void testLoad() {
 		COMBridge<COMObject, COMObject> bridge = new JawinComBridge();
-		ArtisanModel model = new ArtisanModel(bridge);
+		ArtisanModel model = new ArtisanModel();
 		model.setName("EmcTest");
 		try {
 			model.load();
@@ -54,7 +54,7 @@ public class ArtisanModelJawinTests {
 	@Test
 	public void testAllOfType() throws Exception {
 		COMBridge<COMObject, COMObject> bridge = new JawinComBridge();
-		ArtisanModel model = new ArtisanModel(bridge);
+		ArtisanModel model = new ArtisanModel();
 		model.setName("EmcTest");
 		try {
 			model.load();
@@ -72,7 +72,7 @@ public class ArtisanModelJawinTests {
 	@Test
 	public void testIterateAllOfType() throws Exception {
 		COMBridge<COMObject, COMObject> bridge = new JawinComBridge();
-		ArtisanModel model = new ArtisanModel(bridge);
+		ArtisanModel model = new ArtisanModel();
 		model.setName("EmcTest");
 		try {
 			model.load();
@@ -95,7 +95,7 @@ public class ArtisanModelJawinTests {
 	@Test
 	public void testGetProperty_Attribute() throws Exception {
 		COMBridge<COMObject, COMObject> bridge = new JawinComBridge();
-		ArtisanModel model = new ArtisanModel(bridge);
+		ArtisanModel model = new ArtisanModel();
 		JawinPropertyGetter pg = new JawinPropertyGetter();
 		model.setName("EmcTest");
 		try {
@@ -119,7 +119,7 @@ public class ArtisanModelJawinTests {
 	@Test
 	public void testHasProperty() throws Exception {
 		COMBridge<COMObject, COMObject> bridge = new JawinComBridge();
-		ArtisanModel model = new ArtisanModel(bridge);
+		ArtisanModel model = new ArtisanModel();
 		JawinPropertyGetter pg = new JawinPropertyGetter();
 		model.setName("HSUV");
 		try {

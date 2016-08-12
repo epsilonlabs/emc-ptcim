@@ -15,12 +15,22 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.COM.COMBridge;
 import org.eclipse.epsilon.emc.COM.COMModel;
 import org.eclipse.epsilon.emc.COM.COMObject;
+import org.eclipse.epsilon.emc.COM.COMProperty;
+import org.eclipse.epsilon.emc.COM.COMPropertyManager;
 import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
-import org.eclipse.epsilon.emc.artisan.jawin.JawinComBridge;
+import org.eclipse.epsilon.emc.artisan.jawin.JawinPropertyGetter;
+import org.eclipse.epsilon.emc.artisan.jawin.JawinPropertyManager;
+import org.eclipse.epsilon.emc.artisan.jawin.JawinPropertySetter;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
@@ -31,23 +41,43 @@ import org.eclipse.epsilon.eol.execute.introspection.IPropertySetter;
 import org.eclipse.epsilon.eol.models.CachedModel;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class ArtisanModel.
  */
 public class ArtisanModel extends CachedModel<COMObject> {
 	
+	/** The Constant COM_ID. */
+	private static final String COM_ID = "org.eclipse.epsilon.emc.artisan.COM";
+	
+	/** The Constant BRIDGE_INDEX. */
+	private static final int BRIDGE_INDEX = 0;
+	
+	/** The Constant GETTER_INDEX. */
+	private static final int GETTER_INDEX = 1;
+	
+	/** The Constant MANAGER_INDEX. */
+	private static final int MANAGER_INDEX = 2;
+	
+	/** The Constant SETTER_INDEX. */
+	private static final int SETTER_INDEX = 3;
+	
+	
 	/** The bridge. */
 	// FIXME How to inject the correct implementation?
 	COMBridge<COMObject, COMObject> bridge;
 	
-	/** The Project, needed for type testing and instantiation */ 
+	/**  The Project, needed for type testing and instantiation. */ 
 	private COMObject theProject;
 	
 	/** The is initialized. */
 	private boolean isInitialized = false;
 	
-	/**  The ArtisanModel. */
+	/**  The Artisan Model. */
 	private COMModel model = null;
+	
+	/**  The Artisan Studio. */
+	private COMObject studio = null;
 	
 	
 	/** The property getter. */
@@ -56,30 +86,30 @@ public class ArtisanModel extends CachedModel<COMObject> {
 
 	/** The property setter. */
 	private IPropertySetter propertySetter;
-
 	
-	protected void setTheProject(COMObject theProject) {
-		this.theProject = theProject;
-	}
+	/** The property manager. */
+	private COMPropertyManager propertyManager;
 
-	protected void setModel(COMModel model) {
-		this.model = model;
-	}
-
-	public ArtisanModel() {
-		this(new JawinComBridge());
-	}
-	
 	/**
-	 * Instantiates a new artisan model.
-	 *
-	 * @param bridge the bridge
+	 * Instantiates a new artisan model. Gets the COM helpers from the extension
 	 */
-	public ArtisanModel(COMBridge<COMObject, COMObject> bridge) {
-		super();
-		// Can we have an extension point for this?
-		this.bridge = bridge;
-		cachingEnabled = false;
+	public ArtisanModel() {
+		// FIXME USe the Extension point to get the jawin classes
+		IExtensionRegistry reg = Platform.getExtensionRegistry();
+		IExtensionPoint ep = reg.getExtensionPoint(COM_ID);
+		IExtension[] extensions = ep.getExtensions();
+		// There should only be one contributor
+		IExtension ext = extensions[0];
+		IConfigurationElement[] ce = ext.getConfigurationElements();
+    	try {
+			bridge = (COMBridge<COMObject, COMObject>) ce[BRIDGE_INDEX].createExecutableExtension("class");
+			propertyGetter = (IPropertyGetter) ce[GETTER_INDEX].createExecutableExtension("class");
+			propertyManager = ((COMPropertyManager) ce[MANAGER_INDEX].createExecutableExtension("class")).getInstance();
+			propertySetter  = (IPropertySetter) ce[SETTER_INDEX].createExecutableExtension("class");
+		} catch (CoreException e) {
+			throw new IllegalStateException(e);
+		}
+    	cachingEnabled = false;
 	}
 
 	/* (non-Javadoc)
@@ -103,10 +133,25 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		}
 		return (Collection<COMObject>) elements;
 	}
+	
 
 	/**
+	 * Connect to artisan studio.
+	 *
+	 * @throws EpsilonCOMException the epsilon COM exception
+	 */
+	public void connectToStudio() throws EpsilonCOMException {
+		studio = bridge.connectToCOM("Studio.Editor");
+	}
+	
+	/**
 	 * In Artisan the type is the same name as the association name in the model (dictionary)
-	 * Specialised classes are obtained by using attribute settings (see AddByType)
+	 * Specialised classes are obtained by using attribute settings (see AddByType).
+	 *
+	 * @param type the type
+	 * @return the COM object
+	 * @throws EolModelElementTypeNotFoundException the eol model element type not found exception
+	 * @throws EolNotInstantiableModelElementTypeException the eol not instantiable model element type exception
 	 */
 	@Override
 	protected COMObject createInstanceInModel(String type)
@@ -154,6 +199,14 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllOfKind(java.lang.String)
+	 */
+	@Override
+	public Collection<COMObject> getAllOfKind(String kind) throws EolModelElementTypeNotFoundException {
+		throw new UnsupportedOperationException("Access to the Artisan Model Metamodel is restricted.");
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllOfKindFromModel(java.lang.String)
 	 */
 	@Override
@@ -161,11 +214,6 @@ public class ArtisanModel extends CachedModel<COMObject> {
 			throws EolModelElementTypeNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	@Override
-	public Collection<COMObject> getAllOfKind(String kind) throws EolModelElementTypeNotFoundException {
-		throw new UnsupportedOperationException("Access to the Artisan Model Metamodel is restricted.");
 	}
 
 	/* (non-Javadoc)
@@ -190,7 +238,6 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		return (Collection<COMObject>) elements;
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllOfTypeFromModel(java.lang.String)
 	 */
@@ -200,7 +247,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllTypeNamesOf(java.lang.Object)
 	 */
@@ -216,6 +263,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	protected Object getCacheKeyForType(String type) throws EolModelElementTypeNotFoundException {
 		return type;
 	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#getElementById(java.lang.String)
@@ -273,7 +321,6 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	public IPropertyGetter getPropertyGetter() {
 		return propertyGetter;
 	}
-	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.Model#getPropertySetter()
@@ -316,6 +363,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		}
 		return errDispPtr.length() > 0;
 	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#isInstantiable(java.lang.String)
@@ -327,12 +375,24 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		return hasType(type);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.eol.models.Model#knowsAboutProperty(java.lang.Object, java.lang.String)
+	 */
+	@Override
+	public boolean knowsAboutProperty(Object instance, String property) {
+		COMProperty p = propertyManager.getProperty((COMObject) instance, property);
+		return p != null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.eol.models.CachedModel#load(org.eclipse.epsilon.common.util.StringProperties, org.eclipse.epsilon.eol.models.IRelativePathResolver)
+	 */
 	@Override
 	public void load(StringProperties properties, IRelativePathResolver resolver) throws EolModelLoadingException {
 		super.load(properties, resolver);
 		load();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#loadModel()
 	 */
@@ -381,7 +441,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		Collection<COMObject> all = allContentsFromModel();
 		return all.contains(instance);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#setElementId(java.lang.Object, java.lang.String)
 	 */
@@ -389,6 +449,15 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	public void setElementId(Object instance, String newId) {
 		throw new UnsupportedOperationException("Artisan objects' Id is read only.");
 		
+	}
+
+	/**
+	 * Sets the model.
+	 *
+	 * @param model the new model
+	 */
+	protected void setModel(COMModel model) {
+		this.model = model;
 	}
 
 	/**
@@ -407,6 +476,15 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	public void setPropertySetter(IPropertySetter propertySetter) {
 		this.propertySetter = propertySetter;
+	}
+
+	/**
+	 * Sets the the project.
+	 *
+	 * @param theProject the new the project
+	 */
+	protected void setTheProject(COMObject theProject) {
+		this.theProject = theProject;
 	}
 
 	/* (non-Javadoc)

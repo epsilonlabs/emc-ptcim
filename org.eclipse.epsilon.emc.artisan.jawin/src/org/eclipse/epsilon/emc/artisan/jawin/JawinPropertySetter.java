@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.epsilon.emc.COM.COMObject;
 import org.eclipse.epsilon.emc.COM.COMProperty;
+import org.eclipse.epsilon.emc.COM.COMPropertyManager;
 import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
 import org.eclipse.epsilon.eol.exceptions.EolIllegalPropertyAssignmentException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -26,7 +27,7 @@ import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertySetter;
 public class JawinPropertySetter extends AbstractPropertySetter {
 	
 	/** The property  manager (cache). */
-	private final JawinPropertyManager manager = JawinPropertyManager.INSTANCE;
+	private final COMPropertyManager manager = JawinPropertyManager.INSTANCE;
 	
 	/** The COM property. */
 	private COMProperty comProperty;

@@ -8,22 +8,31 @@ import java.util.Map;
 
 import org.eclipse.epsilon.emc.COM.COMObject;
 import org.eclipse.epsilon.emc.COM.COMProperty;
+import org.eclipse.epsilon.emc.COM.COMPropertyManager;
 import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
 
-public class JawinPropertyManager {
+public class JawinPropertyManager implements COMPropertyManager {
 	
-	public static final JawinPropertyManager INSTANCE = new JawinPropertyManager();
+	public static final COMPropertyManager INSTANCE = new JawinPropertyManager();
 	
 	private static final Object ASSOCIATION_ROLE = "Association";
 	
-	private Map<COMObject, Map<String, COMProperty>> cache;
+	@Override
+	public COMPropertyManager getInstance() {
+		return INSTANCE;
+	}
 	
+	private Map<COMObject, Map<String, COMProperty>> cache;
 	
 	public JawinPropertyManager() {
 		super();
 		this.cache = new HashMap<COMObject, Map<String,COMProperty>>();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.emc.artisan.jawin.COMPropertyManager#getProperty(org.eclipse.epsilon.emc.COM.COMObject, java.lang.String)
+	 */
+	@Override
 	public COMProperty getProperty(COMObject object, String property) {
 		Map<String, COMProperty> cachedProps = cache.get(object);
 		if (cachedProps == null) {

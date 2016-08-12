@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.epsilon.emc.artisan.COM">
+      <bridge
+            class="org.eclipse.epsilon.emc.artisan.jawin.JawinComBridge">
+      </bridge>
+      <getter
+            class="org.eclipse.epsilon.emc.artisan.jawin.JawinPropertyGetter">
+      </getter>
+      <manager
+            class="org.eclipse.epsilon.emc.artisan.jawin.JawinPropertyManager">
+      </manager>
+      <setter
+            class="org.eclipse.epsilon.emc.artisan.jawin.JawinPropertySetter">
+      </setter>
+   </extension>
+
+</plugin>

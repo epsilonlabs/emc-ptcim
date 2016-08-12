@@ -10,5 +10,5 @@ Require-Bundle: org.junit,
  org.eclipse.epsilon.emc.artisan;bundle-version="1.4.0",
  org.eclipse.epsilon.emc.artisan.jawin;bundle-version="1.4.0",
  org.eclipse.epsilon.eol.engine,
- org.eclipse.epsilon.emc.COM;bundle-version="1.4.0"
+ org.eclipse.epsilon.emc.artisan.COM;bundle-version="1.4.0"
 Export-Package: org.eclipse.epsilon.emc.artisan

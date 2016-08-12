@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.emc.artisan;
+package org.eclipse.epsilon.emc.artisan.jawin;
 
 
 import java.util.ArrayList;
@@ -59,25 +59,25 @@ public class DelME {
 		
 		
 		// Create a new element by type, use the project
-		DispatchPtr allPckItem = allofType(theProject, "Package Item");
-		while (hasMore(allPckItem)) {
-			DispatchPtr pItem = next(allPckItem);
-			Object name = getAttr(pItem, "Name");
-			System.out.println(name);
-			
-		}
+//		DispatchPtr allPckItem = allofType(theProject, "Package Item");
+//		while (hasMore(allPckItem)) {
+//			DispatchPtr pItem = next(allPckItem);
+//			Object name = getAttr(pItem, "Name");
+//			System.out.println(name);
+//			
+//		}
 		
 		// Transaction?
 		//ArtisanProject("Transaction") = "Begin"
-		theProject.invoke("PropertySet", "Transaction", 0, "Begin");
+//		theProject.invoke("PropertySet", "Transaction", 0, "Begin");
 		
 		
 		
 		//DispatchPtr newclassDispPtr = (DispatchPtr) model.invokeN("AddByType", new Object[] {type, "UNSCOPEDITEM"}, 2);
-		DispatchPtr newclassDispPtr = (DispatchPtr) model.invokeN("AddByType", new Object[] {type, "CLASS"});
-		newclassDispPtr.toString();
-		Object name = getAttr(newclassDispPtr, "Full Name");
-		System.out.println(name);
+//		DispatchPtr newclassDispPtr = (DispatchPtr) model.invokeN("AddByType", new Object[] {type, "CLASS"});
+//		newclassDispPtr.toString();
+//		Object name = getAttr(newclassDispPtr, "Full Name");
+//		System.out.println(name);
 //		Object name = getAttr(newclassDispPtr, "Name");
 //		type = "Actor";
 //		DispatchPtr newactorDispPtr = (DispatchPtr) theProject.invokeN("AddByType", new Object[] {type, "PACKAGEITEM"});
@@ -86,15 +86,39 @@ public class DelME {
 		
 //		String old_props = null;
 //		String props = null;
+		
+		// Show the class in the model
+		 DispatchPtr editor = new DispatchPtr("Studio.Editor");
+		 editor.invoke("ShowMainWindow");
+		 editor.invoke("SetForegroundWindow");
+		 editor.invoke("OpenModel","EmcTest");
+		 
+
 		while (hasMore(allClasses)) {
-			DispatchPtr clzz = next(allClasses);
-			//DispatchPtr newclass = (DispatchPtr) clzz.invokeN("AddByType", new Object[] {"Class", "CONTAINEDCLASS"}, 2);
-			// Add the new class to the class
-			DispatchPtr newclass = (DispatchPtr) clzz.invokeN("Add", new Object[] {"Contained Class", newclassDispPtr});
-			/*Object*/ name = getAttr(newclass, "Full Name");
-			Object owner = getAttr(newclass, "Scoping Item");
 			
-			System.out.println(name);
+			
+			DispatchPtr clzz = next(allClasses);
+			// clzz id
+			Object id = clzz.get("Property", "Id");
+			// Find a diagram related to the class
+			DispatchPtr diag = new DispatchPtr();
+			// First Diagram
+			DispatchPtr diagDispPtr = (DispatchPtr) clzz.invoke("Item", "Using Diagram");
+			diag.stealUnknown(diagDispPtr);
+			Object dId = diag.get("Property", "Id");
+			Object objSymbol = clzz.invoke("Item", "Representing Symbol");
+			Object symboldId = ((DispatchPtr) objSymbol).get("Property", "Id");
+			editor.invoke("OpenDiagram", dId);
+			editor.invoke("SelectSymbol2", dId, symboldId);
+				
+			
+//			//DispatchPtr newclass = (DispatchPtr) clzz.invokeN("AddByType", new Object[] {"Class", "CONTAINEDCLASS"}, 2);
+//			// Add the new class to the class
+//			DispatchPtr newclass = (DispatchPtr) clzz.invokeN("Add", new Object[] {"Contained Class", newclassDispPtr});
+//			/*Object*/ name = getAttr(newclass, "Full Name");
+//			Object owner = getAttr(newclass, "Scoping Item");
+//			
+//			System.out.println(name);
 			break;
 //			if (name.equals("C1")) {
 //				clzz.invokeN("PropertySet", new Object[] {"Name", 0, "C3"});
@@ -143,7 +167,7 @@ public class DelME {
 			//}
 		}
 		//ArtisanProject("Transaction") = "Abort"
-		theProject.invoke("PropertySet", "Transaction", 0, "Abort");
+//		theProject.invoke("PropertySet", "Transaction", 0, "Abort");
 		
 		Ole32.CoUninitialize();
 		System.out.println("Success");
