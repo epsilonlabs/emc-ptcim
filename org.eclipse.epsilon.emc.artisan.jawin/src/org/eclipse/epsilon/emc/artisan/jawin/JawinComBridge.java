@@ -10,7 +10,6 @@ import org.eclipse.epsilon.emc.COM.COMModel;
 import org.eclipse.epsilon.emc.COM.COMObject;
 import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
 import org.jawin.COMException;
-import org.jawin.GUID;
 import org.jawin.win32.Ole32;
 
 public class JawinComBridge implements COMBridge<COMObject, COMObject> {
@@ -60,8 +59,9 @@ public class JawinComBridge implements COMBridge<COMObject, COMObject> {
 			method = "Project";
 		}
 		List<Object> args = new ArrayList<Object>();
+		args.add(method);
 		args.add(name); 
-		model = (JawinObject) app.invoke("Item", method, args);
+		model = (JawinObject) app.invoke("Item", args);
 		return model;
 	}
 

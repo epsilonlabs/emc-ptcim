@@ -1,8 +1,19 @@
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ${me} - Initial API and implementation
+ *******************************************************************************/
 package org.eclipse.epsilon.emc.COM;
 
 import java.util.List;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The Interface COMObject.
  */
@@ -14,6 +25,7 @@ public interface COMObject {
 	 *
 	 * @param association the association
 	 * @return the COM object
+	 * @throws EpsilonCOMException the epsilon COM exception
 	 */
 	Object add(String association) throws EpsilonCOMException;
 	
@@ -23,7 +35,7 @@ public interface COMObject {
 	 * @param association the association
 	 * @param object the object
 	 * @return the COM object
-	 * @throws EpsilonCOMException 
+	 * @throws EpsilonCOMException the epsilon COM exception
 	 */
 	Object add(String association, COMObject object) throws EpsilonCOMException;
 	
@@ -35,6 +47,7 @@ public interface COMObject {
 	 * @param association the association
 	 * @param name the name
 	 * @return the COM object
+	 * @throws EpsilonCOMException the epsilon COM exception
 	 */
 	Object add(String association, String name) throws EpsilonCOMException;
 	
@@ -44,6 +57,7 @@ public interface COMObject {
 	 * @param association the association
 	 * @param type the type
 	 * @return the COM object
+	 * @throws EpsilonCOMException the epsilon COM exception
 	 */
 	Object addByType(String association, String type) throws EpsilonCOMException;
 
@@ -84,15 +98,14 @@ public interface COMObject {
 	Object invoke(String string) throws EpsilonCOMException;
 	
 	/**
-	 * Invoke a method in the COMObject.
+	 * Invoke.
 	 *
-	 * @param string the string
-	 * @param args the args
-	 * @return the COM object
+	 * @param methodName the method name
+	 * @param arg the arg
+	 * @return the object
 	 * @throws EpsilonCOMException the epsilon COM exception
 	 */
-	Object invoke(String string, List<Object> args) throws EpsilonCOMException;
-
+	@Deprecated
 	Object invoke(String methodName, String arg) throws EpsilonCOMException;
 
 	/**
@@ -116,7 +129,47 @@ public interface COMObject {
 	 * @return the COM object
 	 * @throws EpsilonCOMException the epsilon COM exception
 	 */
+	@Deprecated
 	Object invoke(String methodName, String type, List<Object> args, int index) throws EpsilonCOMException;
+	
+	
+	/**
+	 * Invoke a method in the COMObject.
+	 *
+	 * @param string the string
+	 * @param args the args
+	 * @return the COM object
+	 * @throws EpsilonCOMException the epsilon COM exception
+	 */
+	Object invoke(String string, List<Object> args) throws EpsilonCOMException;
+	
+	
+	/**
+	 * Invoke a method on the object. The args arguments are passed directly to the COM object. byRefArgs are
+	 * wrapped in an implementation specific "by reference" wrapper. 
+	 *
+	 * @param methodName the method name
+	 * @param args the args
+	 * @param byRefArgs the by ref args
+	 * @return the object
+	 * @throws EpsilonCOMException the epsilon COM exception
+	 */
+	Object invoke(String methodName, List<Object> args, List<Object> byRefArgs) throws EpsilonCOMException;
+	
+	/**
+	 * Invoke a method on the object. The args arguments are passed directly to the COM object. byRefArgs are
+	 * wrapped in an implementation specific "by reference" wrapper. If the return value(s) is(are) by reference,
+	 * the argsExpected parameter can be used to specify how many return arguments are expected. This should be
+	 * bigger that the combined size of args and byRefArgs.  
+	 *
+	 * @param methodName the method name
+	 * @param args the args
+	 * @param byRefArgs the by ref args
+	 * @param argsExpected the args expected
+	 * @return the object
+	 * @throws EpsilonCOMException the epsilon COM exception
+	 */
+	Object invoke(String methodName, List<Object> args, List<Object> byRefArgs, int argsExpected) throws EpsilonCOMException;
 
 	/**
 	 * Sets the id.

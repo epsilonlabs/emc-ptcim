@@ -42,7 +42,7 @@ public class JawinIterator implements Iterator<JawinObject> {
 		super();
 		this.source = (JawinObject) source;
 		try {
-			// Make sure the iterator
+			// Make sure the iterator is at the beginning of the collection
 			source.invoke("ResetQueryItems");
 		} catch (EpsilonCOMException e) {
 			// TODO Auto-generated catch block

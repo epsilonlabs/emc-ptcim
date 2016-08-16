@@ -56,10 +56,11 @@ public class JawinPropertySetter extends AbstractPropertySetter {
 	public void invoke(Object value) throws EolRuntimeException {
 		// TODO Check if value matches property? See EMF Setter
 		List<Object> args = new ArrayList<Object>();
+		args.add(comProperty.getName());
 		args.add(0);
 		args.add(value);
 		try {
-			((COMObject) object).invoke("PropertySet", comProperty.getName(), args);
+			((COMObject) object).invoke("PropertySet", args);
 		} catch (EpsilonCOMException e) {
 			// TODO Can we check if message has 'Failed to add item' and do a
 			// objItem.Property("ExtendedErrorInfo") to get more info?

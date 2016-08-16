@@ -13,7 +13,6 @@ package org.eclipse.epsilon.emc.artisan.jawin;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -61,7 +60,9 @@ public class JawinCollection extends AbstractCollection<JawinObject> {
 	@Override
 	public void clear() {
 		try {
-			owner.invoke("Remove", association);
+			List<Object> args = new ArrayList<Object>();
+			args.add(association);
+			owner.invoke("Remove", args);
 		} catch (EpsilonCOMException e) {
 			throw new IllegalStateException(e);
 		}
@@ -74,11 +75,11 @@ public class JawinCollection extends AbstractCollection<JawinObject> {
 	@Override
 	public boolean add(JawinObject e) {
 		assert e.getId() != null;
-		JawinObject ret = null;
 		try {
 			List<Object> args = new ArrayList<Object>();
+			args.add(association);
 			args.add(e.getDelegate());
-			ret = (JawinObject) owner.invoke("Add", association, args);
+			Object ret = owner.invoke("Add", args);
 		} catch (EpsilonCOMException ex) {
 			// TODO Can we check if message has 'Failed to add item' and do a
 			// objItem.Property("ExtendedErrorInfo") to get more info?
@@ -111,11 +112,11 @@ public class JawinCollection extends AbstractCollection<JawinObject> {
 	 */
 	@Override
 	public boolean remove(Object o) {
-		//COMObject resCount;
 		try {
 			List<Object> args = new ArrayList<Object>();
+			args.add(association);
 			args.add(o);
-			owner.invoke("Remove", association, args);
+			owner.invoke("Remove", args);
 		} catch (EpsilonCOMException ex) {
 			throw new IllegalStateException(ex);
 		}
@@ -148,7 +149,9 @@ public class JawinCollection extends AbstractCollection<JawinObject> {
 	public int size() {
 		Object resCount;
 		try {
-			resCount = owner.invoke("ItemCount", association, Collections.emptyList());
+			List<Object> args = new ArrayList<Object>();
+			args.add(association);
+			resCount = owner.invoke("ItemCount", args);
 		} catch (EpsilonCOMException e) {
 			throw new IllegalStateException(e);
 		}

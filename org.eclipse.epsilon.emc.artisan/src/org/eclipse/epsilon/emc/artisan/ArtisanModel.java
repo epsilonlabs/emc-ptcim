@@ -12,7 +12,6 @@ package org.eclipse.epsilon.emc.artisan;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -28,9 +27,6 @@ import org.eclipse.epsilon.emc.COM.COMObject;
 import org.eclipse.epsilon.emc.COM.COMProperty;
 import org.eclipse.epsilon.emc.COM.COMPropertyManager;
 import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
-import org.eclipse.epsilon.emc.artisan.jawin.JawinPropertyGetter;
-import org.eclipse.epsilon.emc.artisan.jawin.JawinPropertyManager;
-import org.eclipse.epsilon.emc.artisan.jawin.JawinPropertySetter;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
@@ -41,7 +37,6 @@ import org.eclipse.epsilon.eol.execute.introspection.IPropertySetter;
 import org.eclipse.epsilon.eol.models.CachedModel;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ArtisanModel.
  */
@@ -90,6 +85,8 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	/** The property manager. */
 	private COMPropertyManager propertyManager;
 
+	private boolean connectedToStudio = false;
+
 	/**
 	 * Instantiates a new artisan model. Gets the COM helpers from the extension
 	 */
@@ -103,13 +100,25 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		IConfigurationElement[] ce = ext.getConfigurationElements();
     	try {
 			bridge = (COMBridge<COMObject, COMObject>) ce[BRIDGE_INDEX].createExecutableExtension("class");
-			propertyGetter = (IPropertyGetter) ce[GETTER_INDEX].createExecutableExtension("class");
-			propertyManager = ((COMPropertyManager) ce[MANAGER_INDEX].createExecutableExtension("class")).getInstance();
-			propertySetter  = (IPropertySetter) ce[SETTER_INDEX].createExecutableExtension("class");
+			setPropertyGetter((IPropertyGetter) ce[GETTER_INDEX].createExecutableExtension("class"));
+			setPropertyManager(((COMPropertyManager) ce[MANAGER_INDEX].createExecutableExtension("class")).getInstance());
+			setPropertySetter((IPropertySetter) ce[SETTER_INDEX].createExecutableExtension("class"));
 		} catch (CoreException e) {
 			throw new IllegalStateException(e);
 		}
     	cachingEnabled = false;
+    	/*
+		 * Set objManager = CreateObject("Studio.ModelManager")
+		 * objManager.AddModel("\\Enabler\MyServer\MyRepository","MyModel")
+		 */
+		if (!isInitialized) {
+			try {
+				bridge.initialiseCOM();
+			} catch (EpsilonCOMException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+		isInitialized = true;
 	}
 
 	/* (non-Javadoc)
@@ -117,23 +126,19 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	protected Collection<COMObject> allContentsFromModel() {
-		if (!isInitialized) {
-			// FIXME throw exception?
-			return Collections.emptyList();
-		}
 		assert model != null;
 		Collection<? extends COMObject> elements;
 		List<Object> args = new ArrayList<Object>();
+		args.add("Owned Contents");
 		args.add("*");
 		try {
-			COMObject res = (COMObject) model.invoke("Items", "Owned Contents", args, 2);
+			COMObject res = (COMObject) model.invoke("Items", args);
 			elements = model.wrapInColleciton(res, model, "Owned Contents");
 		} catch (EpsilonCOMException e) {
 			throw new IllegalStateException(e);
 		}
 		return (Collection<COMObject>) elements;
 	}
-	
 
 	/**
 	 * Connect to artisan studio.
@@ -141,9 +146,47 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 * @throws EpsilonCOMException the epsilon COM exception
 	 */
 	public void connectToStudio() throws EpsilonCOMException {
-		studio = bridge.connectToCOM("Studio.Editor");
+		if (!connectedToStudio ) {
+			studio = bridge.connectToCOM("Studio.Editor");
+			connectedToStudio = true;
+		}
 	}
 	
+	/**
+	 * Opens the Artisan Sutio Editor and shows the given object. By default the first
+	 * diagram in which the object apperas is selected.
+	 * @throws EpsilonCOMException
+	 */
+	public void showInStudio(Object instance) throws EpsilonCOMException {
+		assert instance instanceof COMObject;
+		COMObject cobject = (COMObject) instance;
+		connectToStudio();
+		studio.invoke("ShowMainWindow");
+		studio.invoke("SetForegroundWindow");
+		List<Object> args = new ArrayList<Object>();
+		args.add(getName());
+		studio.invoke("OpenModel",args);
+		String id = getElementId(instance);
+		// Find a diagram related to the object
+		// First Diagram
+		args.clear();
+		args.add("Using Diagram");
+		COMObject diag = (COMObject) cobject.invoke("Item", args);
+		Object dId = getElementId(diag);
+		args.clear();
+		args.add("Representing Symbol");
+		Object objSymbol = cobject.invoke("Item", args);
+		Object symboldId = getElementId(objSymbol);
+		args.clear();
+		args.add(dId);
+		studio.invoke("OpenDiagram", args);
+		args.clear();
+		args.add(dId);
+		args.add(symboldId);
+		studio.invoke("SelectSymbol2", args);
+	}
+	
+
 	/**
 	 * In Artisan the type is the same name as the association name in the model (dictionary)
 	 * Specialised classes are obtained by using attribute settings (see AddByType).
@@ -173,14 +216,27 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		}
 		return (COMObject) newInstance;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.eol.models.CachedModel#deleteElementInModel(java.lang.Object)
+	
+	/**
+	 * Deletes an object from the model.
+	 * Important:  If you delete an object and that object is linked to other objects through
+	 * automation interface associations that have their Propagate Delete flag set to TRUE,
+	 * objects that are linked through those associations will also be deleted. For example,
+	 * a Class is related to its child Attributes through the Attribute association, which has
+	 * its Propagate Delete flag set to TRUE. If you delete a Class, its Attributes will also
+	 * be deleted.
 	 */
 	@Override
 	protected boolean deleteElementInModel(Object instance) throws EolRuntimeException {
-		// TODO Auto-generated method stub
-		return false;
+		assert instance instanceof COMObject;
+		boolean success = false;
+		try {
+			((COMObject) instance).invoke("Delete");
+			success = true;
+		} catch (EpsilonCOMException e) {
+			throw new EolRuntimeException(e.getMessage());
+		}
+		return success;
 	}
 
 	/* (non-Javadoc)
@@ -190,30 +246,40 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	protected void disposeModel() {
 		if (isInitialized) {
 			try {
-				bridge.uninitializeCOM();
+				if (storeOnDisposal) {
+					commitTransaction();
+				}
+				else {
+					abortTransaction();
+				}
 			} catch (EpsilonCOMException e) {
-				// FIXME Does Epsilon has a logger for this?
-				//e.printStackTrace();
+				// FIXME Log! or exception
+				System.err.println("There was an error finishing the transaction on model disposal. Changes to the model might have been partially commited.");
+			}
+			finally {
+				try {
+					bridge.uninitializeCOM();
+				} catch (EpsilonCOMException e) {
+					// FIXME Does Epsilon has a logger for this?
+					//e.printStackTrace();
+				}
 			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllOfKind(java.lang.String)
+	/**
+	 * Artisan does not provide support for all of kind, so for this models this method
+	 * delegates to {@link #getAllOfTypeFromModel(String)}.
 	 */
 	@Override
 	public Collection<COMObject> getAllOfKind(String kind) throws EolModelElementTypeNotFoundException {
-		throw new UnsupportedOperationException("Access to the Artisan Model Metamodel is restricted.");
+		return getAllOfType(kind);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllOfKindFromModel(java.lang.String)
-	 */
 	@Override
-	protected Collection<COMObject> getAllOfKindFromModel(String kind)
+	protected Collection<? extends COMObject> getAllOfKindFromModel(String kind)
 			throws EolModelElementTypeNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Artisan models don't use cache.");
 	}
 
 	/* (non-Javadoc)
@@ -221,40 +287,38 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	public Collection<COMObject> getAllOfType(String type) throws EolModelElementTypeNotFoundException {
-		if (!isInitialized) {
-			// FIXME throw exception?
-			return Collections.emptyList();
-		}
 		assert model != null;
 		Collection<? extends COMObject> elements;
 		List<Object> args = new ArrayList<Object>();
-		args.add("*");
+		args.add(type);
+		List<Object> byRefArgs = new ArrayList<Object>();
+		byRefArgs.add("*");
 		try {
-			COMObject res = (COMObject) model.invoke("Items", type, args, 2);
+			COMObject res = (COMObject) model.invoke("Items", args, byRefArgs);
 			elements = model.wrapInColleciton(res, model, type);	//new JawinCollection(res, model, type);
 		} catch (EpsilonCOMException e) {
 			throw new EolModelElementTypeNotFoundException(name, type);
 		}
 		return (Collection<COMObject>) elements;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllOfTypeFromModel(java.lang.String)
-	 */
+	
 	@Override
 	protected Collection<? extends COMObject> getAllOfTypeFromModel(String type)
 			throws EolModelElementTypeNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Artisan models don't use cache.");
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllTypeNamesOf(java.lang.Object)
 	 */
 	@Override
 	protected Collection<String> getAllTypeNamesOf(Object instance) {
-		throw new UnsupportedOperationException("Artisan Model does not support enumerations");
+		String type = getTypeNameOf(instance);
+		ArrayList<String> res = new ArrayList<String>();
+		res.add(type);
+		return res;
 	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#getCacheKeyForType(java.lang.String)
@@ -264,7 +328,6 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		return type;
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#getElementById(java.lang.String)
 	 */
@@ -272,13 +335,14 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	public Object getElementById(String id) {
 		List<Object> args = new ArrayList<Object>();
 		args.add(id);
+		Object res = null;
 		try {
-			return model.invoke("ItemById", args);
+			res = model.invoke("ItemById", args);
 		} catch (EpsilonCOMException e) {
 			// FIXME Log me!
 			e.printStackTrace();
 		}
-		return null;
+		return res;
 	}
 
 	/* (non-Javadoc)
@@ -287,23 +351,20 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	@Override
 	public String getElementId(Object instance) {
 		assert instance instanceof COMObject;
-		if (((COMObject) instance).getId() != null) {
-			return ((COMObject) instance).getId();
-		}
-		else {
+		String id = ((COMObject) instance).getId();
+		if (id == null)
+		{
 			List<Object> args = new ArrayList<Object>();
 			args.add("Id");
-			String id = null;
 			try {
 				id = (String) ((COMObject) instance).get("Property", args);
 				((COMObject) instance).setId(id);
 			} catch (EpsilonCOMException e) {
 				// FIXME Log me!
-				e.printStackTrace();
+				throw new IllegalStateException(e);
 			}
-			return id;
 		}
-		
+		return id;
 	}
 
 	/* (non-Javadoc)
@@ -335,7 +396,6 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	public String getTypeNameOf(Object instance) {
-		// TODO Auto-generated method stub
 		assert instance instanceof COMObject;
 		String typeName;
 		try {
@@ -346,6 +406,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		}
 		return typeName;
 	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#hasType(java.lang.String)
@@ -363,7 +424,6 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		}
 		return errDispPtr.length() > 0;
 	}
-	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#isInstantiable(java.lang.String)
@@ -380,7 +440,10 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	public boolean knowsAboutProperty(Object instance, String property) {
-		COMProperty p = propertyManager.getProperty((COMObject) instance, property);
+		Object p = null;
+		if (instance instanceof COMObject) {
+			p = propertyManager.getProperty((COMObject) instance, property);
+		}
 		return p != null;
 	}
 
@@ -398,41 +461,75 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	protected void loadModel() throws EolModelLoadingException {
-		// TODO if the model is not read on load we need to create it
-		/*
-		 * Set objManager = CreateObject("Studio.ModelManager")
-		 * objManager.AddModel("\\Enabler\MyServer\MyRepository","MyModel")
-		 */
-		if (!isInitialized) {
+		if (isInitialized)
+		{
+			COMObject artisanApp;
 			try {
-				bridge.initialiseCOM();
+				artisanApp = bridge.connectToCOM("OMTE.Projects");
 			} catch (EpsilonCOMException e) {
+				try {
+					bridge.uninitializeCOM();
+				} catch (EpsilonCOMException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				throw new EolModelLoadingException(e, this);
+			}
+			try {
+				theProject = bridge.openModel(artisanApp, name);
+				beginTransaction();
+			} catch (EpsilonCOMException e) {
+				try {
+					bridge.uninitializeCOM();
+				} catch (EpsilonCOMException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				throw new EolModelLoadingException(e, this);
+			}
+			List<Object> args = new ArrayList<Object>();
+			args.add("Dictionary");
+			try {
+				COMObject res = (COMObject) theProject.invoke("Item", "Dictionary", args);
+				model = bridge.wrapModel(res);
+			} catch (EpsilonCOMException e) {
+				try {
+					bridge.uninitializeCOM();
+				} catch (EpsilonCOMException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				throw new EolModelLoadingException(e, this);
 			}
 		}
-		isInitialized = true;
-		COMObject artisanApp;
-		try {
-			artisanApp = bridge.connectToCOM("OMTE.Projects");
-		} catch (EpsilonCOMException e) {
-			throw new EolModelLoadingException(e, this);
-		}
-		try {
-			theProject = bridge.openModel(artisanApp, name);
-		} catch (EpsilonCOMException e) {
-			throw new EolModelLoadingException(e, this);
-		}
-		List<Object> args = new ArrayList<Object>();
-		args.add("Dictionary");
-		try {
-			COMObject res = (COMObject) theProject.invoke("Item", "Dictionary", args);
-			model = bridge.wrapModel(res);
-		} catch (EpsilonCOMException e) {
-			throw new EolModelLoadingException(e, this);
-		}
-		
 	}
 
+	private void beginTransaction() throws EpsilonCOMException {
+		List<Object> args = new ArrayList<Object>();
+		args.add("Transaction");
+		args.add(0);
+		args.add("Begin");
+		theProject.invoke("PropertySet", args);
+	}
+	
+	private void commitTransaction() throws EpsilonCOMException {
+		List<Object> args = new ArrayList<Object>();
+		args.add("Transaction");
+		args.add(0);
+		args.add("Commit");
+		theProject.invoke("PropertySet", args);
+	}
+	
+	private void abortTransaction() throws EpsilonCOMException {
+		List<Object> args = new ArrayList<Object>();
+		args.add("Transaction");
+		args.add(0);
+		args.add("Abort");
+		theProject.invoke("PropertySet", args);
+	}
+	
+	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#owns(java.lang.Object)
 	 */
@@ -441,13 +538,13 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		Collection<COMObject> all = allContentsFromModel();
 		return all.contains(instance);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#setElementId(java.lang.Object, java.lang.String)
 	 */
 	@Override
 	public void setElementId(Object instance, String newId) {
-		throw new UnsupportedOperationException("Artisan objects' Id is read only.");
+		throw new UnsupportedOperationException("Artisan objects Ids are read only.");
 		
 	}
 
@@ -469,6 +566,10 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		this.propertyGetter = propertyGetter;
 	}
 
+	private void setPropertyManager(COMPropertyManager manager) {
+		this.propertyManager = manager;
+	}
+
 	/**
 	 * Sets the property setter.
 	 *
@@ -477,7 +578,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	public void setPropertySetter(IPropertySetter propertySetter) {
 		this.propertySetter = propertySetter;
 	}
-
+	
 	/**
 	 * Sets the the project.
 	 *
@@ -495,7 +596,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		throw new UnsupportedOperationException("Artisan models are updated per invocation.");
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#store(java.lang.String)
 	 */

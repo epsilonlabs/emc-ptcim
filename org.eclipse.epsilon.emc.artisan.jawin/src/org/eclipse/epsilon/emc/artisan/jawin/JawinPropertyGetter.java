@@ -43,9 +43,12 @@ public class JawinPropertyGetter extends AbstractPropertyGetter {
 			if (p.isMultiple()) {
 				JawinCollection elements;
 				List<Object> args = new ArrayList<Object>();
-				args.add("*");
+				args.add(property);
+				List<Object> byRefArgs = new ArrayList<Object>();
+				byRefArgs.add("*");
 				try {
-					Object res = jObject.invoke("Items", property, args, 2);
+					//Object res = jObject.invoke("Items", property, args, 2);
+					Object res = jObject.invoke("Items", args, byRefArgs);
 					assert res instanceof JawinObject;
 					elements = new JawinCollection((JawinObject) res, jObject, property);
 				} catch (EpsilonCOMException e) {

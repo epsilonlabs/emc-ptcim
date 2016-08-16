@@ -3,6 +3,7 @@ package org.eclipse.epsilon.emc.artisan.jawin;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.jawin.COMException;
 import org.jawin.DispatchPtr;
@@ -36,7 +37,7 @@ public class DelME {
 //	}
 	
 	private static void usingJawin() throws COMException {
-		DispatchPtr theProject = getActiveProject("EmcTest");
+		DispatchPtr theProject = getActiveProject("HSUV");
 		DispatchPtr model = load(theProject);
 		//DispatchPtr model = load("HSUV");
 		String type = "Class";
@@ -45,11 +46,11 @@ public class DelME {
 		//int i = size(allClasses);
 		//System.out.println(i);
 		// Loop
-		Collection<Object> names = collect(allClasses, "Name");
-		for (Object n : names) {
-			System.out.println(n);
-		}
-		allClasses.invoke("ResetQueryItems");
+//		Collection<Object> names = collect(allClasses, "Name");
+//		for (Object n : names) {
+//			System.out.println(n);
+//		}
+//		allClasses.invoke("ResetQueryItems");
 		
 		// Do we have the type, do a GetClassProperties assume error means calss is not present
 //		Object classDispPtr = theProject.invokeN("GetClassProperties", new Object[] {"Class"});
@@ -70,46 +71,69 @@ public class DelME {
 		// Transaction?
 		//ArtisanProject("Transaction") = "Begin"
 //		theProject.invoke("PropertySet", "Transaction", 0, "Begin");
-		
-		
-		
-		//DispatchPtr newclassDispPtr = (DispatchPtr) model.invokeN("AddByType", new Object[] {type, "UNSCOPEDITEM"}, 2);
+//		
+//		
+//		
 //		DispatchPtr newclassDispPtr = (DispatchPtr) model.invokeN("AddByType", new Object[] {type, "CLASS"});
 //		newclassDispPtr.toString();
 //		Object name = getAttr(newclassDispPtr, "Full Name");
 //		System.out.println(name);
-//		Object name = getAttr(newclassDispPtr, "Name");
 //		type = "Actor";
 //		DispatchPtr newactorDispPtr = (DispatchPtr) theProject.invokeN("AddByType", new Object[] {type, "PACKAGEITEM"});
-//		name = getAttr(newclassDispPtr, "Name");
+//		name = getAttr(newactorDispPtr, "Name");
+//		System.out.println(name);
 		
 		
 //		String old_props = null;
 //		String props = null;
 		
 		// Show the class in the model
-		 DispatchPtr editor = new DispatchPtr("Studio.Editor");
-		 editor.invoke("ShowMainWindow");
-		 editor.invoke("SetForegroundWindow");
-		 editor.invoke("OpenModel","EmcTest");
+//		 DispatchPtr editor = new DispatchPtr("Studio.Editor");
+//		 editor.invoke("ShowMainWindow");
+//		 editor.invoke("SetForegroundWindow");
+//		 editor.invoke("OpenModel","EmcTest");
 		 
-
+//
 		while (hasMore(allClasses)) {
-			
-			
+			// Find if the class is a requirement 
 			DispatchPtr clzz = next(allClasses);
-			// clzz id
-			Object id = clzz.get("Property", "Id");
-			// Find a diagram related to the class
-			DispatchPtr diag = new DispatchPtr();
-			// First Diagram
-			DispatchPtr diagDispPtr = (DispatchPtr) clzz.invoke("Item", "Using Diagram");
-			diag.stealUnknown(diagDispPtr);
-			Object dId = diag.get("Property", "Id");
-			Object objSymbol = clzz.invoke("Item", "Representing Symbol");
-			Object symboldId = ((DispatchPtr) objSymbol).get("Property", "Id");
-			editor.invoke("OpenDiagram", dId);
-			editor.invoke("SelectSymbol2", dId, symboldId);
+			Object name = getAttr(clzz, "Id");
+				System.out.println(name);
+				DispatchPtr stereotypes = new DispatchPtr();
+				// We know Requirements have id#
+				DispatchPtr classDispPtr = (DispatchPtr) clzz.invokeN("Items", new Object[] {"Tag Definitions", "id#"});
+				stereotypes.stealUnknown(classDispPtr);
+				Collection<Object> snames = collect(stereotypes, "Name");
+				System.out.println("Info: " + snames);
+				stereotypes.invoke("ResetQueryItems");
+				while (hasMore(stereotypes)) {
+					Object strPropDesc = clzz.get("Property", "Extended Attribute Descriptors");
+					System.out.println("strPropDesc: " + strPropDesc);
+
+					DispatchPtr tag = next(stereotypes);
+					DispatchPtr stereotypes1 = new DispatchPtr();
+					DispatchPtr classDispPtr1 = (DispatchPtr) tag.invokeN("Items", new Object[] {"Stereotype", "Requirement"});
+					stereotypes1.stealUnknown(classDispPtr1);
+					snames = collect(stereotypes1, "Name");
+					System.out.println("Info2: " + snames);
+					
+				}
+				
+			
+			
+//			// clzz id
+			
+//			Object id = clzz.get("Property", "Id");
+//			// Find a diagram related to the class
+//			DispatchPtr diag = new DispatchPtr();
+//			// First Diagram
+//			DispatchPtr diagDispPtr = (DispatchPtr) clzz.invoke("Item", "Using Diagram");
+//			diag.stealUnknown(diagDispPtr);
+//			Object dId = diag.get("Property", "Id");
+//			Object objSymbol = clzz.invoke("Item", "Representing Symbol");
+//			Object symboldId = ((DispatchPtr) objSymbol).get("Property", "Id");
+//			editor.invoke("OpenDiagram", dId);
+//			editor.invoke("SelectSymbol2", dId, symboldId);
 				
 			
 //			//DispatchPtr newclass = (DispatchPtr) clzz.invokeN("AddByType", new Object[] {"Class", "CONTAINEDCLASS"}, 2);
@@ -119,7 +143,7 @@ public class DelME {
 //			Object owner = getAttr(newclass, "Scoping Item");
 //			
 //			System.out.println(name);
-			break;
+//			break;
 //			if (name.equals("C1")) {
 //				clzz.invokeN("PropertySet", new Object[] {"Name", 0, "C3"});
 //			}
@@ -173,9 +197,8 @@ public class DelME {
 		System.out.println("Success");
 	}
 	
-	private static int size(DispatchPtr allClasses) throws COMException {
-		Variant.ByrefHolder varArgument = new Variant.ByrefHolder("*");
-		Object classDispPtr = allClasses.invokeN("ItemCount", new Object[] {"Id"});
+	private static int size(DispatchPtr collection) throws COMException {
+		Object classDispPtr = collection.invokeN("ItemCount", new Object[] {"Id"});
 		//count.stealUnknown(classDispPtr);
 		return (Integer)classDispPtr;
 	}
