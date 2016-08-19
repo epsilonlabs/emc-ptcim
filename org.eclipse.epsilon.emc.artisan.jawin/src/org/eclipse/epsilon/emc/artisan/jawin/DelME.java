@@ -41,7 +41,19 @@ public class DelME {
 		DispatchPtr model = load(theProject);
 		//DispatchPtr model = load("HSUV");
 		String type = "Class";
-		DispatchPtr allClasses = allofType(model, type);
+		//DispatchPtr allClasses = allofType(model, type);
+		DispatchPtr allInstances = new DispatchPtr();
+		Variant.ByrefHolder varArgument = new Variant.ByrefHolder("*");
+		DispatchPtr classDispPtr = (DispatchPtr) model.invokeN("Items", new Object[] {""});
+		allInstances.stealUnknown(classDispPtr);
+		while (hasMore(allInstances)) {
+			// Find if the class is a requirement 
+			DispatchPtr clzz = next(allInstances);
+			Object name = getAttr(clzz, "Name");
+			System.out.println(name);
+		}
+		
+		
 		// Size
 		//int i = size(allClasses);
 		//System.out.println(i);
@@ -94,30 +106,30 @@ public class DelME {
 //		 editor.invoke("OpenModel","EmcTest");
 		 
 //
-		while (hasMore(allClasses)) {
-			// Find if the class is a requirement 
-			DispatchPtr clzz = next(allClasses);
-			Object name = getAttr(clzz, "Id");
-				System.out.println(name);
-				DispatchPtr stereotypes = new DispatchPtr();
-				// We know Requirements have id#
-				DispatchPtr classDispPtr = (DispatchPtr) clzz.invokeN("Items", new Object[] {"Tag Definitions", "id#"});
-				stereotypes.stealUnknown(classDispPtr);
-				Collection<Object> snames = collect(stereotypes, "Name");
-				System.out.println("Info: " + snames);
-				stereotypes.invoke("ResetQueryItems");
-				while (hasMore(stereotypes)) {
-					Object strPropDesc = clzz.get("Property", "Extended Attribute Descriptors");
-					System.out.println("strPropDesc: " + strPropDesc);
-
-					DispatchPtr tag = next(stereotypes);
-					DispatchPtr stereotypes1 = new DispatchPtr();
-					DispatchPtr classDispPtr1 = (DispatchPtr) tag.invokeN("Items", new Object[] {"Stereotype", "Requirement"});
-					stereotypes1.stealUnknown(classDispPtr1);
-					snames = collect(stereotypes1, "Name");
-					System.out.println("Info2: " + snames);
-					
-				}
+//		while (hasMore(allClasses)) {
+//			// Find if the class is a requirement 
+//			DispatchPtr clzz = next(allClasses);
+//			Object name = getAttr(clzz, "Id");
+//				System.out.println(name);
+//				DispatchPtr stereotypes = new DispatchPtr();
+//				// We know Requirements have id#
+//				DispatchPtr classDispPtr = (DispatchPtr) clzz.invokeN("Items", new Object[] {"Tag Definitions", "id#"});
+//				stereotypes.stealUnknown(classDispPtr);
+//				Collection<Object> snames = collect(stereotypes, "Name");
+//				System.out.println("Info: " + snames);
+//				stereotypes.invoke("ResetQueryItems");
+//				while (hasMore(stereotypes)) {
+//					Object strPropDesc = clzz.get("Property", "Extended Attribute Descriptors");
+//					System.out.println("strPropDesc: " + strPropDesc);
+//
+//					DispatchPtr tag = next(stereotypes);
+//					DispatchPtr stereotypes1 = new DispatchPtr();
+//					DispatchPtr classDispPtr1 = (DispatchPtr) tag.invokeN("Items", new Object[] {"Stereotype", "Requirement"});
+//					stereotypes1.stealUnknown(classDispPtr1);
+//					snames = collect(stereotypes1, "Name");
+//					System.out.println("Info2: " + snames);
+//					
+//				}
 				
 			
 			
@@ -189,7 +201,7 @@ public class DelME {
 //				}
 //				break;
 			//}
-		}
+//		}
 		//ArtisanProject("Transaction") = "Abort"
 //		theProject.invoke("PropertySet", "Transaction", 0, "Abort");
 		
@@ -207,7 +219,7 @@ public class DelME {
 		DispatchPtr model = new DispatchPtr();
 		Variant.ByrefHolder varIndex = new Variant.ByrefHolder("Dictionary");
 		DispatchPtr dirDispPtr = (DispatchPtr) modelRef.invokeN("Item", new Object[] {
-				"Dictionary", varIndex });
+				"Dictionary", "Dictionary" });
 		model.stealUnknown(dirDispPtr);
 		return model;
 	}
@@ -219,7 +231,7 @@ public class DelME {
 		String Role = "Project";
 		Variant.ByrefHolder varIndex = new Variant.ByrefHolder(Index);
 		DispatchPtr dispPtr = (DispatchPtr) app.invokeN("Item", new Object[] {
-				Role, varIndex });
+				Role, name});
 		DispatchPtr modelRef = new DispatchPtr();
 		modelRef.stealUnknown(dispPtr);
 		return modelRef;
