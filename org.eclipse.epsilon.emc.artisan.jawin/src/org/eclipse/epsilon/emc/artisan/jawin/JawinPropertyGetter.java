@@ -57,12 +57,12 @@ public class JawinPropertyGetter extends AbstractPropertyGetter {
 				o = elements;
 			}
 			else {
-				List<Object> args = new ArrayList<Object>();
-				args.add(property);
-				args.add(null);
+				//List<Object> args = new ArrayList<Object>();
+				//args.add(property);
+				//args.add(null);
 				// TODO which is best/correct?
-				o = jObject.get("Property", args);
-				//Object o2 = jObject.get("Property", property);
+				//o = jObject.get("Property", args);
+				/*Object*/ o = jObject.get("Property", property);
 			}
 		} catch (EpsilonCOMException e) {
 			throw new EolRuntimeException(e.getMessage());
