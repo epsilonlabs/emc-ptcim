@@ -117,6 +117,7 @@ public interface COMObject {
 	 * @return the COM object
 	 * @throws EpsilonCOMException the epsilon COM exception
 	 */
+	@Deprecated
 	Object invoke(String methodName, String type, List<Object> args) throws EpsilonCOMException;
 
 	/**

@@ -1,6 +1,6 @@
 package org.eclipse.epsilon.emc.artisan.jawin;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.epsilon.emc.COM.COMModel;
 import org.eclipse.epsilon.emc.COM.COMObject;
@@ -13,7 +13,7 @@ public class JawinModel extends JawinObject implements COMModel {
 	}
 
 	@Override
-	public Collection<? extends COMObject> wrapInColleciton(COMObject comCollection, COMModel owner, String association) {
+	public List<? extends COMObject> wrapInColleciton(COMObject comCollection, COMModel owner, String association) {
 		
 		return new JawinCollection(comCollection, owner, association);
 	}

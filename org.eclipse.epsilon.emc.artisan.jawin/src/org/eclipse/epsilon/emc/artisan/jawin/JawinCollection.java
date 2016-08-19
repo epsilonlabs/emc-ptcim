@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.epsilon.emc.artisan.jawin;
 
-import java.util.AbstractCollection;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -20,9 +20,11 @@ import org.eclipse.epsilon.emc.COM.COMObject;
 import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
 
 /**
- * The Class JawinCollection.
+ * The Class JawinCollection. This collection only guarantees the implementation
+ * of the methods used by Epsilon (Sequence type). All other operations can produce
+ * unexpected results. 
  */
-public class JawinCollection extends AbstractCollection<JawinObject> {
+public class JawinCollection extends AbstractList<JawinObject> {
 	
 	/** The source. */
 	private final JawinObject source;
@@ -50,25 +52,6 @@ public class JawinCollection extends AbstractCollection<JawinObject> {
 	
 
 	
-	/**
-	 * Important:  If you remove objects from an association that has its Propagate Delete flag set to TRUE,
-	 * the objects will be deleted from the model. For example, a Class is related to its child Attributes
-	 * through the Attribute association, which has its Propagate Delete flag set to TRUE.
-	 * If you use the Remove function to remove owned Attributes from a Class, those Attributes will be
-	 * deleted from the Model.
-	 */
-	@Override
-	public void clear() {
-		try {
-			List<Object> args = new ArrayList<Object>();
-			args.add(association);
-			owner.invoke("Remove", args);
-		} catch (EpsilonCOMException e) {
-			throw new IllegalStateException(e);
-		}
-	}
-
-
 	/* (non-Javadoc)
 	 * @see java.util.AbstractCollection#add(java.lang.Object)
 	 */
@@ -92,11 +75,84 @@ public class JawinCollection extends AbstractCollection<JawinObject> {
 			else {
 				throw new IllegalArgumentException(ex);
 			}
-			
 		}
 		return true;
 	}
+
+
+	/**
+	 * Important:  If you remove objects from an association that has its Propagate Delete flag set to TRUE,
+	 * the objects will be deleted from the model. For example, a Class is related to its child Attributes
+	 * through the Attribute association, which has its Propagate Delete flag set to TRUE.
+	 * If you use the Remove function to remove owned Attributes from a Class, those Attributes will be
+	 * deleted from the Model.
+	 */
+	@Override
+	public void clear() {
+		try {
+			List<Object> args = new ArrayList<Object>();
+			args.add(association);
+			owner.invoke("Remove", args);
+		} catch (EpsilonCOMException e) {
+			throw new IllegalStateException(e);
+		}
+	}
 	
+	/**
+	 * Artisan Collections are designed for iterator access. Hence this method is equivalent to
+	 * getting the iterator and iterating till the index
+	 */
+	@Override
+	public JawinObject get(int index) {
+		if (index >= size()) {
+			throw new IndexOutOfBoundsException();
+		}
+		Iterator<JawinObject> it = iterator();
+		if (index == 0) {
+			if (it.hasNext()) {
+				return it.next();
+			}
+			else {
+				return null;
+			}
+		}
+		int itCount = 0;
+		while (it.hasNext() && itCount++ < index) {
+			it.next();
+		}
+		return it.next();
+	}
+	
+	
+
+	/**
+     * {@inheritDoc}
+     *
+     * <p>This implementation first gets an iterator (with
+     * {@code iterator()}).  Then, it iterates over the list until the
+     * specified element is found or the end of the list is reached.
+     *
+     * @throws ClassCastException   {@inheritDoc}
+     * @throws NullPointerException {@inheritDoc}
+     */
+	@Override
+	public int indexOf(Object o) {
+		Iterator<JawinObject> e = iterator();
+		if (o==null) {
+		    return -1;
+		} 
+		else {
+			int index = 0;
+		    while (e.hasNext()) {
+				if (o.equals(e.next()))
+				    return index;
+				index++;
+			}
+		}
+		return -1;
+	}
+
+
 	/* (non-Javadoc)
 	 * @see java.util.AbstractCollection#iterator()
 	 */
@@ -121,6 +177,14 @@ public class JawinCollection extends AbstractCollection<JawinObject> {
 			throw new IllegalStateException(ex);
 		}
 		return true;
+	}
+	
+	
+	@Override
+	public JawinObject remove(int index) {
+		JawinObject obj = get(index);
+		remove(obj);
+		return obj;
 	}
 
 
