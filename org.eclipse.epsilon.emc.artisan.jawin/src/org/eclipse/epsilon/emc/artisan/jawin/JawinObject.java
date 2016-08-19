@@ -248,8 +248,10 @@ public class JawinObject implements COMObject {
 		try {
 			Object comres = delegate.invokeN(methodName, args.toArray());
 			if (comres instanceof DispatchPtr) {
-				res = new JawinObject();
-				((JawinObject) res).stealUnknown((DispatchPtr) comres);
+				if (((DispatchPtr) comres).getUnknown() != 0) {
+					res = new JawinObject();
+					((JawinObject) res).stealUnknown((DispatchPtr) comres);
+				}
 			}
 			else {
 				//res = new JawinPrimitive(comres);
