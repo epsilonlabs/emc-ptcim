@@ -11,6 +11,7 @@
 package org.eclipse.epsilon.emc.artisan.jawin;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.epsilon.emc.COM.COMObject;
@@ -424,6 +425,18 @@ public class JawinObject implements COMObject {
 		}
 	}
 	
+	
+	@Override
+	public List<? extends COMObject> wrapInColleciton(COMObject owner, String association) {
+		
+		return new JawinCollection(this, owner, association);
+	}
+	
+	@Override
+	public Collection<? extends COMObject> wrapInFilteredColleciton(String association) {
+		
+		return new JawinFilteredCollection(this, association);
+	}
 	
 	
 }

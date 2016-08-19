@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.epsilon.emc.COM;
 
+import java.util.Collection;
 import java.util.List;
 
 
@@ -178,6 +179,10 @@ public interface COMObject {
 	 * @param id the new id
 	 */
 	void setId(String id);
+	
+	List<? extends COMObject> wrapInColleciton(COMObject owner, String association);
+
+	Collection<? extends COMObject> wrapInFilteredColleciton(String association);
 	
 	
 }

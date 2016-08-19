@@ -139,7 +139,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		args.add("");
 		try {
 			COMObject res = (COMObject) model.invoke("Items", args);
-			elements = model.wrapInColleciton(res, model, "");
+			elements = res.wrapInColleciton(model, "");
 		} catch (EpsilonCOMException e) {
 			throw new IllegalStateException(e);
 		}
@@ -287,7 +287,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		} catch (EpsilonCOMException e) {
 			throw new EolModelElementTypeNotFoundException(name, type);
 		}
-		elements = model.wrapInColleciton(res, model, type);	//new JawinCollection(res, model, type);
+		elements = res.wrapInColleciton(model, type);	//new JawinCollection(res, model, type);
 		return (List<COMObject>) elements;
 	}
 
@@ -316,6 +316,10 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		return type;
 	}
 
+	public COMModel getCOMModel() {
+		return model;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#getElementById(java.lang.String)
 	 */
@@ -334,6 +338,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		}
 		return res;
 	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#getElementId(java.lang.Object)
@@ -357,6 +362,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		return id;
 	}
 	
+	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#getEnumerationValue(java.lang.String, java.lang.String)
@@ -365,8 +371,6 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	public Object getEnumerationValue(String enumeration, String label) throws EolEnumerationValueNotFoundException {
 		throw new UnsupportedOperationException("Artisan Model does not support enumerations");
 	}
-	
-	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.Model#getPropertyGetter()
@@ -431,7 +435,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	public boolean isOfKind(Object instance, String metaClass) throws EolModelElementTypeNotFoundException {
 		return isOfType(instance, metaClass);
 	}
-
+	
 	@Override
 	public boolean isOfType(Object instance, String metaClass) throws EolModelElementTypeNotFoundException {
 		assert instance instanceof COMObject;
@@ -452,7 +456,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		}
 		return p != null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#load(org.eclipse.epsilon.common.util.StringProperties, org.eclipse.epsilon.eol.models.IRelativePathResolver)
 	 */

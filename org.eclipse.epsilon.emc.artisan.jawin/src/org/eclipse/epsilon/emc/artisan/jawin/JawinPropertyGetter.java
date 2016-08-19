@@ -13,6 +13,7 @@ package org.eclipse.epsilon.emc.artisan.jawin;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.epsilon.emc.COM.COMCollection;
 import org.eclipse.epsilon.emc.COM.COMProperty;
 import org.eclipse.epsilon.emc.COM.COMPropertyManager;
 import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
@@ -41,7 +42,7 @@ public class JawinPropertyGetter extends AbstractPropertyGetter {
 				throw new EolRuntimeException("No such property");
 			}
 			if (p.isMultiple()) {
-				JawinCollection elements;
+				COMCollection elements;
 				List<Object> args = new ArrayList<Object>();
 				args.add(property);
 				List<Object> byRefArgs = new ArrayList<Object>();

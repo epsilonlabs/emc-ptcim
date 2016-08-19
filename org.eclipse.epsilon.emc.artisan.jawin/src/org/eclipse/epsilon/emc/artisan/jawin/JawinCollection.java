@@ -16,18 +16,22 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.epsilon.emc.COM.COMCollection;
 import org.eclipse.epsilon.emc.COM.COMObject;
 import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
+import org.eclipse.epsilon.eol.execute.operations.AbstractOperation;
+import org.eclipse.epsilon.eol.execute.operations.declarative.IAbstractOperationContributor;
 
 /**
  * The Class JawinCollection. This collection only guarantees the implementation
  * of the methods used by Epsilon (Sequence type). All other operations can produce
- * unexpected results. 
+ * unexpected results. Collections that are a result of a filtered Items only
+ * provide iteration. 
  */
-public class JawinCollection extends AbstractList<JawinObject> {
+public class JawinCollection extends AbstractList<JawinObject> implements COMCollection, IAbstractOperationContributor {
 	
-	/** The source. */
-	private final JawinObject source;
+	/** The object that points to the collection. */
+	private final JawinObject comObject;
 	
 	/** The owner. */
 	private final JawinObject owner;
@@ -39,19 +43,19 @@ public class JawinCollection extends AbstractList<JawinObject> {
 	 * Instantiates a new jawin collection.
 	 *
 	 * @param comCollection the source
-	 * @param owner2 the owner
+	 * @param owner the owner
 	 * @param association the association
 	 */
 	public JawinCollection(COMObject comCollection, COMObject owner, String association) {
 		assert comCollection instanceof JawinObject;
 		assert owner instanceof JawinObject;
-		this.source = (JawinObject) comCollection;
+		this.comObject = (JawinObject) comCollection;
 		this.owner = (JawinObject) owner;
 		this.association = association;
 	}
-	
 
-	
+
+
 	/* (non-Javadoc)
 	 * @see java.util.AbstractCollection#add(java.lang.Object)
 	 */
@@ -80,6 +84,7 @@ public class JawinCollection extends AbstractList<JawinObject> {
 	}
 
 
+
 	/**
 	 * Important:  If you remove objects from an association that has its Propagate Delete flag set to TRUE,
 	 * the objects will be deleted from the model. For example, a Class is related to its child Attributes
@@ -97,10 +102,15 @@ public class JawinCollection extends AbstractList<JawinObject> {
 			throw new IllegalStateException(e);
 		}
 	}
-	
+
+
+
 	/**
 	 * Artisan Collections are designed for iterator access. Hence this method is equivalent to
 	 * getting the iterator and iterating till the index
+	 *
+	 * @param index the index
+	 * @return the jawin object
 	 */
 	@Override
 	public JawinObject get(int index) {
@@ -121,6 +131,33 @@ public class JawinCollection extends AbstractList<JawinObject> {
 			it.next();
 		}
 		return it.next();
+	}
+	
+
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.emc.artisan.jawin.COMCollection#getAssociation()
+	 */
+	@Override
+	public String getAssociation() {
+		return association;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.emc.artisan.jawin.COMCollection#getSource()
+	 */
+	@Override
+	public JawinObject getCOMObject() {
+		return comObject;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.emc.artisan.jawin.COMCollection#getOwner()
+	 */
+	@Override
+	public JawinObject getOwner() {
+		return owner;
 	}
 	
 	
@@ -153,13 +190,30 @@ public class JawinCollection extends AbstractList<JawinObject> {
 	}
 
 
+	@Override
+	public boolean isFiltered() {
+		return false;
+	}
+
+
 	/* (non-Javadoc)
 	 * @see java.util.AbstractCollection#iterator()
 	 */
 	@Override
 	public Iterator<JawinObject> iterator() {
-		Iterator<JawinObject> iterator = new JawinIterator(source);
+		Iterator<JawinObject> iterator = new JawinIterator(comObject);
 		return iterator;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see java.util.AbstractList#remove(int)
+	 */
+	@Override
+	public JawinObject remove(int index) {
+		JawinObject obj = get(index);
+		remove(obj);
+		return obj;
 	}
 
 
@@ -178,14 +232,7 @@ public class JawinCollection extends AbstractList<JawinObject> {
 		}
 		return true;
 	}
-	
-	
-	@Override
-	public JawinObject remove(int index) {
-		JawinObject obj = get(index);
-		remove(obj);
-		return obj;
-	}
+
 
 
 	/**
@@ -220,5 +267,19 @@ public class JawinCollection extends AbstractList<JawinObject> {
 			throw new IllegalStateException(e);
 		}
 		return (Integer)resCount;
+	}
+
+
+
+	@Override
+	public AbstractOperation getAbstractOperation(String name) {
+		if ("select".equals(name)) {
+			return new JawinCollectionSelectOperation();
+		}
+		else if( "selectOne".equals(name)) {
+			return new JawinCollectionSelectOneOperation();
+		}
+		else
+			return null;
 	}
 }

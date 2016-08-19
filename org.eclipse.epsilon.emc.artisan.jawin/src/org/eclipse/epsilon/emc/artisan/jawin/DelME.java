@@ -43,8 +43,7 @@ public class DelME {
 		String type = "Class";
 		//DispatchPtr allClasses = allofType(model, type);
 		DispatchPtr allInstances = new DispatchPtr();
-		Variant.ByrefHolder varArgument = new Variant.ByrefHolder("*");
-		DispatchPtr classDispPtr = (DispatchPtr) model.invokeN("Items", new Object[] {""});
+		DispatchPtr classDispPtr = (DispatchPtr) model.invokeN("Items", new Object[] {type});
 		allInstances.stealUnknown(classDispPtr);
 		while (hasMore(allInstances)) {
 			// Find if the class is a requirement 
@@ -52,6 +51,17 @@ public class DelME {
 			Object name = getAttr(clzz, "Name");
 			System.out.println(name);
 		}
+		System.out.println("\n ====== All Classes withj P* Name ===== \n");
+		DispatchPtr allPs = new DispatchPtr();
+		classDispPtr = (DispatchPtr) model.invokeN("Items", new Object[] {type, "P*"});
+		allPs.stealUnknown(classDispPtr);
+		while (hasMore(allPs)) {
+			// Find if the class is a requirement 
+			DispatchPtr clzz = next(allPs);
+			Object name = getAttr(clzz, "Name");
+			System.out.println(name);
+		}
+		
 		
 		
 		// Size
