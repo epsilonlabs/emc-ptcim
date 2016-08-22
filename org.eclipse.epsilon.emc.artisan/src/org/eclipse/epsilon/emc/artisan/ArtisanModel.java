@@ -60,7 +60,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	
 	
 	/** The bridge. */
-	COMBridge<COMObject, COMObject> bridge;
+	protected COMBridge<COMObject, COMObject> bridge;
 	
 	/**  The Project, needed for type testing and instantiation. */ 
 	private COMObject theProject;
@@ -110,7 +110,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		 * Set objManager = CreateObject("Studio.ModelManager")
 		 * objManager.AddModel("\\Enabler\MyServer\MyRepository","MyModel")
 		 */
-		if (!isInitialized) {
+		if (!isInitialized()) {
 			try {
 				bridge.initialiseCOM();
 			} catch (EpsilonCOMException e) {
@@ -191,11 +191,10 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		}
 		List<Object> args = new ArrayList<Object>();
 		args.add(type);
-		args.add(type.toUpperCase());
 		Object newInstance = null;
 		String id;
 		try {
-			newInstance = model.invoke("AddByType", args);
+			newInstance = model.invoke("Add", args);
 			id = (String) ((COMObject) newInstance).get("Property", "Id");
 			((COMObject) newInstance).setId(id);
 		} catch (EpsilonCOMException e) {
@@ -231,25 +230,20 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	protected void disposeModel() {
-		if (isInitialized) {
-			try {
-				if (storeOnDisposal) {
-					commitTransaction();
-				}
-				else {
-					abortTransaction();
-				}
-			} catch (EpsilonCOMException e) {
-				// FIXME Log! or exception
-				System.err.println("There was an error finishing the transaction on model disposal. Changes to the model might have been partially commited.");
-			}
-			finally {
+		if (isInitialized()) {
+			if (!storeOnDisposal) {
 				try {
-					bridge.uninitializeCOM();
+					abortTransaction();
 				} catch (EpsilonCOMException e) {
-					// FIXME Does Epsilon has a logger for this?
-					//e.printStackTrace();
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
+			}
+			try {
+				bridge.uninitializeCOM();
+			} catch (EpsilonCOMException e) {
+				// FIXME Does Epsilon has a logger for this?
+				e.printStackTrace();
 			}
 		}
 	}
@@ -421,6 +415,13 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		return errDispPtr.length() > 0;
 	}
 
+	/**
+	 * @return the isInitialized
+	 */
+	public boolean isInitialized() {
+		return isInitialized;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#isInstantiable(java.lang.String)
 	 */
@@ -430,7 +431,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		// sure that the name is actually valid. 
 		return hasType(type);
 	}
-
+	
 	@Override
 	public boolean isOfKind(Object instance, String metaClass) throws EolModelElementTypeNotFoundException {
 		return isOfType(instance, metaClass);
@@ -444,7 +445,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		
 		
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.Model#knowsAboutProperty(java.lang.Object, java.lang.String)
 	 */
@@ -456,7 +457,9 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		}
 		return p != null;
 	}
-
+	
+	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#load(org.eclipse.epsilon.common.util.StringProperties, org.eclipse.epsilon.eol.models.IRelativePathResolver)
 	 */
@@ -465,58 +468,64 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		super.load(properties, resolver);
 		load();
 	}
-	
-	
-	
+
+	public void loadDictionary() throws EolModelLoadingException {
+		//List<Object> args = new ArrayList<Object>();
+		//args.add("Dictionary");
+		List<Object> byRefArgs = new ArrayList<Object>();
+		byRefArgs.add("Dictionary");
+		byRefArgs.add("Dictionary");
+		try {
+			COMObject res = (COMObject) theProject.invoke("Item", byRefArgs);
+			model = bridge.wrapModel(res);
+		} catch (EpsilonCOMException e) {
+			try {
+				bridge.uninitializeCOM();
+			} catch (EpsilonCOMException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			throw new EolModelLoadingException(e, this);
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#loadModel()
 	 */
 	@Override
 	protected void loadModel() throws EolModelLoadingException {
-		if (isInitialized)
-		{
-			COMObject artisanApp;
-			try {
-				artisanApp = bridge.connectToCOM("OMTE.Projects");
-			} catch (EpsilonCOMException e) {
+		if (isInitialized()) {
+			if  (readOnLoad) {
+				COMObject artisanApp;
 				try {
-					bridge.uninitializeCOM();
-				} catch (EpsilonCOMException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					artisanApp = bridge.connectToCOM("OMTE.Projects");
+				} catch (EpsilonCOMException e) {
+					throw new EolModelLoadingException(e, this);
 				}
-				throw new EolModelLoadingException(e, this);
+				try {
+					theProject = bridge.openModel(artisanApp, name);
+				} catch (EpsilonCOMException e) {
+					throw new EolModelLoadingException(e, this);
+				}
+			}
+			else if (storeOnDisposal) {
+				// TODO The configuration dialog should provide fields for the server and repository
+				String server = "WV7898";
+				String repository = "Models";
+				try {
+					ArtisanModelFactory.createModel(this, server, repository, getName());
+				} catch (EolRuntimeException e) {
+					throw new EolModelLoadingException(e, this);
+				}
 			}
 			try {
-				theProject = bridge.openModel(artisanApp, name);
 				beginTransaction();
 			} catch (EpsilonCOMException e) {
-				try {
-					bridge.uninitializeCOM();
-				} catch (EpsilonCOMException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
 				throw new EolModelLoadingException(e, this);
 			}
-			//List<Object> args = new ArrayList<Object>();
-			//args.add("Dictionary");
-			List<Object> byRefArgs = new ArrayList<Object>();
-			byRefArgs.add("Dictionary");
-			byRefArgs.add("Dictionary");
-			try {
-				COMObject res = (COMObject) theProject.invoke("Item", byRefArgs);
-				model = bridge.wrapModel(res);
-			} catch (EpsilonCOMException e) {
-				try {
-					bridge.uninitializeCOM();
-				} catch (EpsilonCOMException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				throw new EolModelLoadingException(e, this);
-			}
+			loadDictionary();
 		}
+		
 	}
 
 	/* (non-Javadoc)
@@ -560,11 +569,11 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	public void setPropertyGetter(IPropertyGetter propertyGetter) {
 		this.propertyGetter = propertyGetter;
 	}
-
+	
 	private void setPropertyManager(COMPropertyManager manager) {
 		this.propertyManager = manager;
 	}
-	
+
 	/**
 	 * Sets the property setter.
 	 *
@@ -582,7 +591,6 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	protected void setTheProject(COMObject theProject) {
 		this.theProject = theProject;
 	}
-
 	/**
 	 * Opens the Artisan Sutio Editor and shows the given object. By default the first
 	 * diagram in which the object apperas is selected.
@@ -616,20 +624,30 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		args.add(symboldId);
 		studio.invoke("SelectSymbol2", args);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#store()
 	 */
 	@Override
 	public boolean store() {
-		throw new UnsupportedOperationException("Artisan models are updated per invocation.");
+		assert storeOnDisposal;
+		try {
+			commitTransaction();
+		} catch (EpsilonCOMException e) {
+			// FIXME Log! or exception
+			System.err.println("There was an error finishing the transaction on model store. Changes to the model might have been partially commited.");
+			return false;
+		}
+		return true;
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#store(java.lang.String)
 	 */
 	@Override
 	public boolean store(String location) {
+		// FIXME We could do a CloneModel?
 		throw new UnsupportedOperationException("Artisan models are updated per invocation.");
 	}
 

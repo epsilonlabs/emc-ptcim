@@ -11,7 +11,6 @@
 package org.eclipse.epsilon.emc.artisan.jawin;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.epsilon.emc.COM.COMCollection;

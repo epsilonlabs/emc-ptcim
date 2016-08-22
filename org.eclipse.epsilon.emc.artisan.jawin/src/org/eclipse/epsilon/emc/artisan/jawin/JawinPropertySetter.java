@@ -58,7 +58,12 @@ public class JawinPropertySetter extends AbstractPropertySetter {
 		List<Object> args = new ArrayList<Object>();
 		args.add(comProperty.getName());
 		args.add(0);
-		args.add(value);
+		if (value instanceof JawinObject) {
+			args.add(((JawinObject) value).getDelegate());
+		}
+		else {
+			args.add(value);
+		}
 		try {
 			((COMObject) object).invoke("PropertySet", args);
 		} catch (EpsilonCOMException e) {

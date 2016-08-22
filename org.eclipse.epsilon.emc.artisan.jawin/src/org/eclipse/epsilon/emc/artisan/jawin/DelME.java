@@ -37,30 +37,30 @@ public class DelME {
 //	}
 	
 	private static void usingJawin() throws COMException {
-		DispatchPtr theProject = getActiveProject("HSUV");
+		DispatchPtr theProject = getActiveProject("M");
 		DispatchPtr model = load(theProject);
-		//DispatchPtr model = load("HSUV");
-		String type = "Class";
-		//DispatchPtr allClasses = allofType(model, type);
-		DispatchPtr allInstances = new DispatchPtr();
-		DispatchPtr classDispPtr = (DispatchPtr) model.invokeN("Items", new Object[] {type});
-		allInstances.stealUnknown(classDispPtr);
-		while (hasMore(allInstances)) {
-			// Find if the class is a requirement 
-			DispatchPtr clzz = next(allInstances);
-			Object name = getAttr(clzz, "Name");
-			System.out.println(name);
-		}
-		System.out.println("\n ====== All Classes withj P* Name ===== \n");
-		DispatchPtr allPs = new DispatchPtr();
-		classDispPtr = (DispatchPtr) model.invokeN("Items", new Object[] {type, "P*"});
-		allPs.stealUnknown(classDispPtr);
-		while (hasMore(allPs)) {
-			// Find if the class is a requirement 
-			DispatchPtr clzz = next(allPs);
-			Object name = getAttr(clzz, "Name");
-			System.out.println(name);
-		}
+//		//DispatchPtr model = load("HSUV");
+//		String type = "Class";
+//		//DispatchPtr allClasses = allofType(model, type);
+//		DispatchPtr allInstances = new DispatchPtr();
+//		DispatchPtr classDispPtr = (DispatchPtr) model.invokeN("Items", new Object[] {type});
+//		allInstances.stealUnknown(classDispPtr);
+//		while (hasMore(allInstances)) {
+//			// Find if the class is a requirement 
+//			DispatchPtr clzz = next(allInstances);
+//			Object name = getAttr(clzz, "Name");
+//			System.out.println(name);
+//		}
+//		System.out.println("\n ====== All Classes withj P* Name ===== \n");
+//		DispatchPtr allPs = new DispatchPtr();
+//		classDispPtr = (DispatchPtr) model.invokeN("Items", new Object[] {type, "P*"});
+//		allPs.stealUnknown(classDispPtr);
+//		while (hasMore(allPs)) {
+//			// Find if the class is a requirement 
+//			DispatchPtr clzz = next(allPs);
+//			Object name = getAttr(clzz, "Name");
+//			System.out.println(name);
+//		}
 		
 		
 		
@@ -81,7 +81,7 @@ public class DelME {
 //		List<String> errlist = Arrays.asList(((String) classDispPtr ).split("\\n"));
 		
 		
-		// Create a new element by type, use the project
+
 //		DispatchPtr allPckItem = allofType(theProject, "Package Item");
 //		while (hasMore(allPckItem)) {
 //			DispatchPtr pItem = next(allPckItem);
@@ -95,15 +95,11 @@ public class DelME {
 //		theProject.invoke("PropertySet", "Transaction", 0, "Begin");
 //		
 //		
-//		
-//		DispatchPtr newclassDispPtr = (DispatchPtr) model.invokeN("AddByType", new Object[] {type, "CLASS"});
-//		newclassDispPtr.toString();
-//		Object name = getAttr(newclassDispPtr, "Full Name");
-//		System.out.println(name);
-//		type = "Actor";
-//		DispatchPtr newactorDispPtr = (DispatchPtr) theProject.invokeN("AddByType", new Object[] {type, "PACKAGEITEM"});
-//		name = getAttr(newactorDispPtr, "Name");
-//		System.out.println(name);
+//		Create a new element by type, use the project
+		DispatchPtr newclassDispPtr = (DispatchPtr) model.invokeN("Add", new Object[] {"Package"});
+		Object name = getAttr(newclassDispPtr, "Name");
+		System.out.println(name);
+		//DispatchPtr newactorDispPtr = (DispatchPtr) newclassDispPtr.invokeN("AddByType", new Object[] {"Package", "Scoped Package"});
 		
 		
 //		String old_props = null;
