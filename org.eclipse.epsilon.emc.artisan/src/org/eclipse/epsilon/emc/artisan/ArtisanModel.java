@@ -12,6 +12,7 @@ package org.eclipse.epsilon.emc.artisan;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -175,6 +176,49 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	}
 
 	/**
+	 * Creates a new instances in a specific parent and association.
+	 * In Artisan, elements created through the API can not be moved from the parent 
+	 * in which they where created. This method allows to create elements in a 
+	 * specific hierarchy. For Add operations the parameters must be the parent object.
+	 * The type must match the name of the association. For AddByType operations,
+	 * the parameters must be the parent object, and the association. 
+	 */
+	@Override
+	public Object createInstance(String type, Collection<Object> parameters)
+			throws EolModelElementTypeNotFoundException, EolNotInstantiableModelElementTypeException {
+		
+		if ((parameters == null) || parameters.isEmpty()) {
+			return super.createInstance(type);
+		}
+		Object newInstance = null;
+		Iterator<Object> it = parameters.iterator();
+		Object parent = it.next();
+		COMObject comParent = (COMObject) parent;
+		List<Object> args = new ArrayList<Object>();
+		args.add(type);
+		if (parameters.size() == 1) {		// Add
+			try {
+				newInstance = comParent.invoke("Add", args);
+				setNewInstanceId(newInstance);
+			} catch (EpsilonCOMException e) {
+				throw new EolModelElementTypeNotFoundException(this.name, type);
+			}
+		}
+		else {								// AddByType
+			Object association = it.next();
+			args.add(association);
+			try {
+				newInstance = comParent.invoke("AddByType", args);
+				setNewInstanceId(newInstance);
+			} catch (EpsilonCOMException e) {
+				throw new EolModelElementTypeNotFoundException(this.name, type);
+			}
+		}
+		return newInstance;
+	}
+	
+	
+	/**
 	 * In Artisan the type is the same name as the association name in the model (dictionary)
 	 * Specialised classes are obtained by using attribute settings (see AddByType).
 	 *
@@ -192,11 +236,9 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		List<Object> args = new ArrayList<Object>();
 		args.add(type);
 		Object newInstance = null;
-		String id;
 		try {
 			newInstance = model.invoke("Add", args);
-			id = (String) ((COMObject) newInstance).get("Property", "Id");
-			((COMObject) newInstance).setId(id);
+			setNewInstanceId(newInstance);
 		} catch (EpsilonCOMException e) {
 			throw new EolModelElementTypeNotFoundException(getName(), type);
 		}
@@ -224,7 +266,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		}
 		return success;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#disposeModel()
 	 */
@@ -247,7 +289,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 			}
 		}
 	}
-
+	
 	/**
 	 * Artisan does not provide support for all of kind, so for this models this method
 	 * delegates to {@link #getAllOfTypeFromModel(String)}.
@@ -257,12 +299,12 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		return getAllOfType(kind);
 	}
 
-
 	@Override
 	protected Collection<? extends COMObject> getAllOfKindFromModel(String kind)
 			throws EolModelElementTypeNotFoundException {
 		throw new UnsupportedOperationException("Artisan models don't use cache.");
 	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllOfType(java.lang.String)
@@ -332,7 +374,6 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		}
 		return res;
 	}
-	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#getElementId(java.lang.Object)
@@ -356,7 +397,6 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		return id;
 	}
 	
-	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#getEnumerationValue(java.lang.String, java.lang.String)
@@ -365,6 +405,8 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	public Object getEnumerationValue(String enumeration, String label) throws EolEnumerationValueNotFoundException {
 		throw new UnsupportedOperationException("Artisan Model does not support enumerations");
 	}
+	
+	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.Model#getPropertyGetter()
@@ -431,7 +473,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		// sure that the name is actually valid. 
 		return hasType(type);
 	}
-	
+
 	@Override
 	public boolean isOfKind(Object instance, String metaClass) throws EolModelElementTypeNotFoundException {
 		return isOfType(instance, metaClass);
@@ -445,7 +487,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		
 		
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.Model#knowsAboutProperty(java.lang.Object, java.lang.String)
 	 */
@@ -457,9 +499,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		}
 		return p != null;
 	}
-	
-	
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#load(org.eclipse.epsilon.common.util.StringProperties, org.eclipse.epsilon.eol.models.IRelativePathResolver)
 	 */
@@ -468,7 +508,9 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		super.load(properties, resolver);
 		load();
 	}
-
+	
+	
+	
 	public void loadDictionary() throws EolModelLoadingException {
 		//List<Object> args = new ArrayList<Object>();
 		//args.add("Dictionary");
@@ -559,6 +601,15 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	protected void setModel(COMModel model) {
 		this.model = model;
+	}
+
+	/**
+	 * @param newInstance
+	 * @throws EpsilonCOMException
+	 */
+	private void setNewInstanceId(Object newInstance) throws EpsilonCOMException {
+		String id = (String) ((COMObject) newInstance).get("Property", "Id");
+		((COMObject) newInstance).setId(id);
 	}
 
 	/**

@@ -87,6 +87,7 @@ public class ArtisanModelFactory {
 		try {
 			res = modelManager.invoke("AddModel", args);
 		} catch (EpsilonCOMException e) {
+			// FIXME This results in a New Model being crated... we have to delete it or rename it or ?
 			if (!e.getMessage().contains("already exists")) {
 				throw new EolRuntimeException(e.getMessage());
 			}

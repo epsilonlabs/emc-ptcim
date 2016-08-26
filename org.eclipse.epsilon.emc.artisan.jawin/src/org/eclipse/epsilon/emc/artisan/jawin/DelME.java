@@ -3,7 +3,6 @@ package org.eclipse.epsilon.emc.artisan.jawin;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.jawin.COMException;
 import org.jawin.DispatchPtr;
@@ -37,7 +36,7 @@ public class DelME {
 //	}
 	
 	private static void usingJawin() throws COMException {
-		DispatchPtr theProject = getActiveProject("M");
+		DispatchPtr theProject = getActiveProject("EmcTest");
 		DispatchPtr model = load(theProject);
 //		//DispatchPtr model = load("HSUV");
 //		String type = "Class";
@@ -62,7 +61,20 @@ public class DelME {
 //			System.out.println(name);
 //		}
 		
-		
+		// Stereotypes
+		DispatchPtr allSts = new DispatchPtr();
+		DispatchPtr stsDispPtr = (DispatchPtr) model.invoke("Items", "Tag Definition");
+		allSts.stealUnknown(stsDispPtr);
+		while (hasMore(allSts)) {
+			DispatchPtr pItem = next(allSts);
+			Object name = getAttr(pItem, "Name");
+			System.out.println(name);
+			boolean visible = Boolean.valueOf((String)getAttr(pItem, "Released"));
+			System.out.println(visible);
+			if (!visible) {
+				pItem.invoke("PropertySet", "Released", 0, "TRUE");
+			}
+		}
 		
 		// Size
 		//int i = size(allClasses);
@@ -96,9 +108,12 @@ public class DelME {
 //		
 //		
 //		Create a new element by type, use the project
-		DispatchPtr newclassDispPtr = (DispatchPtr) model.invokeN("Add", new Object[] {"Package"});
-		Object name = getAttr(newclassDispPtr, "Name");
-		System.out.println(name);
+		//DispatchPtr newPck = (DispatchPtr) model.invokeN("Add", new Object[] {"Package"});
+		//DispatchPtr newClass = (DispatchPtr) newPck.invokeN("Add", new Object[] {"Class"});
+		//DispatchPtr newClassPck = (DispatchPtr) newClass.invokeN("Items", new Object[] {"Package"});
+		//newClass.invokeN("Remove",  new Object[] {"Category"});
+		//newClass.invokeN("Add",  new Object[] {"Package", newPck});
+		
 		//DispatchPtr newactorDispPtr = (DispatchPtr) newclassDispPtr.invokeN("AddByType", new Object[] {"Package", "Scoped Package"});
 		
 		

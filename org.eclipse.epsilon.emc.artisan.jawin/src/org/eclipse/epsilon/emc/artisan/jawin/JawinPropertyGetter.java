@@ -49,7 +49,7 @@ public class JawinPropertyGetter extends AbstractPropertyGetter {
 				byRefArgs.add("*");
 				try {
 					//Object res = jObject.invoke("Items", property, args, 2);
-					Object res = jObject.invoke("Items", args, byRefArgs);
+					Object res = jObject.invoke("Items", args);		//, byRefArgs);
 					assert res instanceof JawinObject;
 					elements = new JawinCollection((JawinObject) res, jObject, property);
 				} catch (EpsilonCOMException e) {
