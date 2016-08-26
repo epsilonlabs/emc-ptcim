@@ -44,7 +44,7 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 	@Override
 	public Object execute(Object target, Variable iterator, Expression ast, IEolContext context) throws EolRuntimeException {
 
-		System.err.println("OptimisableCollectionSelectOneOperation execute called!");
+		//System.err.println("OptimisableCollectionSelectOneOperation execute called!");
 		if (!(target instanceof COMCollection)) {
 			return super.execute(target, iterator, ast, context);
 		}
@@ -109,12 +109,17 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 				args.add(attributename);
 				try {
 					comresult = (COMObject) target.getOwner().invoke("ItemEx", args);
-					String strId = (String) comresult.get("Property", "Id");
-					comresult.setId(strId);
 				} catch (EpsilonCOMException e) {
-					throw new EolInternalException(e);
+					
 				}
 			}
+			String strId = null;
+			try {
+				strId = (String) comresult.get("Property", "Id");
+			} catch (EpsilonCOMException e) {
+				throw new EolInternalException(e);
+			}
+			comresult.setId(strId);
 			return comresult;
 			
 		} else {
@@ -132,6 +137,10 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 	private boolean isOptimisable(Expression ast) {
 		try {
 			if (!(ast instanceof OperatorExpression)) {
+				return false;
+			}
+			// MIDDLE - we should be using a comparison operator
+			if (!(ast instanceof EqualsOperatorExpression)) {
 				return false;
 			}
 
@@ -153,16 +162,14 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 			if (!iterator.getName().equals(nameExpression.getName())) {
 				return false;
 			}
-			// MIDDLE - we should be using a comparison operator
-			if (!(ast instanceof EqualsOperatorExpression)) {
-				return false;
-			}
+			
 			// RIGHT - we should have a value (String)
-			final Expression rawROperand = opExp.getSecondOperand();
-			return (rawROperand instanceof StringLiteral)
-					|| (rawROperand instanceof BooleanLiteral)
-					|| (rawROperand instanceof IntegerLiteral)
-					|| (rawROperand instanceof RealLiteral);
+//			final Expression rawROperand = opExp.getSecondOperand();
+//			return (rawROperand instanceof StringLiteral)
+//					|| (rawROperand instanceof BooleanLiteral)
+//					|| (rawROperand instanceof IntegerLiteral)
+//					|| (rawROperand instanceof RealLiteral);
+			return true;
 			
 		} catch (Exception e) {
 			return false;

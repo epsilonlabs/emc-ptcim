@@ -22,7 +22,6 @@ import org.eclipse.epsilon.eol.dom.Expression;
 import org.eclipse.epsilon.eol.dom.NameExpression;
 import org.eclipse.epsilon.eol.dom.OperatorExpression;
 import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
-import org.eclipse.epsilon.eol.dom.StringLiteral;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
@@ -84,7 +83,6 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 		if (!"name".equals(attributename.toLowerCase())) {		// Name is the default Id
 			return (Collection<Object>) super.execute(target, iterator, (Expression) ast, context, returnOnFirstMatch);
 		}
-		final String variableName = ((NameExpression) lOperand.getTargetExpression()).getName();
 		final Expression valueAST = opExp.getSecondOperand();
 		Object attributevalue = null;
 		try {
@@ -128,6 +126,10 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 			if (!(ast instanceof OperatorExpression)) {
 				return false;
 			}
+			// MIDDLE - we should be using a comparison operator
+			if (!(ast instanceof EqualsOperatorExpression)) {
+				return false;
+			}
 
 			// LEFT - we should have iterator.property
 			// L1. Check for a property call expression
@@ -147,13 +149,11 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 			if (!iterator.getName().equals(nameExpression.getName())) {
 				return false;
 			}
-			// MIDDLE - we should be using a comparison operator
-			if (!(ast instanceof EqualsOperatorExpression)) {
-				return false;
-			}
-			// RIGHT - we should have a value (String)
-			final Expression rawROperand = opExp.getSecondOperand();
-			return rawROperand instanceof StringLiteral;
+			
+			// We cant validate the right unless we execute it, and then it would mean double execution of a probably complex expression
+			//final Expression rawROperand = opExp.getSecondOperand();
+			//return rawROperand instanceof StringLiteral;
+			return true;
 			
 			
 		} catch (Exception e) {
