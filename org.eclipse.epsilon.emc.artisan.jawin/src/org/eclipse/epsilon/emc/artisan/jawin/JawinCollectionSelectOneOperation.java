@@ -91,40 +91,37 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 					+ "\ncannot be evaluated using database indexing,\nas the iterator variable of the current select operation ("
 					+ iterator.getName() + ") is not used in this process.\nDefaulting to Epsion's select");
 		}
-		if (attributevalue != null) {
-			String value = String.valueOf(attributevalue);
-			List<Object> args = new ArrayList<Object>();
-			args.add(target.getAssociation());
-			COMObject comresult = null;
-			if ("name".equals(attributename.toLowerCase())) {		// Name is the default Id
-				try {
-					comresult = (COMObject) target.getOwner().invoke("Item", args);
-				} catch (EpsilonCOMException e) {
-					throw new EolInternalException(e);
-				}
-			}
-			else {
-				args.add(value);
-				// FIXME Validate that the attribute exists and use the property getter? Apparently Artisan understands all lower case no spaces
-				args.add(attributename);
-				try {
-					comresult = (COMObject) target.getOwner().invoke("ItemEx", args);
-				} catch (EpsilonCOMException e) {
-					
-				}
-			}
-			String strId = null;
+		String value = String.valueOf(attributevalue);
+		List<Object> args = new ArrayList<Object>();
+		args.add(target.getAssociation());
+		args.add(value);
+		COMObject comresult = null;
+		if ("name".equals(attributename.toLowerCase())) {		// Name is the default Id
 			try {
-				strId = (String) comresult.get("Property", "Id");
+				comresult = (COMObject) target.getOwner().invoke("Item", args);
 			} catch (EpsilonCOMException e) {
 				throw new EolInternalException(e);
 			}
-			comresult.setId(strId);
-			return comresult;
-			
-		} else {
-			return super.execute(target, iterator, (Expression) ast, context);
 		}
+		else {
+
+			// FIXME Validate that the attribute exists and use the property getter? Apparently Artisan understands all lower case no spaces
+			args.add(attributename);
+			try {
+				comresult = (COMObject) target.getOwner().invoke("ItemEx", args);
+			} catch (EpsilonCOMException e) {
+				throw new EolInternalException(e);
+			}
+		}
+		if (comresult != null) {
+			try {
+				String strId = (String) comresult.get("Property", "Id");
+				comresult.setId(strId);
+			} catch (EpsilonCOMException e) {
+				throw new EolInternalException(e);
+			}
+		}
+		return comresult;
 	}
 	
 	/**
