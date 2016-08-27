@@ -272,6 +272,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	protected void disposeModel() {
+		propertyManager.dispose();
 		if (isInitialized()) {
 			if (!storeOnDisposal) {
 				try {

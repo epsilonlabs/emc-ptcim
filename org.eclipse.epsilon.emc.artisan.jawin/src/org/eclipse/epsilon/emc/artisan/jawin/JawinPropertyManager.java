@@ -29,6 +29,10 @@ public class JawinPropertyManager implements COMPropertyManager {
 		this.cache = new HashMap<COMObject, Map<String,COMProperty>>();
 	}
 	
+	public void dispose() {
+		cache.clear();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.emc.artisan.jawin.COMPropertyManager#getProperty(org.eclipse.epsilon.emc.COM.COMObject, java.lang.String)
 	 */
