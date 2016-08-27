@@ -62,19 +62,19 @@ public class DelME {
 //		}
 		
 		// Stereotypes
-		DispatchPtr allSts = new DispatchPtr();
-		DispatchPtr stsDispPtr = (DispatchPtr) model.invoke("Items", "Tag Definition");
-		allSts.stealUnknown(stsDispPtr);
-		while (hasMore(allSts)) {
-			DispatchPtr pItem = next(allSts);
-			Object name = getAttr(pItem, "Name");
-			System.out.println(name);
-			boolean visible = Boolean.valueOf((String)getAttr(pItem, "Released"));
-			System.out.println(visible);
-			if (!visible) {
-				pItem.invoke("PropertySet", "Released", 0, "TRUE");
-			}
-		}
+//		DispatchPtr allSts = new DispatchPtr();
+//		DispatchPtr stsDispPtr = (DispatchPtr) model.invoke("Items", "Tag Definition");
+//		allSts.stealUnknown(stsDispPtr);
+//		while (hasMore(allSts)) {
+//			DispatchPtr pItem = next(allSts);
+//			Object name = getAttr(pItem, "Name");
+//			System.out.println(name);
+//			boolean visible = Boolean.valueOf((String)getAttr(pItem, "Released"));
+//			System.out.println(visible);
+//			if (!visible) {
+//				pItem.invoke("PropertySet", "Released", 0, "TRUE");
+//			}
+//		}
 		
 		// Size
 		//int i = size(allClasses);
@@ -116,15 +116,35 @@ public class DelME {
 		
 		//DispatchPtr newactorDispPtr = (DispatchPtr) newclassDispPtr.invokeN("AddByType", new Object[] {"Package", "Scoped Package"});
 		
+		// ATTRIBUTES VS ASSOCIATIONS
+		DispatchPtr op = (DispatchPtr) theProject.invoke("ItemByID", "fec7f1d0-95f5-49f6-addb-17a94f8eab36");
+//		Object cAttr = op.get("Property", "Class");
+//		System.out.println(cAttr);
+//		DispatchPtr cAssoc = (DispatchPtr) op.invoke("Item", "Class");
+//		System.out.println(cAssoc);
+		Object cname =  op.get("Property", "name");
+		System.out.println(cname);
 		
 //		String old_props = null;
 //		String props = null;
 		
 		// Show the class in the model
-//		 DispatchPtr editor = new DispatchPtr("Studio.Editor");
-//		 editor.invoke("ShowMainWindow");
-//		 editor.invoke("SetForegroundWindow");
-//		 editor.invoke("OpenModel","EmcTest");
+		DispatchPtr editor = new DispatchPtr("Studio.Editor");
+		editor.invoke("ShowMainWindow");
+		editor.invoke("SetForegroundWindow");
+		editor.invoke("OpenModel","EmcGen");
+		// Find object
+		editor.invoke("SelectBrowserItem", "fec7f1d0-95f5-49f6-addb-17a94f8eab36", "Packages");
+//		// Find a diagram related to the class
+//		DispatchPtr diag = new DispatchPtr();
+//		// First Diagram
+//		DispatchPtr diagDispPtr = (DispatchPtr) obj.invoke("Item", "Using Diagram");
+//		diag.stealUnknown(diagDispPtr);
+//		Object dId = diag.get("Property", "Id");
+//		Object objSymbol = clzz.invoke("Item", "Representing Symbol");
+//		Object symboldId = ((DispatchPtr) objSymbol).get("Property", "Id");
+//		editor.invoke("OpenDiagram", dId);
+//		editor.invoke("SelectSymbol2", dId, symboldId);
 		 
 //
 //		while (hasMore(allClasses)) {
