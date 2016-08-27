@@ -18,6 +18,7 @@ import org.eclipse.epsilon.emc.COM.COMProperty;
 import org.eclipse.epsilon.emc.COM.COMPropertyManager;
 import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
 import org.eclipse.epsilon.eol.exceptions.EolIllegalPropertyAssignmentException;
+import org.eclipse.epsilon.eol.exceptions.EolReadOnlyPropertyException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertySetter;
 
@@ -55,6 +56,9 @@ public class JawinPropertySetter extends AbstractPropertySetter {
 	@Override
 	public void invoke(Object value) throws EolRuntimeException {
 		// TODO Check if value matches property? See EMF Setter
+		if (comProperty.isReadOnly()) {
+			throw new EolReadOnlyPropertyException();
+		}
 		List<Object> args = new ArrayList<Object>();
 		args.add(comProperty.getName());
 		args.add(0);

@@ -41,29 +41,37 @@ public class JawinPropertyGetter extends AbstractPropertyGetter {
 			if (p == null) {
 				throw new EolRuntimeException("No such property");
 			}
-			if (p.isMultiple()) {
-				COMCollection elements;
+			if (p.isAssociation()) {
 				List<Object> args = new ArrayList<Object>();
 				args.add(property);
-				List<Object> byRefArgs = new ArrayList<Object>();
-				byRefArgs.add("*");
-				try {
-					//Object res = jObject.invoke("Items", property, args, 2);
-					Object res = jObject.invoke("Items", args);		//, byRefArgs);
-					assert res instanceof JawinObject;
-					elements = new JawinCollection((JawinObject) res, jObject, property);
-				} catch (EpsilonCOMException e) {
-					throw new EolRuntimeException(e.getMessage());
+				if (p.isMultiple()) {
+					COMCollection elements;
+					List<Object> byRefArgs = new ArrayList<Object>();
+					byRefArgs.add("*");
+					try {
+						//Object res = jObject.invoke("Items", property, args, 2);
+						Object res = jObject.invoke("Items", args);		//, byRefArgs);
+						assert res instanceof JawinObject;
+						elements = new JawinCollection((JawinObject) res, jObject, property);
+					} catch (EpsilonCOMException e) {
+						throw new EolRuntimeException(e.getMessage());
+					}
+					o = elements;
 				}
-				o = elements;
+				else {
+					try {
+						o = jObject.invoke("Item", args);		//, byRefArgs);
+						if ( o instanceof JawinObject) {
+							String strId = (String) ((JawinObject) o).get("Property", "Id");
+							((JawinObject) o).setId(strId);
+						}
+					} catch (EpsilonCOMException e) {
+						throw new EolRuntimeException(e.getMessage());
+					}
+				}
 			}
 			else {
-				//List<Object> args = new ArrayList<Object>();
-				//args.add(property);
-				//args.add(null);
-				// TODO which is best/correct?
-				//o = jObject.get("Property", args);
-				/*Object*/ o = jObject.get("Property", property);
+				o = jObject.get("Property", property);
 			}
 		} catch (EpsilonCOMException e) {
 			throw new EolRuntimeException(e.getMessage());
