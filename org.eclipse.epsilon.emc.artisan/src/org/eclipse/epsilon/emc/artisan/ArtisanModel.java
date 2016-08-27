@@ -657,24 +657,31 @@ public class ArtisanModel extends CachedModel<COMObject> {
 		List<Object> args = new ArrayList<Object>();
 		args.add(getName());
 		studio.invoke("OpenModel",args);
-		String id = getElementId(instance);
-		// Find a diagram related to the object
-		// First Diagram
+		String objectId = getElementId(instance);
 		args.clear();
 		args.add("Using Diagram");
 		COMObject diag = (COMObject) cobject.invoke("Item", args);
-		Object dId = getElementId(diag);
-		args.clear();
-		args.add("Representing Symbol");
-		Object objSymbol = cobject.invoke("Item", args);
-		Object symboldId = getElementId(objSymbol);
-		args.clear();
-		args.add(dId);
-		studio.invoke("OpenDiagram", args);
-		args.clear();
-		args.add(dId);
-		args.add(symboldId);
-		studio.invoke("SelectSymbol2", args);
+		if (diag != null) {
+			Object diagramId = getElementId(diag);
+			args.clear();
+			args.add("Representing Symbol");
+			Object objSymbol = cobject.invoke("Item", args);
+			Object symboldId = getElementId(objSymbol);
+			args.clear();
+			args.add(diagramId);
+			studio.invoke("OpenDiagram", args);
+			args.clear();
+			args.add(diagramId);
+			args.add(symboldId);
+			studio.invoke("SelectSymbol2", args);
+		}
+		else {		// There is no diagram, use the project tree
+			args.clear();
+			args.add(objectId);
+			args.add("Packages");
+			studio.invoke("SelectBrowserItem", args);
+		}
+		
 	}
 	
 	/* (non-Javadoc)
