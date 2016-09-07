@@ -11,6 +11,9 @@
 package org.eclipse.epsilon.emc.artisan.dt;
 
 import org.eclipse.epsilon.common.dt.launching.dialogs.AbstractCachedModelConfigurationDialog;
+import org.eclipse.epsilon.emc.artisan.ArtisanModel;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -36,6 +39,13 @@ public class ArtisanModelConfigurationDialog extends AbstractCachedModelConfigur
 	protected Button browseModelFile;
 	protected Button ignoreArgoUmlProfiles;
 	
+	protected Label referenceLabel;
+	protected Text referenceText;
+	private Text serverText;
+	private Label serverLabel;
+	private Text repositoryText;
+	private Label repositoryLabel;
+	
 	protected void createGroups(Composite control) {
 		super.createGroups(control);
 		//createFilesGroup(control);
@@ -43,22 +53,62 @@ public class ArtisanModelConfigurationDialog extends AbstractCachedModelConfigur
 		createLoadStoreOptionsGroup(control);
 	}
 	
+	@Override
+	protected void createNameAliasGroup(Composite parent) {
+		final Composite groupContent = createGroupContainer(parent, "Identification", 2);		
+		
+		nameLabel = new Label(groupContent, SWT.NONE);
+		nameLabel.setText("Name: ");
+		
+		nameText = new Text(groupContent, SWT.BORDER);
+		nameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		aliasesLabel = new Label(groupContent, SWT.NONE);
+		aliasesLabel.setText("Aliases: ");
+		
+		aliasesText = new Text(groupContent, SWT.BORDER);
+		aliasesText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		referenceLabel = new Label(groupContent, SWT.NONE);
+		referenceLabel.setText("Reference: ");
+		referenceLabel.setToolTipText("This is the name of the model in the Artisan repository");
+		
+		referenceText = new Text(groupContent, SWT.BORDER);
+		referenceText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		serverLabel = new Label(groupContent, SWT.NONE);
+		serverLabel.setText("Server: ");
+		serverLabel.setToolTipText("Leave blank to use the local server.");
+		
+		serverText = new Text(groupContent, SWT.BORDER);
+		serverText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		repositoryLabel = new Label(groupContent, SWT.NONE);
+		repositoryLabel.setText("Repository: ");
+		repositoryLabel.setToolTipText("Leave blank to use the default repository.");
+		
+		repositoryText = new Text(groupContent, SWT.BORDER);
+		repositoryText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		groupContent.layout();
+		groupContent.pack();
+	}
+	
 
-	/*
+	
 	protected void loadProperties(){
 		super.loadProperties();
 		if (properties == null) return;
-		fileText.setText(properties.getProperty(ArgoUMLModel.PROPERTY_MODEL_FILE));
-		profileDirectoriesText.setText(properties.getProperty(ArgoUMLModel.PROPERTY_PROFILE_DIRECTORIES));
-		profileWorkspaceDirectoriesText.setText(properties.getProperty(ArgoUMLModel.PROPERTY_PROFILE_WORKSPACE_DIRECTORIES));
-		ignoreArgoUmlProfiles.setSelection(properties.getBooleanProperty(ArgoUMLModel.PROPERTY_IGNORE_ARGOUML_PROFILE_DIRECTORIES, false));
+		referenceText.setText(properties.getProperty(ArtisanModel.PROPERTY_MODEL_REFERENCE));
+		serverText.setText(properties.getProperty(ArtisanModel.PROPERTY_SERVER_NAME));
+		repositoryText.setText(properties.getProperty(ArtisanModel.PROPERTY_REPOSITORY_NAME));
 	}
 	
 	protected void storeProperties(){
 		super.storeProperties();
-		properties.put(ArgoUMLModel.PROPERTY_PROFILE_DIRECTORIES, profileDirectoriesText.getText());
-		properties.put(ArgoUMLModel.PROPERTY_PROFILE_WORKSPACE_DIRECTORIES, profileWorkspaceDirectoriesText.getText());
-		properties.put(ArgoUMLModel.PROPERTY_MODEL_FILE, fileText.getText());
-		properties.put(ArgoUMLModel.PROPERTY_IGNORE_ARGOUML_PROFILE_DIRECTORIES, ignoreArgoUmlProfiles.getSelection() + "");
-	}*/
+		properties.put(ArtisanModel.PROPERTY_MODEL_REFERENCE, referenceText.getText());
+		properties.put(ArtisanModel.PROPERTY_SERVER_NAME, serverText.getText());
+		properties.put(ArtisanModel.PROPERTY_REPOSITORY_NAME, repositoryText.getText());
+	}
+	
 }

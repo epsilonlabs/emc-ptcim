@@ -58,6 +58,13 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	
 	/** The Constant SETTER_INDEX. */
 	private static final int SETTER_INDEX = 3;
+
+	public static final String PROPERTY_MODEL_REFERENCE = "model_ref";
+
+	public static final String PROPERTY_SERVER_NAME = "server";
+
+	public static final String PROPERTY_REPOSITORY_NAME = "repository";
+	
 	
 	
 	/** The bridge. */
