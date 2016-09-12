@@ -53,20 +53,40 @@ public class JawinComBridge implements COMBridge<COMObject, COMObject> {
 	public JawinObject openModel(COMObject app, String name) throws EpsilonCOMException {
 		String method = "";
 		JawinObject model;
-		if(name.contains("\\")){
-			method = "Reference";
-		}else{
+		//if(name.contains("\\")){
+		//	method = "Reference";
+		//}else{
 			method = "Project";
-		}
+		//}
 		List<Object> args = new ArrayList<Object>();
 		args.add(method);
 		args.add(name); 
 		model = (JawinObject) app.invoke("Item", args);
 		return model;
 	}
+	
+	@Override
+	public JawinObject openModel(COMObject app, String id, String server, String repository, String version) throws EpsilonCOMException {
+		String method = "";
+		JawinObject model;
+		//if(name.contains("\\")){
+			method = "Reference";
+		//}else{
+			method = "Project";
+		//}
+		List<Object> args = new ArrayList<Object>();
+		args.add(method);
+		String modelPath = "\\\\Enabler\\" + server + "\\" + repository + "\\" + id;
+		if (version.length() > 0) {
+			modelPath += "\\" + version;
+		}
+		args.add(modelPath); 
+		model = (JawinObject) app.invoke("Item", args);
+		return model;
+	}
 
 	@Override
-	public void uninitializeCOM() throws EpsilonCOMException {
+	public void uninitialiseCOM() throws EpsilonCOMException {
 		try {
 			Ole32.CoUninitialize();
 		} catch (COMException e) {

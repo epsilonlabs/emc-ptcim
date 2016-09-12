@@ -45,6 +45,8 @@ public class ArtisanModelConfigurationDialog extends AbstractCachedModelConfigur
 	private Label serverLabel;
 	private Text repositoryText;
 	private Label repositoryLabel;
+	private Label versionLabel;
+	private Text versionText;
 	
 	protected void createGroups(Composite control) {
 		super.createGroups(control);
@@ -71,24 +73,31 @@ public class ArtisanModelConfigurationDialog extends AbstractCachedModelConfigur
 		
 		referenceLabel = new Label(groupContent, SWT.NONE);
 		referenceLabel.setText("Reference: ");
-		referenceLabel.setToolTipText("This is the name of the model in the Artisan repository");
+		referenceLabel.setToolTipText("This is the title/id of the model in the Artisan repository");
 		
 		referenceText = new Text(groupContent, SWT.BORDER);
 		referenceText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		serverLabel = new Label(groupContent, SWT.NONE);
 		serverLabel.setText("Server: ");
-		serverLabel.setToolTipText("Leave blank to use the local server.");
+		serverLabel.setToolTipText("Leave blank to open the model by title.");
 		
 		serverText = new Text(groupContent, SWT.BORDER);
 		serverText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		repositoryLabel = new Label(groupContent, SWT.NONE);
 		repositoryLabel.setText("Repository: ");
-		repositoryLabel.setToolTipText("Leave blank to use the default repository.");
+		repositoryLabel.setToolTipText("Leave blank to open the model by title.");
 		
 		repositoryText = new Text(groupContent, SWT.BORDER);
 		repositoryText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		versionLabel = new Label(groupContent, SWT.NONE);
+		versionLabel.setText("Version: ");
+		versionLabel.setToolTipText("Leave blank to open the latest version of the model. This option can oly be used to open models by refernce(id)");
+		
+		versionText = new Text(groupContent, SWT.BORDER);
+		versionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		groupContent.layout();
 		groupContent.pack();
@@ -102,6 +111,7 @@ public class ArtisanModelConfigurationDialog extends AbstractCachedModelConfigur
 		referenceText.setText(properties.getProperty(ArtisanModel.PROPERTY_MODEL_REFERENCE));
 		serverText.setText(properties.getProperty(ArtisanModel.PROPERTY_SERVER_NAME));
 		repositoryText.setText(properties.getProperty(ArtisanModel.PROPERTY_REPOSITORY_NAME));
+		versionText.setText(properties.getProperty(ArtisanModel.PROPERTY_VERSION_NUMBER));
 	}
 	
 	protected void storeProperties(){
@@ -109,6 +119,7 @@ public class ArtisanModelConfigurationDialog extends AbstractCachedModelConfigur
 		properties.put(ArtisanModel.PROPERTY_MODEL_REFERENCE, referenceText.getText());
 		properties.put(ArtisanModel.PROPERTY_SERVER_NAME, serverText.getText());
 		properties.put(ArtisanModel.PROPERTY_REPOSITORY_NAME, repositoryText.getText());
+		properties.put(ArtisanModel.PROPERTY_VERSION_NUMBER, versionText.getText());
 	}
 	
 }

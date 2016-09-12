@@ -64,7 +64,8 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	public static final String PROPERTY_SERVER_NAME = "server";
 
 	public static final String PROPERTY_REPOSITORY_NAME = "repository";
-	
+
+	public static final String PROPERTY_VERSION_NUMBER = "version";
 	
 	
 	/** The bridge. */
@@ -92,6 +93,14 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	/**  The Artisan Studio. */
 	private COMObject studio = null;
 	private boolean connectedToStudio = false;
+
+	private String model_id;
+
+	private String server;
+
+	private String repository;
+
+	private String version;
 
 
 	/**
@@ -290,7 +299,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 				}
 			}
 			try {
-				bridge.uninitializeCOM();
+				bridge.uninitialiseCOM();
 			} catch (EpsilonCOMException e) {
 				// FIXME Does Epsilon has a logger for this?
 				e.printStackTrace();
@@ -514,6 +523,10 @@ public class ArtisanModel extends CachedModel<COMObject> {
 	@Override
 	public void load(StringProperties properties, IRelativePathResolver resolver) throws EolModelLoadingException {
 		super.load(properties, resolver);
+		model_id = properties.getProperty(PROPERTY_MODEL_REFERENCE);
+		server = properties.getProperty(PROPERTY_SERVER_NAME);
+		repository = properties.getProperty(PROPERTY_REPOSITORY_NAME);
+		version = properties.getProperty(PROPERTY_VERSION_NUMBER);
 		load();
 	}
 	
@@ -530,7 +543,7 @@ public class ArtisanModel extends CachedModel<COMObject> {
 			model = bridge.wrapModel(res);
 		} catch (EpsilonCOMException e) {
 			try {
-				bridge.uninitializeCOM();
+				bridge.uninitialiseCOM();
 			} catch (EpsilonCOMException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -553,15 +566,17 @@ public class ArtisanModel extends CachedModel<COMObject> {
 					throw new EolModelLoadingException(e, this);
 				}
 				try {
-					theProject = bridge.openModel(artisanApp, name);
+					if (server.length() == 0) {
+						theProject = bridge.openModel(artisanApp, model_id);
+					}
+					else {
+						theProject = bridge.openModel(artisanApp, model_id, server, repository, version);
+					}
 				} catch (EpsilonCOMException e) {
 					throw new EolModelLoadingException(e, this);
 				}
 			}
 			else if (storeOnDisposal) {
-				// TODO The configuration dialog should provide fields for the server and repository
-				String server = "WV7898";
-				String repository = "Models";
 				try {
 					ArtisanModelFactory.createModel(this, server, repository, getName());
 				} catch (EolRuntimeException e) {
