@@ -20,6 +20,7 @@ import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
 import org.eclipse.epsilon.eol.exceptions.EolIllegalPropertyAssignmentException;
 import org.eclipse.epsilon.eol.exceptions.EolReadOnlyPropertyException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.eol.exceptions.models.EolNotAModelElementException;
 import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertySetter;
 
 /**
@@ -61,19 +62,28 @@ public class JawinPropertySetter extends AbstractPropertySetter {
 		}
 		List<Object> args = new ArrayList<Object>();
 		args.add(comProperty.getName());
-		args.add(0);
-		if (value instanceof JawinObject) {
-			args.add(((JawinObject) value).getDelegate());
+		if (comProperty.isAssociation()) {
+			if (!(value instanceof JawinObject)) {
+				throw new EolRuntimeException("Association (0..1) properties' values must be COM objects.");
+			}
+			try {
+				args.add(((JawinObject) value).getDelegate());
+				((COMObject) object).invoke("Add", args);
+			} catch (EpsilonCOMException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		else {
+			args.add(0);
 			args.add(value);
-		}
-		try {
-			((COMObject) object).invoke("PropertySet", args);
-		} catch (EpsilonCOMException e) {
-			// TODO Can we check if message has 'Failed to add item' and do a
-			// objItem.Property("ExtendedErrorInfo") to get more info?
-			throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
+			try {
+				((COMObject) object).invoke("PropertySet", args);
+			} catch (EpsilonCOMException e) {
+				// TODO Can we check if message has 'Failed to add item' and do a
+				// objItem.Property("ExtendedErrorInfo") to get more info?
+				throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
+			}
 		}
 	}
 

@@ -117,6 +117,7 @@ public class DelME {
 		//DispatchPtr newactorDispPtr = (DispatchPtr) newclassDispPtr.invokeN("AddByType", new Object[] {"Package", "Scoped Package"});
 		
 		// ATTRIBUTES VS ASSOCIATIONS
+		// TODO test the Add for associations.
 		DispatchPtr op = (DispatchPtr) theProject.invoke("ItemByID", "fec7f1d0-95f5-49f6-addb-17a94f8eab36");
 //		Object cAttr = op.get("Property", "Class");
 //		System.out.println(cAttr);
