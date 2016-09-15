@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.epsilon.evl.dt.dblClick">
       <tracer
-            class="org.eclipse.epsilon.emc.artisan.ArtisanConstrainTracer">
+            class="org.eclipse.epsilon.emc.artisan.ArtisanConstraintTracer">
       </tracer>
    </extension>
 

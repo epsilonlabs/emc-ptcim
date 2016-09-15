@@ -15,7 +15,7 @@ import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dt.views.IConstraintTracer;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 
-public class ArtisanConstrainTracer implements IConstraintTracer {
+public class ArtisanConstraintTracer implements IConstraintTracer {
 	
 	/** The bridge. */
 	COMBridge<COMObject, COMObject> bridge;
