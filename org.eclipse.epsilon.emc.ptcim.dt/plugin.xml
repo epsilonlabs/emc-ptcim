@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.epsilon.common.dt.modelType">
       <modelType
-            class="org.eclipse.epsilon.emc.artisan.ArtisanModel"
+            class="org.eclipse.epsilon.emc.ptcim.PtcimModel"
             dialog="org.eclipse.epsilon.emc.ptcim.dt.PtcimModelConfigurationDialog"
             icon="images/uml.gif"
             label="Artisan Studio Model"

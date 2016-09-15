@@ -22,7 +22,6 @@ import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dt.views.IConstraintTracer;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class PtcimConstraintTracer provides the link between an element in the eclipse
  * Epsilon scripts and the PTC Integrity Modeler modeler.

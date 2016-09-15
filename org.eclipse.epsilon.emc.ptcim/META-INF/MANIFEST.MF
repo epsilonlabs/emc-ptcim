@@ -11,8 +11,8 @@ Require-Bundle: org.eclipse.epsilon.eol.engine,
  org.eclipse.epsilon.emc.ptcim.ole,
  org.eclipse.equinox.registry,
  org.eclipse.core.runtime,
- org.eclipse.epsilon.evl.dt,
- org.eclipse.epsilon.evl.engine,
  org.eclipse.jface,
  org.eclipse.debug.core,
- org.eclipse.epsilon.eol.dt
+ org.eclipse.epsilon.eol.dt,
+ org.eclipse.epsilon.evl.dt,
+ org.eclipse.epsilon.evl.engine
