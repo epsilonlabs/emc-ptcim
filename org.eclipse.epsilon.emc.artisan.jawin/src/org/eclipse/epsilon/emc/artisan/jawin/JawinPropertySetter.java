@@ -20,7 +20,6 @@ import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
 import org.eclipse.epsilon.eol.exceptions.EolIllegalPropertyAssignmentException;
 import org.eclipse.epsilon.eol.exceptions.EolReadOnlyPropertyException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
-import org.eclipse.epsilon.eol.exceptions.models.EolNotAModelElementException;
 import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertySetter;
 
 /**
@@ -71,7 +70,9 @@ public class JawinPropertySetter extends AbstractPropertySetter {
 				((COMObject) object).invoke("Add", args);
 			} catch (EpsilonCOMException e) {
 				// TODO Auto-generated catch block
+				System.err.println("Error for " + comProperty.getName() + " for value " + value);
 				e.printStackTrace();
+				throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
 			}
 		}
 		else {
@@ -82,6 +83,8 @@ public class JawinPropertySetter extends AbstractPropertySetter {
 			} catch (EpsilonCOMException e) {
 				// TODO Can we check if message has 'Failed to add item' and do a
 				// objItem.Property("ExtendedErrorInfo") to get more info?
+				System.err.println("Error for " + comProperty.getName() + " for value " + value);
+				e.printStackTrace();
 				throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
 			}
 		}

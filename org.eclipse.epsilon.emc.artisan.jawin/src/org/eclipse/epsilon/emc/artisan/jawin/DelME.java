@@ -108,8 +108,8 @@ public class DelME {
 //		
 //		
 //		Create a new element by type, use the project
-		//DispatchPtr newPck = (DispatchPtr) model.invokeN("Add", new Object[] {"Package"});
-		//DispatchPtr newClass = (DispatchPtr) newPck.invokeN("Add", new Object[] {"Class"});
+		DispatchPtr newEx = (DispatchPtr) model.invokeN("Add", new Object[] {"Exception"});
+		DispatchPtr newClass = (DispatchPtr) model.invokeN("Add", new Object[] {"Class"});
 		//DispatchPtr newClassPck = (DispatchPtr) newClass.invokeN("Items", new Object[] {"Package"});
 		//newClass.invokeN("Remove",  new Object[] {"Category"});
 		//newClass.invokeN("Add",  new Object[] {"Package", newPck});
@@ -118,24 +118,22 @@ public class DelME {
 		
 		// ATTRIBUTES VS ASSOCIATIONS
 		// TODO test the Add for associations.
-		DispatchPtr op = (DispatchPtr) theProject.invoke("ItemByID", "fec7f1d0-95f5-49f6-addb-17a94f8eab36");
-//		Object cAttr = op.get("Property", "Class");
+		//Object cExs = newClass.invoke("Contained Exception");
 //		System.out.println(cAttr);
 //		DispatchPtr cAssoc = (DispatchPtr) op.invoke("Item", "Class");
 //		System.out.println(cAssoc);
-		Object cname =  op.get("Property", "name");
-		System.out.println(cname);
+		newClass.invokeN("Add", new Object[] {"Contained Exception", newEx});
 		
 //		String old_props = null;
 //		String props = null;
 		
 		// Show the class in the model
-		DispatchPtr editor = new DispatchPtr("Studio.Editor");
-		editor.invoke("ShowMainWindow");
-		editor.invoke("SetForegroundWindow");
-		editor.invoke("OpenModel","EmcGen");
-		// Find object
-		editor.invoke("SelectBrowserItem", "fec7f1d0-95f5-49f6-addb-17a94f8eab36", "Packages");
+//		DispatchPtr editor = new DispatchPtr("Studio.Editor");
+//		editor.invoke("ShowMainWindow");
+//		editor.invoke("SetForegroundWindow");
+//		editor.invoke("OpenModel","EmcGen");
+//		// Find object
+//		editor.invoke("SelectBrowserItem", "fec7f1d0-95f5-49f6-addb-17a94f8eab36", "Packages");
 //		// Find a diagram related to the class
 //		DispatchPtr diag = new DispatchPtr();
 //		// First Diagram
