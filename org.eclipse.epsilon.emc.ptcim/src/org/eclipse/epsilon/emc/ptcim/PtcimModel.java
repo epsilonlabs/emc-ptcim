@@ -94,14 +94,13 @@ public class PtcimModel extends CachedModel<COMObject> {
 	private COMObject studio = null;
 	private boolean connectedToStudio = false;
 
-	private String model_id;
+	private String modelId;
 
 	private String server;
 
 	private String repository;
 
 	private String version;
-
 
 	/**
 	 * Instantiates a new artisan model. Gets the COM helpers from the extension
@@ -137,6 +136,7 @@ public class PtcimModel extends CachedModel<COMObject> {
 		isInitialized = true;
 	}
 
+
 	private void abortTransaction() throws EpsilonCOMException {
 		List<Object> args = new ArrayList<Object>();
 		args.add("Transaction");
@@ -162,7 +162,7 @@ public class PtcimModel extends CachedModel<COMObject> {
 		}
 		return (Collection<COMObject>) elements;
 	}
-	
+
 	private void beginTransaction() throws EpsilonCOMException {
 		List<Object> args = new ArrayList<Object>();
 		args.add("Transaction");
@@ -170,7 +170,7 @@ public class PtcimModel extends CachedModel<COMObject> {
 		args.add("Begin");
 		theProject.invoke("PropertySet", args);
 	}
-
+	
 	private void commitTransaction() throws EpsilonCOMException {
 		List<Object> args = new ArrayList<Object>();
 		args.add("Transaction");
@@ -232,8 +232,7 @@ public class PtcimModel extends CachedModel<COMObject> {
 		}
 		return newInstance;
 	}
-	
-	
+
 	/**
 	 * In Artisan the type is the same name as the association name in the model (dictionary)
 	 * Specialised classes are obtained by using attribute settings (see AddByType).
@@ -260,7 +259,8 @@ public class PtcimModel extends CachedModel<COMObject> {
 		}
 		return (COMObject) newInstance;
 	}
-
+	
+	
 	/**
 	 * Deletes an object from the model.
 	 * Important:  If you delete an object and that object is linked to other objects through
@@ -306,7 +306,7 @@ public class PtcimModel extends CachedModel<COMObject> {
 			}
 		}
 	}
-	
+
 	/**
 	 * Artisan does not provide support for all of kind, so for this models this method
 	 * delegates to {@link #getAllOfTypeFromModel(String)}.
@@ -315,13 +315,12 @@ public class PtcimModel extends CachedModel<COMObject> {
 	public Collection<COMObject> getAllOfKind(String kind) throws EolModelElementTypeNotFoundException {
 		return getAllOfType(kind);
 	}
-
+	
 	@Override
 	protected Collection<? extends COMObject> getAllOfKindFromModel(String kind)
 			throws EolModelElementTypeNotFoundException {
 		throw new UnsupportedOperationException("Artisan models don't use cache.");
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllOfType(java.lang.String)
@@ -343,6 +342,7 @@ public class PtcimModel extends CachedModel<COMObject> {
 		elements = res.wrapInColleciton(model, type);	//new JawinCollection(res, model, type);
 		return (List<COMObject>) elements;
 	}
+
 
 	@Override
 	protected Collection<? extends COMObject> getAllOfTypeFromModel(String type)
@@ -413,7 +413,6 @@ public class PtcimModel extends CachedModel<COMObject> {
 		}
 		return id;
 	}
-	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#getEnumerationValue(java.lang.String, java.lang.String)
@@ -421,6 +420,13 @@ public class PtcimModel extends CachedModel<COMObject> {
 	@Override
 	public Object getEnumerationValue(String enumeration, String label) throws EolEnumerationValueNotFoundException {
 		throw new UnsupportedOperationException("Artisan Model does not support enumerations");
+	}
+	
+	/**
+	 * Get the Id of the model used for the PTC IM repository
+	 */
+	public String getModelId() {
+		return modelId;
 	}
 	
 	
@@ -523,7 +529,7 @@ public class PtcimModel extends CachedModel<COMObject> {
 	@Override
 	public void load(StringProperties properties, IRelativePathResolver resolver) throws EolModelLoadingException {
 		super.load(properties, resolver);
-		model_id = properties.getProperty(PROPERTY_MODEL_REFERENCE);
+		modelId = properties.getProperty(PROPERTY_MODEL_REFERENCE);
 		server = properties.getProperty(PROPERTY_SERVER_NAME);
 		repository = properties.getProperty(PROPERTY_REPOSITORY_NAME);
 		version = properties.getProperty(PROPERTY_VERSION_NUMBER);
@@ -567,10 +573,10 @@ public class PtcimModel extends CachedModel<COMObject> {
 				}
 				try {
 					if (server.length() == 0) {
-						theProject = bridge.openModel(artisanApp, model_id);
+						theProject = bridge.openModel(artisanApp, modelId);
 					}
 					else {
-						theProject = bridge.openModel(artisanApp, model_id, server, repository, version);
+						theProject = bridge.openModel(artisanApp, modelId, server, repository, version);
 					}
 				} catch (EpsilonCOMException e) {
 					throw new EolModelLoadingException(e, this);
@@ -675,9 +681,8 @@ public class PtcimModel extends CachedModel<COMObject> {
 		COMObject cobject = (COMObject) instance;
 		connectToStudio();
 		studio.invoke("ShowMainWindow");
-		studio.invoke("SetForegroundWindow");
 		List<Object> args = new ArrayList<Object>();
-		args.add(getName());
+		args.add(getModelId());
 		studio.invoke("OpenModel",args);
 		String objectId = getElementId(instance);
 		args.clear();
@@ -703,7 +708,7 @@ public class PtcimModel extends CachedModel<COMObject> {
 			args.add("Packages");
 			studio.invoke("SelectBrowserItem", args);
 		}
-		
+		studio.invoke("SetForegroundWindow");
 	}
 	
 	/* (non-Javadoc)
