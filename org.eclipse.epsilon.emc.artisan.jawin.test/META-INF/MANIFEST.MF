@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Jawin COM Tests
-Bundle-SymbolicName: org.eclipse.epsilon.emc.artisan.jawin.test
+Bundle-SymbolicName: org.eclipse.epsilon.emc.ptcim.jawin.test
 Bundle-Version: 1.4.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit,
  org.eclipse.epsilon.eol.engine,
- org.eclipse.epsilon.emc.artisan.COM,
- org.eclipse.epsilon.emc.artisan.jawin;bundle-version="1.4.0",
+ org.eclipse.epsilon.emc.ptcim.ole,
+ org.eclipse.epsilon.emc.ptcim.jawin;bundle-version="1.4.0",
  org.jawin_2.0-alpha1;bundle-version="2.0.0"

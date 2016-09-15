@@ -5,7 +5,7 @@
          point="org.eclipse.epsilon.common.dt.modelType">
       <modelType
             class="org.eclipse.epsilon.emc.artisan.ArtisanModel"
-            dialog="org.eclipse.epsilon.emc.artisan.dt.ArtisanModelConfigurationDialog"
+            dialog="org.eclipse.epsilon.emc.ptcim.dt.PtcimModelConfigurationDialog"
             icon="images/uml.gif"
             label="Artisan Studio Model"
             stable="true"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.epsilon.emc.artisan.feature"
+      id="org.eclipse.epsilon.emc.ptcim.feature"
       label="Feature"
       version="1.0.0.qualifier">
 

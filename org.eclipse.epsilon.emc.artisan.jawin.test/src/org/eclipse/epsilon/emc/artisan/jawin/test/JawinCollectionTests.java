@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.epsilon.emc.COM.EpsilonCOMException;
-import org.eclipse.epsilon.emc.artisan.jawin.JawinCollection;
-import org.eclipse.epsilon.emc.artisan.jawin.JawinObject;
+import org.eclipse.epsilon.emc.ptcim.jawin.JawinCollection;
+import org.eclipse.epsilon.emc.ptcim.jawin.JawinObject;
+import org.eclipse.epsilon.emc.ptcim.ole.EpsilonCOMException;
 import org.jawin.COMException;
 import org.jawin.DispatchPtr;
 import org.jawin.Variant;
