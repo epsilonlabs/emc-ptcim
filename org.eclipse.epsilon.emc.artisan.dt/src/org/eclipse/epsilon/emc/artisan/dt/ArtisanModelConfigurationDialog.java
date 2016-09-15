@@ -47,6 +47,7 @@ public class ArtisanModelConfigurationDialog extends AbstractCachedModelConfigur
 	private Label repositoryLabel;
 	private Label versionLabel;
 	private Text versionText;
+	private Button fromSelectionButton;
 	
 	protected void createGroups(Composite control) {
 		super.createGroups(control);
@@ -98,6 +99,18 @@ public class ArtisanModelConfigurationDialog extends AbstractCachedModelConfigur
 		
 		versionText = new Text(groupContent, SWT.BORDER);
 		versionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		fromSelectionButton = new Button(groupContent, SWT.CHECK);
+		fromSelectionButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fromSelectionButton.setText("Selected element as root");
+		fromSelectionButton.setToolTipText("If checked, Epsilon scripts will be run using the selected element as root. "
+				+ "The selected element should prerably be a package. "
+				+ "If not, performance might be affected.");
+		fromSelectionButton.setSelection(false);
+		
+		GridData fromSelectionButtonData = new GridData();
+		fromSelectionButtonData.horizontalSpan = 2;
+		fromSelectionButton.setLayoutData(fromSelectionButtonData);
 		
 		groupContent.layout();
 		groupContent.pack();
