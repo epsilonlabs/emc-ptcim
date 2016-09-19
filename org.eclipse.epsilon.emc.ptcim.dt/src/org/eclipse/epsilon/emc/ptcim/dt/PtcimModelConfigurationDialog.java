@@ -21,13 +21,14 @@ import org.eclipse.swt.widgets.Text;
 
 public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurationDialog {
 	
+	private static final String MODEL_TYPE = "PTC IM Model";
+
 	protected String getModelName() {
-		return "PCT Ingtegrity Moeler Model";
+		return "PTC Integrity Modeler Model";
 	}
 
-	
 	protected String getModelType() {
-		return "PTC IM";
+		return MODEL_TYPE;
 	}
 	
 	protected Label fileTextLabel;
@@ -125,6 +126,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		serverText.setText(properties.getProperty(PtcimModel.PROPERTY_SERVER_NAME));
 		repositoryText.setText(properties.getProperty(PtcimModel.PROPERTY_REPOSITORY_NAME));
 		versionText.setText(properties.getProperty(PtcimModel.PROPERTY_VERSION_NUMBER));
+		fromSelectionButton.setSelection(Boolean.getBoolean(properties.getProperty(PtcimModel.PROPERTY_FROM_SELECTION)));
 	}
 	
 	protected void storeProperties(){
@@ -133,6 +135,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		properties.put(PtcimModel.PROPERTY_SERVER_NAME, serverText.getText());
 		properties.put(PtcimModel.PROPERTY_REPOSITORY_NAME, repositoryText.getText());
 		properties.put(PtcimModel.PROPERTY_VERSION_NUMBER, versionText.getText());
+		properties.put(PtcimModel.PROPERTY_FROM_SELECTION, Boolean.toString(fromSelectionButton.getSelection()));
 	}
 	
 }

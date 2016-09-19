@@ -59,13 +59,15 @@ public class PtcimModel extends CachedModel<COMObject> {
 	/** The Constant SETTER_INDEX. */
 	private static final int SETTER_INDEX = 3;
 
-	public static final String PROPERTY_MODEL_REFERENCE = "model_ref";
+	public static final String PROPERTY_MODEL_REFERENCE = "modelRef";
 
 	public static final String PROPERTY_SERVER_NAME = "server";
 
 	public static final String PROPERTY_REPOSITORY_NAME = "repository";
 
 	public static final String PROPERTY_VERSION_NUMBER = "version";
+
+	public static final String PROPERTY_FROM_SELECTION = "fromSelection";
 	
 	
 	/** The bridge. */
@@ -254,6 +256,15 @@ public class PtcimModel extends CachedModel<COMObject> {
 		try {
 			newInstance = model.invoke("Add", args);
 			setNewInstanceId(newInstance);
+			// check that the instance is correct
+//			Object ref = getElementById(((COMObject) newInstance).getId());
+//			while (ref == null) {
+//				// Some how the element was not created, try again
+//				newInstance = model.invoke("Add", args);
+//				setNewInstanceId(newInstance);
+//				// check that the instance is correct
+//				ref = getElementById(((COMObject) newInstance).getId());
+//			}
 		} catch (EpsilonCOMException e) {
 			throw new EolModelElementTypeNotFoundException(getName(), type);
 		}
@@ -291,12 +302,12 @@ public class PtcimModel extends CachedModel<COMObject> {
 		propertyManager.dispose();
 		if (isInitialized()) {
 			if (!storeOnDisposal) {
-				try {
-					abortTransaction();
-				} catch (EpsilonCOMException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+//				try {
+//					abortTransaction();
+//				} catch (EpsilonCOMException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 			}
 			try {
 				bridge.uninitialiseCOM();
@@ -589,11 +600,11 @@ public class PtcimModel extends CachedModel<COMObject> {
 					throw new EolModelLoadingException(e, this);
 				}
 			}
-			try {
-				beginTransaction();
-			} catch (EpsilonCOMException e) {
-				throw new EolModelLoadingException(e, this);
-			}
+//			try {
+//				beginTransaction();
+//			} catch (EpsilonCOMException e) {
+//				throw new EolModelLoadingException(e, this);
+//			}
 			loadDictionary();
 		}
 		
@@ -717,13 +728,13 @@ public class PtcimModel extends CachedModel<COMObject> {
 	@Override
 	public boolean store() {
 		assert storeOnDisposal;
-		try {
-			commitTransaction();
-		} catch (EpsilonCOMException e) {
-			// FIXME Log! or exception
-			System.err.println("There was an error finishing the transaction on model store. Changes to the model might have been partially commited.");
-			return false;
-		}
+//		try {
+//			commitTransaction();
+//		} catch (EpsilonCOMException e) {
+//			// FIXME Log! or exception
+//			System.err.println("There was an error finishing the transaction on model store. Changes to the model might have been partially commited.");
+//			return false;
+//		}
 		return true;
 
 	}

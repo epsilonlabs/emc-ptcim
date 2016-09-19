@@ -7,9 +7,9 @@
             class="org.eclipse.epsilon.emc.ptcim.PtcimModel"
             dialog="org.eclipse.epsilon.emc.ptcim.dt.PtcimModelConfigurationDialog"
             icon="images/uml.gif"
-            label="Artisan Studio Model"
+            label="PTC IM Model"
             stable="true"
-            type="Artisan">
+            type="PTC IM Model">
       </modelType>
    </extension>
 
