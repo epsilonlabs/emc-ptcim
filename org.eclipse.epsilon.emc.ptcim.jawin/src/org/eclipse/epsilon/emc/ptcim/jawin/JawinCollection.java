@@ -16,9 +16,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.COMCollection;
-import org.eclipse.epsilon.emc.ptcim.ole.COMObject;
-import org.eclipse.epsilon.emc.ptcim.ole.EpsilonCOMException;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcCollection;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
+import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.eol.execute.operations.AbstractOperation;
 import org.eclipse.epsilon.eol.execute.operations.declarative.IAbstractOperationContributor;
 
@@ -28,7 +28,7 @@ import org.eclipse.epsilon.eol.execute.operations.declarative.IAbstractOperation
  * unexpected results. Collections that are a result of a filtered Items only
  * provide iteration. 
  */
-public class JawinCollection extends AbstractList<JawinObject> implements COMCollection, IAbstractOperationContributor {
+public class JawinCollection extends AbstractList<JawinObject> implements IPtcCollection, IAbstractOperationContributor {
 	
 	/** The object that points to the collection. */
 	private final JawinObject comObject;
@@ -46,7 +46,7 @@ public class JawinCollection extends AbstractList<JawinObject> implements COMCol
 	 * @param owner the owner
 	 * @param association the association
 	 */
-	public JawinCollection(COMObject comCollection, COMObject owner, String association) {
+	public JawinCollection(IPtcObject comCollection, IPtcObject owner, String association) {
 		assert comCollection instanceof JawinObject;
 		assert owner instanceof JawinObject;
 		this.comObject = (JawinObject) comCollection;
@@ -65,7 +65,7 @@ public class JawinCollection extends AbstractList<JawinObject> implements COMCol
 		try {
 			List<Object> args = new ArrayList<Object>();
 			args.add(association);
-			args.add(e.getDelegate());
+			args.add(e);
 			Object ret = owner.invoke("Add", args);
 		} catch (EpsilonCOMException ex) {
 			// TODO Can we check if message has 'Failed to add item' and do a

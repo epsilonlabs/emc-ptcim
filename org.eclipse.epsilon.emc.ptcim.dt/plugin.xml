@@ -6,7 +6,7 @@
       <modelType
             class="org.eclipse.epsilon.emc.ptcim.PtcimModel"
             dialog="org.eclipse.epsilon.emc.ptcim.dt.PtcimModelConfigurationDialog"
-            icon="images/uml.gif"
+            icon="images/ptc.gif"
             label="PTC IM Model"
             stable="true"
             type="PTC IM Model">

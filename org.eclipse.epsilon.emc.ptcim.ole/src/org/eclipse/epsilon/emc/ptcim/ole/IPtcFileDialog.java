@@ -1,5 +1,5 @@
 package org.eclipse.epsilon.emc.ptcim.ole;
 
-public class COMGuid {
+public interface IPtcFileDialog<T> {
 
 }

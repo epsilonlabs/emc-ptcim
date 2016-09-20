@@ -13,10 +13,10 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.COMObject;
-import org.eclipse.epsilon.emc.ptcim.ole.COMProperty;
-import org.eclipse.epsilon.emc.ptcim.ole.COMPropertyManager;
-import org.eclipse.epsilon.emc.ptcim.ole.EpsilonCOMException;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcPropertyManager;
+import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
+import org.eclipse.epsilon.emc.ptcim.ole.impl.PtcProperty;
 import org.eclipse.epsilon.eol.exceptions.EolIllegalPropertyAssignmentException;
 import org.eclipse.epsilon.eol.exceptions.EolReadOnlyPropertyException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -28,10 +28,10 @@ import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertySetter;
 public class JawinPropertySetter extends AbstractPropertySetter {
 	
 	/** The property  manager (cache). */
-	private final COMPropertyManager manager = JawinPropertyManager.INSTANCE;
+	private final IPtcPropertyManager manager = JawinPropertyManager.INSTANCE;
 	
 	/** The COM property. */
-	private COMProperty comProperty;
+	private PtcProperty comProperty;
 	
 
 	/* (non-Javadoc)
@@ -39,7 +39,7 @@ public class JawinPropertySetter extends AbstractPropertySetter {
 	 */
 	@Override
 	public void setProperty(String property) {
-		comProperty = manager.getProperty((COMObject) object, property);
+		comProperty = manager.getProperty((IPtcObject) object, property);
 		if (comProperty != null) {
 			super.setProperty(property);
 		}
@@ -66,8 +66,8 @@ public class JawinPropertySetter extends AbstractPropertySetter {
 				throw new EolRuntimeException("Association (0..1) properties' values must be COM objects.");
 			}
 			try {
-				args.add(((JawinObject) value).getDelegate());
-				((COMObject) object).invoke("Add", args);
+				args.add(((JawinObject) value));
+				((IPtcObject) object).invoke("Add", args);
 			} catch (EpsilonCOMException e) {
 				// TODO Auto-generated catch block
 				System.err.println("Error for " + comProperty.getName() + " for value " + value);
@@ -77,14 +77,21 @@ public class JawinPropertySetter extends AbstractPropertySetter {
 		}
 		else {
 			args.add(0);
-			args.add(value);
+			args.add(value);			
 			try {
-				((COMObject) object).invoke("PropertySet", args);
+				((IPtcObject) object).invoke("PropertySet", args);
 			} catch (EpsilonCOMException e) {
-				// TODO Can we check if message has 'Failed to add item' and do a
-				// objItem.Property("ExtendedErrorInfo") to get more info?
-				System.err.println("Error for " + comProperty.getName() + " for value " + value);
-				e.printStackTrace();
+				// Get additional information about the error
+//				Object extendedErr = null;
+//				try {
+//					extendedErr = ((IPtcObject) object).get("Property", "ExtendedErrorInfo");
+//				} catch (EpsilonCOMException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
+//				// objItem.Property("ExtendedErrorInfo") to get more info?
+//				System.err.println("Error for " + comProperty.getName() + " for value " + value + ". Err " + extendedErr );
+//				e.printStackTrace();
 				throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
 			}
 		}

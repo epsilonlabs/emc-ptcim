@@ -13,9 +13,9 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.COMCollection;
-import org.eclipse.epsilon.emc.ptcim.ole.COMObject;
-import org.eclipse.epsilon.emc.ptcim.ole.EpsilonCOMException;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcCollection;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
+import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.eol.dom.BooleanLiteral;
 import org.eclipse.epsilon.eol.dom.EqualsOperatorExpression;
 import org.eclipse.epsilon.eol.dom.Expression;
@@ -45,13 +45,13 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 	public Object execute(Object target, Variable iterator, Expression ast, IEolContext context) throws EolRuntimeException {
 
 		//System.err.println("OptimisableCollectionSelectOneOperation execute called!");
-		if (!(target instanceof COMCollection)) {
+		if (!(target instanceof IPtcCollection)) {
 			return super.execute(target, iterator, ast, context);
 		}
 		try {
 			this.context = context;
 			this.iterator = iterator;
-			return decomposeAST((COMCollection) target, ast);
+			return decomposeAST((IPtcCollection) target, ast);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -60,7 +60,7 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 
 	}
 
-	protected Object decomposeAST(COMCollection target, Expression ast) throws Exception {
+	protected Object decomposeAST(IPtcCollection target, Expression ast) throws Exception {
 
 		if (isOptimisable(ast)) {
 			return optimisedExecution(target, ast);
@@ -73,7 +73,7 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 
 	}
 
-	private Object optimisedExecution(COMCollection target, Expression ast) throws EolRuntimeException {
+	private Object optimisedExecution(IPtcCollection target, Expression ast) throws EolRuntimeException {
 
 		// NOTE: this assumes that isOptimisable(ast) returned true
 		final OperatorExpression opExp = (OperatorExpression) ast;
@@ -95,10 +95,10 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 		List<Object> args = new ArrayList<Object>();
 		args.add(target.getAssociation());
 		args.add(value);
-		COMObject comresult = null;
+		IPtcObject comresult = null;
 		if ("name".equals(attributename.toLowerCase())) {		// Name is the default Id
 			try {
-				comresult = (COMObject) target.getOwner().invoke("Item", args);
+				comresult = (IPtcObject) target.getOwner().invoke("Item", args);
 			} catch (EpsilonCOMException e) {
 				throw new EolInternalException(e);
 			}
@@ -108,14 +108,14 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 			// FIXME Validate that the attribute exists and use the property getter? Apparently Artisan understands all lower case no spaces
 			args.add(attributename);
 			try {
-				comresult = (COMObject) target.getOwner().invoke("ItemEx", args);
+				comresult = (IPtcObject) target.getOwner().invoke("ItemEx", args);
 			} catch (EpsilonCOMException e) {
 				throw new EolInternalException(e);
 			}
 		}
 		if (comresult != null) {
 			try {
-				String strId = (String) comresult.get("Property", "Id");
+				String strId = (String) comresult.getAttribute("Property", "Id");
 				comresult.setId(strId);
 			} catch (EpsilonCOMException e) {
 				throw new EolInternalException(e);

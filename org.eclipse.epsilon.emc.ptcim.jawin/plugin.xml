@@ -2,19 +2,10 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.epsilon.emc.artisan.COM">
-      <bridge
-            class="org.eclipse.epsilon.emc.ptcim.jawin.JawinComBridge">
-      </bridge>
-      <getter
-            class="org.eclipse.epsilon.emc.ptcim.jawin.JawinPropertyGetter">
-      </getter>
-      <manager
-            class="org.eclipse.epsilon.emc.ptcim.jawin.JawinPropertyManager">
-      </manager>
-      <setter
-            class="org.eclipse.epsilon.emc.ptcim.jawin.JawinPropertySetter">
-      </setter>
+         point="org.eclipse.epsilon.emc.ptcim.ole">
+      <factory
+            class="org.eclipse.epsilon.emc.ptcim.jawin.JawinFrameworkFactory">
+      </factory>
    </extension>
 
 </plugin>

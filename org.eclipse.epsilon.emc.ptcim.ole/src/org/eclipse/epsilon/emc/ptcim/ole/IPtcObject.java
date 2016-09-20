@@ -13,12 +13,13 @@ package org.eclipse.epsilon.emc.ptcim.ole;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface COMObject.
+ * The IPtcObject Interface provides the high level methods to be used on PTC IM
+ * objects.
  */
-public interface COMObject {
+public interface IPtcObject {
 	
 	
 	/**
@@ -38,7 +39,7 @@ public interface COMObject {
 	 * @return the COM object
 	 * @throws EpsilonCOMException the epsilon COM exception
 	 */
-	Object add(String association, COMObject object) throws EpsilonCOMException;
+	Object add(String association, IPtcObject object) throws EpsilonCOMException;
 	
 	/**
 	 * A new object is created with its default property set to the value passed,
@@ -63,24 +64,29 @@ public interface COMObject {
 	Object addByType(String association, String type) throws EpsilonCOMException;
 
 	/**
-	 * Returns the value of the given property in the COMObject.
+	 * Let COM decrease the reference count for the COM-object, and ultimately destroy the object.
+	 */
+	void disconnect() throws EpsilonCOMException;
+	
+	/**
+	 * Returns the value of the given property in the IPtcObject.
 	 *
 	 * @param attrName the attr name
 	 * @param args the args
 	 * @return the object
 	 * @throws EpsilonCOMException the epsilon COM exception
 	 */
-	Object get(String attrName, List<Object> args) throws EpsilonCOMException;
+	Object getAttribute(String attrName, List<Object> args) throws EpsilonCOMException;
 	
 	/**
-	 * Returns the value of the given property in the COMObject.
+	 * Returns the value of the given property in the IPtcObject.
 	 *
 	 * @param name the name
 	 * @param arg the arg
 	 * @return the object
 	 * @throws EpsilonCOMException the epsilon COM exception
 	 */
-	Object get(String name, Object arg) throws EpsilonCOMException;
+	Object getAttribute(String name, Object arg) throws EpsilonCOMException;
 	
 	/**
 	 * Gets the id.
@@ -90,53 +96,7 @@ public interface COMObject {
 	String getId();
 	
 	/**
-	 * Invoke a method in the COMObject.
-	 *
-	 * @param string the string
-	 * @return the COM object
-	 * @throws EpsilonCOMException the epsilon COM exception
-	 */
-	Object invoke(String string) throws EpsilonCOMException;
-	
-	/**
-	 * Invoke.
-	 *
-	 * @param methodName the method name
-	 * @param arg the arg
-	 * @return the object
-	 * @throws EpsilonCOMException the epsilon COM exception
-	 */
-	@Deprecated
-	Object invoke(String methodName, String arg) throws EpsilonCOMException;
-
-	/**
-	 * Invoke a method in the COMObject.
-	 *
-	 * @param methodName the method name
-	 * @param type the type
-	 * @param args the args
-	 * @return the COM object
-	 * @throws EpsilonCOMException the epsilon COM exception
-	 */
-	@Deprecated
-	Object invoke(String methodName, String type, List<Object> args) throws EpsilonCOMException;
-
-	/**
-	 * Invoke.
-	 *
-	 * @param methodName the method name
-	 * @param type the type
-	 * @param args the args
-	 * @param index the index
-	 * @return the COM object
-	 * @throws EpsilonCOMException the epsilon COM exception
-	 */
-	@Deprecated
-	Object invoke(String methodName, String type, List<Object> args, int index) throws EpsilonCOMException;
-	
-	
-	/**
-	 * Invoke a method in the COMObject.
+	 * Invoke a method in the IPtcObject.
 	 *
 	 * @param string the string
 	 * @param args the args
@@ -144,8 +104,7 @@ public interface COMObject {
 	 * @throws EpsilonCOMException the epsilon COM exception
 	 */
 	Object invoke(String string, List<Object> args) throws EpsilonCOMException;
-	
-	
+
 	/**
 	 * Invoke a method on the object. The args arguments are passed directly to the COM object. byRefArgs are
 	 * wrapped in an implementation specific "by reference" wrapper. 
@@ -157,7 +116,7 @@ public interface COMObject {
 	 * @throws EpsilonCOMException the epsilon COM exception
 	 */
 	Object invoke(String methodName, List<Object> args, List<Object> byRefArgs) throws EpsilonCOMException;
-	
+
 	/**
 	 * Invoke a method on the object. The args arguments are passed directly to the COM object. byRefArgs are
 	 * wrapped in an implementation specific "by reference" wrapper. If the return value(s) is(are) by reference,
@@ -174,15 +133,38 @@ public interface COMObject {
 	Object invoke(String methodName, List<Object> args, List<Object> byRefArgs, int argsExpected) throws EpsilonCOMException;
 
 	/**
+	 * Invoke a method in the IPtcObject.
+	 *
+	 * @param string the string
+	 * @return the COM object
+	 * @throws EpsilonCOMException the epsilon COM exception
+	 */
+	Object invokeMethod(String string) throws EpsilonCOMException;
+	
+	/**
 	 * Sets the id.
 	 *
 	 * @param id the new id
 	 */
 	void setId(String id);
-	
-	List<? extends COMObject> wrapInColleciton(COMObject owner, String association);
 
-	Collection<? extends COMObject> wrapInFilteredColleciton(String association);
+	/**
+	 * Wrap in collection. The returned collection is directly controlled by the
+	 * PTC IM service.
+	 *
+	 * @param owner the owner
+	 * @param association the association
+	 * @return the list<? extends IPtcObject>
+	 */
+	List<? extends IPtcObject> wrapInColleciton(IPtcObject owner, String association);
+	
+	/**
+	 * Wrap in filtered collection. The returned collection is a Java collection.
+	 *
+	 * @param association the association
+	 * @return the collection<? extends IPtcObject>
+	 */
+	Collection<? extends IPtcObject> wrapInFilteredColleciton(String association);
 	
 	
 }

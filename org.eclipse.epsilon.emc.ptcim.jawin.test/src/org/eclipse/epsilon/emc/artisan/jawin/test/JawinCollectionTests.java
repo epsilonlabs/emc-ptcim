@@ -12,7 +12,7 @@ import java.util.Iterator;
 
 import org.eclipse.epsilon.emc.ptcim.jawin.JawinCollection;
 import org.eclipse.epsilon.emc.ptcim.jawin.JawinObject;
-import org.eclipse.epsilon.emc.ptcim.ole.EpsilonCOMException;
+import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.jawin.COMException;
 import org.jawin.DispatchPtr;
 import org.jawin.Variant;
@@ -64,7 +64,7 @@ public class JawinCollectionTests {
 		try {
 			newAttrPtr = (DispatchPtr) model.getDelegate().invokeN("AddByType", new Object[] {type, type.toUpperCase()}, 2);
 			newAttrPtr.invoke("PropertySet", "Name", 0, "NewAttr");
-			id = (String) newAttrPtr.get("Property", "Id");
+			id = (String) newAttrPtr.getAttribute("Property", "Id");
 		} catch (COMException e) {
 			theProject.invoke("PropertySet", "Transaction", 0, "Abort");
 			fail("Couldn't create new item");

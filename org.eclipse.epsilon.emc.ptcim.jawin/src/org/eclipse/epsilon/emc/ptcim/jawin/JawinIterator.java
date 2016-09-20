@@ -13,7 +13,7 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.eclipse.epsilon.emc.ptcim.ole.EpsilonCOMException;
+import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 
 
 /**
@@ -24,7 +24,7 @@ import org.eclipse.epsilon.emc.ptcim.ole.EpsilonCOMException;
 public class JawinIterator implements Iterator<JawinObject> {
 	
 	/**
-	 * The COMObject that points to the collection.
+	 * The IPtcObject that points to the collection.
 	 */
 	private final JawinObject source;
 	
@@ -43,7 +43,7 @@ public class JawinIterator implements Iterator<JawinObject> {
 		this.source = (JawinObject) source;
 		try {
 			// Make sure the iterator is at the beginning of the collection
-			source.invoke("ResetQueryItems");
+			source.invokeMethod("ResetQueryItems");
 		} catch (EpsilonCOMException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -59,7 +59,7 @@ public class JawinIterator implements Iterator<JawinObject> {
 		
 		Object more;
 		try {
-			more = source.invoke("MoreItems");
+			more = source.invokeMethod("MoreItems");
 		} catch (EpsilonCOMException e) {
 			// FIXME this should be logged
 			return false;
@@ -74,8 +74,8 @@ public class JawinIterator implements Iterator<JawinObject> {
 	@Override
 	public JawinObject next() {
 		try {
-			next = (JawinObject) source.invoke("NextItem");
-			String strId = (String) next.get("Property", "Id");
+			next = (JawinObject) source.invokeMethod("NextItem");
+			String strId = (String) next.getAttribute("Property", "Id");
 			next.setId(strId);
 		} catch (EpsilonCOMException e) {
 			throw new NoSuchElementException(e.getMessage());

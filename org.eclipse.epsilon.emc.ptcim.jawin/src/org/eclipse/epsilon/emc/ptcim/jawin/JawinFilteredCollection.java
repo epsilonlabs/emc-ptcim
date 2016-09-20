@@ -13,15 +13,15 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 import java.util.AbstractCollection;
 import java.util.Iterator;
 
-import org.eclipse.epsilon.emc.ptcim.ole.COMCollection;
-import org.eclipse.epsilon.emc.ptcim.ole.COMObject;
-import org.eclipse.epsilon.emc.ptcim.ole.EpsilonCOMException;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcCollection;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
+import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 
 
 /**
  * The Class JawinFilteredCollection.
  */
-public class JawinFilteredCollection extends AbstractCollection<JawinObject> implements COMCollection {
+public class JawinFilteredCollection extends AbstractCollection<JawinObject> implements IPtcCollection {
 	
 	/** The object that points to the collection. */
 	private final JawinObject comObject;
@@ -35,7 +35,7 @@ public class JawinFilteredCollection extends AbstractCollection<JawinObject> imp
 	 * @param comObject the com object
 	 * @param association the association
 	 */
-	public JawinFilteredCollection(COMObject comObject, String association) {
+	public JawinFilteredCollection(IPtcObject comObject, String association) {
 		assert comObject instanceof JawinObject;
 		this.comObject = (JawinObject) comObject;
 		this.association = association;
@@ -56,7 +56,7 @@ public class JawinFilteredCollection extends AbstractCollection<JawinObject> imp
 	 * @return the owner
 	 */
 	@Override
-	public COMObject getOwner() {
+	public IPtcObject getOwner() {
 		return null;
 	}
 
@@ -64,7 +64,7 @@ public class JawinFilteredCollection extends AbstractCollection<JawinObject> imp
 	 * @see org.eclipse.epsilon.emc.COM.COMCollection#getCOMObject()
 	 */
 	@Override
-	public COMObject getCOMObject() {
+	public IPtcObject getCOMObject() {
 		return this.comObject;
 	}
 

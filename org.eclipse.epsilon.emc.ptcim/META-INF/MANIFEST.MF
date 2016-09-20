@@ -15,4 +15,7 @@ Require-Bundle: org.eclipse.epsilon.eol.engine,
  org.eclipse.debug.core,
  org.eclipse.epsilon.eol.dt,
  org.eclipse.epsilon.evl.dt,
- org.eclipse.epsilon.evl.engine
+ org.eclipse.epsilon.evl.engine,
+ org.eclipse.osgi
+Bundle-Activator: org.eclipse.epsilon.emc.ptcim.Activator
+Bundle-ActivationPolicy: lazy

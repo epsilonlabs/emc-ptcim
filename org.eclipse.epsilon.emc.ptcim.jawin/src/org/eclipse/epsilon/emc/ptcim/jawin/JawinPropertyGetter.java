@@ -13,10 +13,10 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.COMCollection;
-import org.eclipse.epsilon.emc.ptcim.ole.COMProperty;
-import org.eclipse.epsilon.emc.ptcim.ole.COMPropertyManager;
-import org.eclipse.epsilon.emc.ptcim.ole.EpsilonCOMException;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcCollection;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcPropertyManager;
+import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
+import org.eclipse.epsilon.emc.ptcim.ole.impl.PtcProperty;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter;
 
@@ -26,7 +26,7 @@ import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter;
 public class JawinPropertyGetter extends AbstractPropertyGetter {
 
 	/** The manager. */
-	private final COMPropertyManager manager = JawinPropertyManager.INSTANCE;
+	private final IPtcPropertyManager manager = JawinPropertyManager.INSTANCE;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter#invoke(java.lang.Object, java.lang.String)
@@ -37,7 +37,7 @@ public class JawinPropertyGetter extends AbstractPropertyGetter {
 		JawinObject jObject = (JawinObject) object;
 		Object o = null;
 		try {
-			COMProperty p = manager.getProperty(jObject, property);
+			PtcProperty p = manager.getProperty(jObject, property);
 			if (p == null) {
 				throw new EolRuntimeException("No such property");
 			}
@@ -45,7 +45,7 @@ public class JawinPropertyGetter extends AbstractPropertyGetter {
 				List<Object> args = new ArrayList<Object>();
 				args.add(property);
 				if (p.isMultiple()) {
-					COMCollection elements;
+					IPtcCollection elements;
 					List<Object> byRefArgs = new ArrayList<Object>();
 					byRefArgs.add("*");
 					try {
@@ -62,7 +62,7 @@ public class JawinPropertyGetter extends AbstractPropertyGetter {
 					try {
 						o = jObject.invoke("Item", args);		//, byRefArgs);
 						if ( o instanceof JawinObject) {
-							String strId = (String) ((JawinObject) o).get("Property", "Id");
+							String strId = (String) ((JawinObject) o).getAttribute("Property", "Id");
 							((JawinObject) o).setId(strId);
 						}
 					} catch (EpsilonCOMException e) {
@@ -71,7 +71,7 @@ public class JawinPropertyGetter extends AbstractPropertyGetter {
 				}
 			}
 			else {
-				o = jObject.get("Property", property);
+				o = jObject.getAttribute("Property", property);
 			}
 		} catch (EpsilonCOMException e) {
 			throw new EolRuntimeException(e.getMessage());
@@ -86,7 +86,7 @@ public class JawinPropertyGetter extends AbstractPropertyGetter {
 	public boolean hasProperty(Object object, String property) {
 		assert object instanceof JawinObject;
 		JawinObject jObject = (JawinObject) object;
-		COMProperty p = manager.getProperty(jObject, property);
+		PtcProperty p = manager.getProperty(jObject, property);
 		return p != null;
 	}
 

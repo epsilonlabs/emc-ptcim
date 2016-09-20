@@ -6,27 +6,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.epsilon.emc.ptcim.ole.COMObject;
-import org.eclipse.epsilon.emc.ptcim.ole.COMProperty;
-import org.eclipse.epsilon.emc.ptcim.ole.COMPropertyManager;
-import org.eclipse.epsilon.emc.ptcim.ole.EpsilonCOMException;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcPropertyManager;
+import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
+import org.eclipse.epsilon.emc.ptcim.ole.impl.PtcProperty;
 
-public class JawinPropertyManager implements COMPropertyManager {
+public class JawinPropertyManager implements IPtcPropertyManager {
 	
-	public static final COMPropertyManager INSTANCE = new JawinPropertyManager();
+	public static final IPtcPropertyManager INSTANCE = new JawinPropertyManager();
 	
 	private static final Object ASSOCIATION_ROLE = "Association";
 	
 	@Override
-	public COMPropertyManager getInstance() {
+	public IPtcPropertyManager getInstance() {
 		return INSTANCE;
 	}
 	
-	private Map<COMObject, Map<String, COMProperty>> cache;
+	private Map<IPtcObject, Map<String, PtcProperty>> cache;
 	
 	public JawinPropertyManager() {
 		super();
-		this.cache = new HashMap<COMObject, Map<String,COMProperty>>();
+		this.cache = new HashMap<IPtcObject, Map<String,PtcProperty>>();
 	}
 	
 	public void dispose() {
@@ -37,19 +37,19 @@ public class JawinPropertyManager implements COMPropertyManager {
 	 * @see org.eclipse.epsilon.emc.ptcim.jawin.COMPropertyManager#getProperty(org.eclipse.epsilon.emc.COM.COMObject, java.lang.String)
 	 */
 	@Override
-	public COMProperty getProperty(COMObject object, String property) {
-		Map<String, COMProperty> cachedProps = cache.get(object);
+	public PtcProperty getProperty(IPtcObject object, String property) {
+		Map<String, PtcProperty> cachedProps = cache.get(object);
 		if (cachedProps == null) {
-			cachedProps = new HashMap<String, COMProperty>();
+			cachedProps = new HashMap<String, PtcProperty>();
 			cache.put(object, cachedProps);
 		}
-		COMProperty prop = cachedProps.get(property);
+		PtcProperty prop = cachedProps.get(property);
 		if (prop == null) {
 			List<Object> args = new ArrayList<Object>();
 			args.add("All Property Descriptors");
 			String descriptors = null;
 			try {
-				descriptors = (String) object.get("Property", args);
+				descriptors = (String) object.getAttribute("Property", args);
 			} catch (EpsilonCOMException e) {
 				// TODO We probably need better understanding of errors
 				return null;
@@ -78,7 +78,7 @@ public class JawinPropertyManager implements COMPropertyManager {
 					if (multy.contains("+")) {
 						isMultiple = true;
 					}
-					prop = new COMProperty(name, isPublic, readOnly, isMultiple, isAssociation);
+					prop = new PtcProperty(name, isPublic, readOnly, isMultiple, isAssociation);
 					break;
 				}
 			}
@@ -89,19 +89,19 @@ public class JawinPropertyManager implements COMPropertyManager {
 
 
 
-//	public COMProperty getProperty(String type, String property) {
-//		Map<String, COMProperty> cachedProps = cache.get(type);
+//	public PtcProperty getProperty(String type, String property) {
+//		Map<String, PtcProperty> cachedProps = cache.get(type);
 //		if (cachedProps == null) {
-//			cachedProps = new HashMap<String, COMProperty>();
+//			cachedProps = new HashMap<String, PtcProperty>();
 //			cache.put(type, cachedProps);
 //		}
-//		COMProperty prop = cachedProps.get(property);
+//		PtcProperty prop = cachedProps.get(property);
 //		if (prop == null) {
 //			List<Object> args = new ArrayList<Object>();
 //			args.add(type);
 //			String descriptors = null;
 //			try {
-//				COMObject res = model.invoke("GetClassProperties", args);
+//				IPtcObject res = model.invoke("GetClassProperties", args);
 //				assert res instanceof JawinPrimitive;
 //				descriptors = (String) ((JawinPrimitive) res).getPrimitive();
 //			} catch (EpsilonCOMException e) {
@@ -132,7 +132,7 @@ public class JawinPropertyManager implements COMPropertyManager {
 //					if (multy.contains("+")) {
 //						isMultiple = true;
 //					}
-//					prop = new COMProperty(name, isPublic, readOnly, isMultiple, isAssociation);
+//					prop = new PtcProperty(name, isPublic, readOnly, isMultiple, isAssociation);
 //					break;
 //				}
 //			}

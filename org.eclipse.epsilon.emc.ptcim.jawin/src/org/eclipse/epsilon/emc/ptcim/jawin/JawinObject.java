@@ -14,21 +14,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.COMObject;
-import org.eclipse.epsilon.emc.ptcim.ole.EpsilonCOMException;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
+import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.jawin.COMException;
 import org.jawin.COMPtr;
 import org.jawin.DispatchPtr;
 import org.jawin.GUID;
 import org.jawin.Variant;
+import org.jawin.win32.Ole32;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class JawinObject.
  */
-public class JawinObject implements COMObject {
+public class JawinObject extends DispatchPtr implements IPtcObject {
 
-	/** The delegate. */
-	private final DispatchPtr delegate;
 	
 	/** The id. */
 	private String id;
@@ -36,9 +36,7 @@ public class JawinObject implements COMObject {
 	/**
 	 * Instantiates a new jawin object.
 	 */
-	public JawinObject() {
-		delegate = new DispatchPtr();
-	}
+	public JawinObject() { }
 
 	/**
 	 * Instantiates a new jawin object.
@@ -47,27 +45,17 @@ public class JawinObject implements COMObject {
 	 * @throws COMException the COM exception
 	 */
 	public JawinObject(COMPtr comObject) throws COMException {
-		delegate = new DispatchPtr(comObject);
+		super(comObject);
 	}
 
 	/**
 	 * Instantiates a new jawin object.
 	 *
-	 * @param delegate the delegate
-	 */
-	public JawinObject(DispatchPtr delegate) {
-		super();
-		this.delegate = delegate;
-	}
-
-	/**
-	 * Instantiates a new jawin object.
-	 *
-	 * @param clsid the clsid
+	 * @param clsid the GUID of the COM-object to create.
 	 * @throws COMException the COM exception
 	 */
 	public JawinObject(GUID clsid) throws COMException {
-		delegate = new DispatchPtr(clsid);
+		super(clsid);
 	}
 
 	/**
@@ -76,10 +64,11 @@ public class JawinObject implements COMObject {
 	 * @param progid the progid
 	 * @throws COMException the COM exception
 	 */
+
 	public JawinObject(String progid) throws COMException {
-		delegate = new DispatchPtr(progid);
+		super(progid);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.emc.COM.COMObject#add(java.lang.String)
 	 */
@@ -95,7 +84,7 @@ public class JawinObject implements COMObject {
 	 * @see org.eclipse.epsilon.emc.COM.COMObject#add(java.lang.String, org.eclipse.epsilon.emc.COM.COMObject)
 	 */
 	@Override
-	public Object add(String association, COMObject object) throws EpsilonCOMException {
+	public Object add(String association, IPtcObject object) throws EpsilonCOMException {
 		List<Object> args = new ArrayList<Object>();
 		args.add(association);
 		args.add(object);
@@ -124,6 +113,19 @@ public class JawinObject implements COMObject {
 		return null;
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcObject#disconnect()
+	 */
+	public void disconnect() throws EpsilonCOMException {
+		try {
+			super.close();
+		} catch (COMException e) {
+			throw new EpsilonCOMException(e);
+		}
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -148,11 +150,11 @@ public class JawinObject implements COMObject {
 	 * @see org.eclipse.epsilon.emc.COM.COMObject#get(java.lang.String, java.util.List)
 	 */
 	@Override
-	public Object get(String name, List<Object> args) throws EpsilonCOMException {
+	public Object getAttribute(String name, List<Object> args) throws EpsilonCOMException {
 		Object res;	// = new JawinObject();
 		try {
 			//Object o = delegate.getN("Property", new Object[] { name, null });
-			Object comres = delegate.getN(name, args.toArray());
+			Object comres = getN(name, args.toArray());
 			if (comres instanceof DispatchPtr) {
 				res = new JawinObject();
 				((JawinObject) res).stealUnknown((DispatchPtr) comres);
@@ -170,10 +172,10 @@ public class JawinObject implements COMObject {
 	 * @see org.eclipse.epsilon.emc.COM.COMObject#get(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public Object get(String name, Object arg) throws EpsilonCOMException {
+	public Object getAttribute(String name, Object arg) throws EpsilonCOMException {
 		Object res;	// = new JawinObject();
 		try {
-			Object comres = delegate.get(name, arg);
+			Object comres = super.get(name, arg);
 			if (comres instanceof DispatchPtr) {
 				res = new JawinObject();
 				((JawinObject) res).stealUnknown((DispatchPtr) comres);
@@ -186,15 +188,6 @@ public class JawinObject implements COMObject {
 			throw new EpsilonCOMException(e);
 		}
 		return res;
-	}
-	
-	/**
-	 * Gets the delegate.
-	 *
-	 * @return the delegate
-	 */
-	public DispatchPtr getDelegate() {
-		return delegate;
 	}
 
 	/* (non-Javadoc)
@@ -217,37 +210,13 @@ public class JawinObject implements COMObject {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.COM.COMObject#invoke(java.lang.String)
-	 */
-	@Override
-	public Object invoke(String methodName) throws EpsilonCOMException {
-		Object res;
-		try {
-			// FIXME is it DispatchPtr?
-			// FIXME it seems args is always just one, at least for artisan
-			Object comres = delegate.invokeN(methodName, new Object[]{});
-			if (comres instanceof DispatchPtr) {
-				res = new JawinObject();
-				((JawinObject) res).stealUnknown((DispatchPtr) comres);
-			}
-			else {
-				//res = new JawinPrimitive(comres);
-				res = comres;
-			}
-		} catch (COMException e) {
-			throw new EpsilonCOMException(e);
-		}
-		return res;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.emc.COM.COMObject#invoke(java.lang.String, java.util.List)
 	 */
 	@Override
 	public Object invoke(String methodName, List<Object> args) throws EpsilonCOMException {
 		Object res = null;
 		try {
-			Object comres = delegate.invokeN(methodName, args.toArray());
+			Object comres = invokeN(methodName, args.toArray());
 			if (comres instanceof DispatchPtr) {
 				if (((DispatchPtr) comres).getUnknown() != 0) {
 					res = new JawinObject();
@@ -264,12 +233,18 @@ public class JawinObject implements COMObject {
 		return res;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcObject#invoke(java.lang.String, java.util.List, java.util.List)
+	 */
 	@Override
 	public Object invoke(String methodName, List<Object> args, List<Object> byRefArgs) throws EpsilonCOMException {
 		int len = args.size() + byRefArgs.size();
 		return invoke(methodName, args, byRefArgs, len);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcObject#invoke(java.lang.String, java.util.List, java.util.List, int)
+	 */
 	@Override
 	public Object invoke(String methodName, List<Object> args, List<Object> byRefArgs, int argsExpected)
 			throws EpsilonCOMException {
@@ -285,67 +260,12 @@ public class JawinObject implements COMObject {
 				Variant.ByrefHolder varIndex = new Variant.ByrefHolder(refA);
 				comArgs.add(varIndex);
 			}
-			Object comres = delegate.invokeN(methodName, comArgs.toArray(), argsExpected);
+			Object comres = invokeN(methodName, comArgs.toArray(), argsExpected);
 			if (comres instanceof DispatchPtr) {
 				res = new JawinObject();
 				((JawinObject) res).stealUnknown((DispatchPtr) comres);
 			}
 			else {
-				res = comres;
-			}
-		} catch (COMException e) {
-			throw new EpsilonCOMException(e);
-		}
-		return res;
-	}
-
-	@Override
-	@Deprecated
-	public Object invoke(String methodName, String arg) throws EpsilonCOMException {
-		Object res;
-		try {
-			// FIXME is it DispatchPtr?
-			// FIXME it seems args is always just one, at least for artisan
-			Object comres = delegate.invoke(methodName, arg);
-			if (comres instanceof DispatchPtr) {
-				res = new JawinObject();
-				((JawinObject) res).stealUnknown((DispatchPtr) comres);
-			}
-			else {
-				//res = new JawinPrimitive(comres);
-				res = comres;
-			}
-		} catch (COMException e) {
-			throw new EpsilonCOMException(e);
-		}
-		return res;
-	}
-
-	// FIXME this seems to be a invoke with pointer args, not suer if we need a invoke by value
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.COM.COMObject#invoke(java.lang.String, java.lang.String, java.util.List)
-	 */
-	// in which we wont need the Byref Holder
-	@Override
-	@Deprecated
-	public Object invoke(String methodName, String type, List<Object> args) throws EpsilonCOMException {
-		Object res;
-		try {
-			// FIXME is it DispatchPtr?
-			// FIXME it seems args is always just one, at least for artisan
-			List<Object> comArgs = new ArrayList<Object>();
-			comArgs.add(type);
-			for (Object arg : args) {
-				Variant.ByrefHolder varIndex = new Variant.ByrefHolder(arg);
-				comArgs.add(varIndex);
-			}
-			Object comres = delegate.invokeN(methodName, comArgs.toArray());
-			if (comres instanceof DispatchPtr) {
-				res = new JawinObject();
-				((JawinObject) res).stealUnknown((DispatchPtr) comres);
-			}
-			else {
-				//res = new JawinPrimitive(comres);
 				res = comres;
 			}
 		} catch (COMException e) {
@@ -355,28 +275,18 @@ public class JawinObject implements COMObject {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.COM.COMObject#invoke(java.lang.String, java.lang.String, java.util.List, int)
+	 * @see org.eclipse.epsilon.emc.COM.COMObject#invoke(java.lang.String)
 	 */
 	@Override
-	@Deprecated
-	public Object invoke(String methodName, String type, List<Object> args, int index) throws EpsilonCOMException {
+	public Object invokeMethod(String methodName) throws EpsilonCOMException {
 		Object res;
 		try {
-			// FIXME is it DispatchPtr?
-			// FIXME it seems args is always just one, at least for artisan
-			List<Object> comArgs = new ArrayList<Object>();
-			comArgs.add(type);
-			for (Object arg : args) {
-				Variant.ByrefHolder varIndex = new Variant.ByrefHolder(arg);
-				comArgs.add(varIndex);
-			}
-			Object comres = delegate.invokeN(methodName, comArgs.toArray(), index);
+			Object comres = invokeN(methodName, new Object[]{});
 			if (comres instanceof DispatchPtr) {
 				res = new JawinObject();
 				((JawinObject) res).stealUnknown((DispatchPtr) comres);
 			}
 			else {
-				//res = new JawinPrimitive(comres);
 				res = comres;
 			}
 		} catch (COMException e) {
@@ -384,6 +294,70 @@ public class JawinObject implements COMObject {
 		}
 		return res;
 	}
+
+//	// FIXME this seems to be a invoke with pointer args, not suer if we need a invoke by value
+//	/* (non-Javadoc)
+//	 * @see org.eclipse.epsilon.emc.COM.COMObject#invoke(java.lang.String, java.lang.String, java.util.List)
+//	 */
+//	// in which we wont need the Byref Holder
+//	@Override
+//	@Deprecated
+//	public Object invoke(String methodName, String type, List<Object> args) throws EpsilonCOMException {
+//		Object res;
+//		try {
+//			// FIXME is it DispatchPtr?
+//			// FIXME it seems args is always just one, at least for artisan
+//			List<Object> comArgs = new ArrayList<Object>();
+//			comArgs.add(type);
+//			for (Object arg : args) {
+//				Variant.ByrefHolder varIndex = new Variant.ByrefHolder(arg);
+//				comArgs.add(varIndex);
+//			}
+//			Object comres = invokeN(methodName, comArgs.toArray());
+//			if (comres instanceof DispatchPtr) {
+//				res = new JawinObject();
+//				((JawinObject) res).stealUnknown((DispatchPtr) comres);
+//			}
+//			else {
+//				//res = new JawinPrimitive(comres);
+//				res = comres;
+//			}
+//		} catch (COMException e) {
+//			throw new EpsilonCOMException(e);
+//		}
+//		return res;
+//	}
+
+//	/* (non-Javadoc)
+//	 * @see org.eclipse.epsilon.emc.COM.COMObject#invoke(java.lang.String, java.lang.String, java.util.List, int)
+//	 */
+//	@Override
+//	@Deprecated
+//	public Object invoke(String methodName, String type, List<Object> args, int index) throws EpsilonCOMException {
+//		Object res;
+//		try {
+//			// FIXME is it DispatchPtr?
+//			// FIXME it seems args is always just one, at least for artisan
+//			List<Object> comArgs = new ArrayList<Object>();
+//			comArgs.add(type);
+//			for (Object arg : args) {
+//				Variant.ByrefHolder varIndex = new Variant.ByrefHolder(arg);
+//				comArgs.add(varIndex);
+//			}
+//			Object comres = invokeN(methodName, comArgs.toArray(), index);
+//			if (comres instanceof DispatchPtr) {
+//				res = new JawinObject();
+//				((JawinObject) res).stealUnknown((DispatchPtr) comres);
+//			}
+//			else {
+//				//res = new JawinPrimitive(comres);
+//				res = comres;
+//			}
+//		} catch (COMException e) {
+//			throw new EpsilonCOMException(e);
+//		}
+//		return res;
+//	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.emc.COM.COMObject#setId(java.lang.String)
@@ -396,25 +370,11 @@ public class JawinObject implements COMObject {
 		}
 		this.id = id;
 	}
+	
 
-	/**
-	 * Steal unknown.
-	 *
-	 * @param dispPtr the disp ptr
+	/* (non-Javadoc)
+	 * @see org.jawin.COMPtr#toString()
 	 */
-	public void stealUnknown(DispatchPtr dispPtr) {
-		delegate.stealUnknown(dispPtr);
-	}
-
-	/**
-	 * Steal unknown.
-	 *
-	 * @param dispPtr the disp ptr
-	 */
-	public void stealUnknown(JawinObject dispPtr) {
-		delegate.stealUnknown(dispPtr.delegate);
-	}
-
 	@Override
 	public String toString() {
 		if (id != null) {
@@ -426,17 +386,22 @@ public class JawinObject implements COMObject {
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcObject#wrapInColleciton(org.eclipse.epsilon.emc.ptcim.ole.IPtcObject, java.lang.String)
+	 */
 	@Override
-	public List<? extends COMObject> wrapInColleciton(COMObject owner, String association) {
+	public List<? extends IPtcObject> wrapInColleciton(IPtcObject owner, String association) {
 		
 		return new JawinCollection(this, owner, association);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcObject#wrapInFilteredColleciton(java.lang.String)
+	 */
 	@Override
-	public Collection<? extends COMObject> wrapInFilteredColleciton(String association) {
+	public Collection<? extends IPtcObject> wrapInFilteredColleciton(String association) {
 		
 		return new JawinFilteredCollection(this, association);
 	}
-	
 	
 }

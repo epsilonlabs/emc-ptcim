@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.emc.ptcim.ole;
+package org.eclipse.epsilon.emc.ptcim.ole.impl;
 
 public class EpsilonCOMException extends Exception {
 

@@ -15,18 +15,13 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.epsilon.common.util.StringProperties;
-import org.eclipse.epsilon.emc.ptcim.ole.COMBridge;
-import org.eclipse.epsilon.emc.ptcim.ole.COMModel;
-import org.eclipse.epsilon.emc.ptcim.ole.COMObject;
-import org.eclipse.epsilon.emc.ptcim.ole.COMPropertyManager;
-import org.eclipse.epsilon.emc.ptcim.ole.EpsilonCOMException;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcCollection;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcComBridge;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcModelManager;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcPropertyManager;
+import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
@@ -40,24 +35,7 @@ import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 /**
  * The Class PtcimModel provides the EMC access to PTC Intregity Modeler models
  */
-public class PtcimModel extends CachedModel<COMObject> {
-	
-	public static final String ATT_CLASS = "class";
-
-	/** The Constant COM_ID. */
-	public static final String COM_ID = "org.eclipse.epsilon.emc.artisan.COM";
-	
-	/** The Constant BRIDGE_INDEX. */
-	private static final int BRIDGE_INDEX = 0;
-	
-	/** The Constant GETTER_INDEX. */
-	private static final int GETTER_INDEX = 1;
-	
-	/** The Constant MANAGER_INDEX. */
-	private static final int MANAGER_INDEX = 2;
-	
-	/** The Constant SETTER_INDEX. */
-	private static final int SETTER_INDEX = 3;
+public class PtcimModel extends CachedModel<IPtcObject> {
 
 	public static final String PROPERTY_MODEL_REFERENCE = "modelRef";
 
@@ -69,31 +47,33 @@ public class PtcimModel extends CachedModel<COMObject> {
 
 	public static final String PROPERTY_FROM_SELECTION = "fromSelection";
 	
+	/** IAutomationCaseObject interface id */
+	public static final String DIID = "{c9ff8402-bb2e-11d0-8475-0080C82BFA0C}";
 	
 	/** The bridge. */
-	protected COMBridge<COMObject, COMObject> bridge;
+	protected IPtcComBridge<IPtcObject> bridge;
 	
 	/**  The Project, needed for type testing and instantiation. */ 
-	private COMObject theProject;
+	private IPtcObject theProject;
 	
 	/** The is initialized. */
 	private boolean isInitialized = false;
 	
-	/**  The Artisan Model. */
-	private COMModel model = null;
+	/**  The PTC IM Model. */
+	private IPtcObject model = null;
 	
 	
-	/** The property getter. */
-	private IPropertyGetter propertyGetter;
-
-	/** The property setter. */
-	private IPropertySetter propertySetter;
-	
-	/** The property manager. */
-	private COMPropertyManager propertyManager;
+//	/** The property getter. */
+//	private IPropertyGetter propertyGetter;
+//
+//	/** The property setter. */
+//	private IPropertySetter propertySetter;
+//	
+//	/** The property manager. */
+//	private IPtcPropertyManager propertyManager;
 	
 	/**  The Artisan Studio. */
-	private COMObject studio = null;
+	private IPtcObject studio = null;
 	private boolean connectedToStudio = false;
 
 	private String modelId;
@@ -108,37 +88,20 @@ public class PtcimModel extends CachedModel<COMObject> {
 	 * Instantiates a new artisan model. Gets the COM helpers from the extension
 	 */
 	public PtcimModel() {
-		// FIXME USe the Extension point to get the jawin classes
-		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint ep = reg.getExtensionPoint(COM_ID);
-		IExtension[] extensions = ep.getExtensions();
-		// There should only be one contributor
-		IExtension ext = extensions[0];
-		IConfigurationElement[] ce = ext.getConfigurationElements();
-    	try {
-			bridge = (COMBridge<COMObject, COMObject>) ce[BRIDGE_INDEX].createExecutableExtension(ATT_CLASS);
-			setPropertyGetter((IPropertyGetter) ce[GETTER_INDEX].createExecutableExtension(ATT_CLASS));
-			setPropertyManager(((COMPropertyManager) ce[MANAGER_INDEX].createExecutableExtension(ATT_CLASS)).getInstance());
-			setPropertySetter((IPropertySetter) ce[SETTER_INDEX].createExecutableExtension(ATT_CLASS));
-		} catch (CoreException e) {
-			throw new IllegalStateException(e);
-		}
+		
     	cachingEnabled = false;
-    	/*
-		 * Set objManager = CreateObject("Studio.ModelManager")
-		 * objManager.AddModel("\\Enabler\MyServer\MyRepository","MyModel")
-		 */
-		if (!isInitialized()) {
-			try {
-				bridge.initialiseCOM();
-			} catch (EpsilonCOMException e) {
-				throw new IllegalStateException(e);
-			}
-		}
+		
 		isInitialized = true;
 	}
 
-
+	/**
+	 * If a transaction has been started on the model, this method will
+	 * abort the transaction. As a result all the changes in the model
+	 * that where part of the transaction would be discarded. See
+	 * {@link #beginTransaction()}.
+	 *
+	 * @throws EpsilonCOMException If a transaction has not been started
+	 */
 	private void abortTransaction() throws EpsilonCOMException {
 		List<Object> args = new ArrayList<Object>();
 		args.add("Transaction");
@@ -151,20 +114,27 @@ public class PtcimModel extends CachedModel<COMObject> {
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#allContentsFromModel()
 	 */
 	@Override
-	protected Collection<COMObject> allContentsFromModel() {
+	protected Collection<IPtcObject> allContentsFromModel() {
 		assert model != null;
-		Collection<? extends COMObject> elements;
+		Collection<? extends IPtcObject> elements;
 		List<Object> args = new ArrayList<Object>();
 		args.add("");
 		try {
-			COMObject res = (COMObject) model.invoke("Items", args);
+			IPtcObject res = (IPtcObject) model.invoke("Items", args);
 			elements = res.wrapInColleciton(model, "");
 		} catch (EpsilonCOMException e) {
 			throw new IllegalStateException(e);
 		}
-		return (Collection<COMObject>) elements;
+		return (Collection<IPtcObject>) elements;
 	}
-
+	
+	/**
+	 * Begin a transaction in the model. All changes to the model
+	 * during a transaction can either be committed or discarded
+	 * by committing (see {@link #commitTransaction()} or aborting
+	 * (see {@link #abortTransaction()} the transaction respectively.
+	 * @throws EpsilonCOMException if the transaction can not be started
+	 */
 	private void beginTransaction() throws EpsilonCOMException {
 		List<Object> args = new ArrayList<Object>();
 		args.add("Transaction");
@@ -173,6 +143,14 @@ public class PtcimModel extends CachedModel<COMObject> {
 		theProject.invoke("PropertySet", args);
 	}
 	
+	/**
+	 * If a transaction has been started on the model, this method will
+	 * commit the transaction. As a result all the changes in the model
+	 * that where part of the transaction would be applied. See
+	 * {@link #beginTransaction()}.
+	 *
+	 * @throws EpsilonCOMException If a transaction has not been started
+	 */
 	private void commitTransaction() throws EpsilonCOMException {
 		List<Object> args = new ArrayList<Object>();
 		args.add("Transaction");
@@ -187,8 +165,10 @@ public class PtcimModel extends CachedModel<COMObject> {
 	 * @throws EpsilonCOMException the epsilon COM exception
 	 */
 	public void connectToStudio() throws EpsilonCOMException {
+		// clsid = HKEY_CLASSES_ROOT\WOW6432Node\CLSID\{2EF41D24-F489-11D1-9EC4-0000B45B7329}
+		// IStudio = HKEY_CLASSES_ROOT\WOW6432Node\Interface\{014BC370-49D5-4A9F-AE65-553551E01B10}
 		if (!connectedToStudio ) {
-			studio = bridge.connectToCOM("Studio.Editor");
+			studio = bridge.connectByProgId("Studio.Editor");
 			connectedToStudio = true;
 		}
 	}
@@ -211,7 +191,7 @@ public class PtcimModel extends CachedModel<COMObject> {
 		Object newInstance = null;
 		Iterator<Object> it = parameters.iterator();
 		Object parent = it.next();
-		COMObject comParent = (COMObject) parent;
+		IPtcObject comParent = (IPtcObject) parent;
 		List<Object> args = new ArrayList<Object>();
 		args.add(type);
 		if (parameters.size() == 1) {		// Add
@@ -245,7 +225,7 @@ public class PtcimModel extends CachedModel<COMObject> {
 	 * @throws EolNotInstantiableModelElementTypeException the eol not instantiable model element type exception
 	 */
 	@Override
-	protected COMObject createInstanceInModel(String type)
+	protected IPtcObject createInstanceInModel(String type)
 			throws EolModelElementTypeNotFoundException, EolNotInstantiableModelElementTypeException {
 		if (!isInstantiable(type)) {
 			throw new EolNotInstantiableModelElementTypeException(getName(), type);
@@ -257,18 +237,18 @@ public class PtcimModel extends CachedModel<COMObject> {
 			newInstance = model.invoke("Add", args);
 			setNewInstanceId(newInstance);
 			// check that the instance is correct
-//			Object ref = getElementById(((COMObject) newInstance).getId());
+//			Object ref = getElementById(((IPtcObject) newInstance).getId());
 //			while (ref == null) {
 //				// Some how the element was not created, try again
 //				newInstance = model.invoke("Add", args);
 //				setNewInstanceId(newInstance);
 //				// check that the instance is correct
-//				ref = getElementById(((COMObject) newInstance).getId());
+//				ref = getElementById(((IPtcObject) newInstance).getId());
 //			}
 		} catch (EpsilonCOMException e) {
 			throw new EolModelElementTypeNotFoundException(getName(), type);
 		}
-		return (COMObject) newInstance;
+		return (IPtcObject) newInstance;
 	}
 	
 	
@@ -283,10 +263,10 @@ public class PtcimModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	protected boolean deleteElementInModel(Object instance) throws EolRuntimeException {
-		assert instance instanceof COMObject;
+		assert instance instanceof IPtcObject;
 		boolean success = false;
 		try {
-			((COMObject) instance).invoke("Delete");
+			((IPtcObject) instance).invokeMethod("Delete");
 			success = true;
 		} catch (EpsilonCOMException e) {
 			throw new EolRuntimeException(e.getMessage());
@@ -299,7 +279,7 @@ public class PtcimModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	protected void disposeModel() {
-		propertyManager.dispose();
+		getPropertyManager().dispose();
 		if (isInitialized()) {
 			if (!storeOnDisposal) {
 //				try {
@@ -309,12 +289,12 @@ public class PtcimModel extends CachedModel<COMObject> {
 //					e.printStackTrace();
 //				}
 			}
-			try {
-				bridge.uninitialiseCOM();
-			} catch (EpsilonCOMException e) {
-				// FIXME Does Epsilon has a logger for this?
-				e.printStackTrace();
-			}
+		}
+		try {
+			theProject.disconnect();
+		} catch (EpsilonCOMException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -323,12 +303,12 @@ public class PtcimModel extends CachedModel<COMObject> {
 	 * delegates to {@link #getAllOfTypeFromModel(String)}.
 	 */
 	@Override
-	public Collection<COMObject> getAllOfKind(String kind) throws EolModelElementTypeNotFoundException {
+	public Collection<IPtcObject> getAllOfKind(String kind) throws EolModelElementTypeNotFoundException {
 		return getAllOfType(kind);
 	}
 	
 	@Override
-	protected Collection<? extends COMObject> getAllOfKindFromModel(String kind)
+	protected Collection<? extends IPtcObject> getAllOfKindFromModel(String kind)
 			throws EolModelElementTypeNotFoundException {
 		throw new UnsupportedOperationException("Artisan models don't use cache.");
 	}
@@ -337,26 +317,26 @@ public class PtcimModel extends CachedModel<COMObject> {
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllOfType(java.lang.String)
 	 */
 	@Override
-	public Collection<COMObject> getAllOfType(String type) throws EolModelElementTypeNotFoundException {
+	public Collection<IPtcObject> getAllOfType(String type) throws EolModelElementTypeNotFoundException {
 		assert model != null;
-		List<? extends COMObject> elements;
+		List<? extends IPtcObject> elements;
 		List<Object> args = new ArrayList<Object>();
 		args.add(type);
 		List<Object> byRefArgs = new ArrayList<Object>();
 		byRefArgs.add("*");
-		COMObject res;
+		IPtcObject res;
 		try {
-			res = (COMObject) model.invoke("Items", args);	//, byRefArgs);
+			res = (IPtcObject) model.invoke("Items", args);	//, byRefArgs);
 		} catch (EpsilonCOMException e) {
 			throw new EolModelElementTypeNotFoundException(name, type);
 		}
 		elements = res.wrapInColleciton(model, type);	//new JawinCollection(res, model, type);
-		return (List<COMObject>) elements;
+		return (List<IPtcObject>) elements;
 	}
 
 
 	@Override
-	protected Collection<? extends COMObject> getAllOfTypeFromModel(String type)
+	protected Collection<? extends IPtcObject> getAllOfTypeFromModel(String type)
 			throws EolModelElementTypeNotFoundException {
 		throw new UnsupportedOperationException("Artisan models don't use cache.");
 	}
@@ -380,7 +360,7 @@ public class PtcimModel extends CachedModel<COMObject> {
 		return type;
 	}
 
-	public COMModel getCOMModel() {
+	public IPtcObject getCOMModel() {
 		return model;
 	}
 
@@ -391,9 +371,9 @@ public class PtcimModel extends CachedModel<COMObject> {
 	public Object getElementById(String id) {
 		List<Object> args = new ArrayList<Object>();
 		args.add(id);
-		COMObject res = null;
+		IPtcObject res = null;
 		try {
-			res = (COMObject) theProject.invoke("ItemById", args);
+			res = (IPtcObject) theProject.invoke("ItemById", args);
 			if (res != null)
 				res.setId(id);
 		} catch (EpsilonCOMException e) {
@@ -408,15 +388,15 @@ public class PtcimModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	public String getElementId(Object instance) {
-		assert instance instanceof COMObject;
-		String id = ((COMObject) instance).getId();
+		assert instance instanceof IPtcObject;
+		String id = ((IPtcObject) instance).getId();
 		if (id == null)
 		{
 			List<Object> args = new ArrayList<Object>();
 			args.add("Id");
 			try {
-				id = (String) ((COMObject) instance).get("Property", args);
-				((COMObject) instance).setId(id);
+				id = (String) ((IPtcObject) instance).getAttribute("Property", args);
+				((IPtcObject) instance).setId(id);
 			} catch (EpsilonCOMException e) {
 				// FIXME Log me!
 				throw new IllegalStateException(e);
@@ -447,7 +427,14 @@ public class PtcimModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	public IPropertyGetter getPropertyGetter() {
-		return propertyGetter;
+		return Activator.getDefault().getFactory().getPropertyGetter();
+	}
+
+	/**
+	 * @return the propertyManager
+	 */
+	protected IPtcPropertyManager getPropertyManager() {
+		return Activator.getDefault().getFactory().getPropertyManager();
 	}
 
 	/* (non-Javadoc)
@@ -455,7 +442,7 @@ public class PtcimModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	public IPropertySetter getPropertySetter() {
-		return propertySetter;
+		return Activator.getDefault().getFactory().getPropertySetter();
 	}
 
 	/* (non-Javadoc)
@@ -463,10 +450,10 @@ public class PtcimModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	public String getTypeNameOf(Object instance) {
-		assert instance instanceof COMObject;
+		assert instance instanceof IPtcObject;
 		String typeName;
 		try {
-			typeName = (String) ((COMObject) instance).get("Property", "Type");
+			typeName = (String) ((IPtcObject) instance).getAttribute("Property", "Type");
 		} catch (EpsilonCOMException e) {
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
@@ -515,7 +502,7 @@ public class PtcimModel extends CachedModel<COMObject> {
 	
 	@Override
 	public boolean isOfType(Object instance, String metaClass) throws EolModelElementTypeNotFoundException {
-		assert instance instanceof COMObject;
+		assert instance instanceof IPtcObject;
 		String type = getTypeNameOf(instance);
 		return metaClass.equals(type);
 		
@@ -528,8 +515,8 @@ public class PtcimModel extends CachedModel<COMObject> {
 	@Override
 	public boolean knowsAboutProperty(Object instance, String property) {
 		Object p = null;
-		if (instance instanceof COMObject) {
-			p = propertyManager.getProperty((COMObject) instance, property);
+		if (instance instanceof IPtcObject) {
+			p = getPropertyManager().getProperty((IPtcObject) instance, property);
 		}
 		return p != null;
 	}
@@ -556,8 +543,8 @@ public class PtcimModel extends CachedModel<COMObject> {
 		byRefArgs.add("Dictionary");
 		byRefArgs.add("Dictionary");
 		try {
-			COMObject res = (COMObject) theProject.invoke("Item", byRefArgs);
-			model = bridge.wrapModel(res);
+			IPtcObject res = (IPtcObject) theProject.invoke("Item", byRefArgs);
+			model = res;
 		} catch (EpsilonCOMException e) {
 			try {
 				bridge.uninitialiseCOM();
@@ -575,30 +562,34 @@ public class PtcimModel extends CachedModel<COMObject> {
 	@Override
 	protected void loadModel() throws EolModelLoadingException {
 		if (isInitialized()) {
+			Activator activator = Activator.getDefault();
+			IPtcModelManager<? extends IPtcObject, ? extends IPtcCollection> manager;
+			try {
+				manager = activator.getFactory().getModelManager();
+			} catch (EpsilonCOMException e1) {
+				// TODO Auto-generated catch block
+				throw new EolModelLoadingException(e1, this);
+			}
 			if  (readOnLoad) {
-				COMObject artisanApp;
-				try {
-					artisanApp = bridge.connectToCOM("OMTE.Projects");
-				} catch (EpsilonCOMException e) {
-					throw new EolModelLoadingException(e, this);
-				}
 				try {
 					if (server.length() == 0) {
-						theProject = bridge.openModel(artisanApp, modelId);
+						theProject = manager.getProjectByTitle(modelId);
 					}
 					else {
-						theProject = bridge.openModel(artisanApp, modelId, server, repository, version);
+						theProject = manager.getProjectByReference(modelId, server, repository, version);
 					}
 				} catch (EpsilonCOMException e) {
 					throw new EolModelLoadingException(e, this);
 				}
 			}
 			else if (storeOnDisposal) {
-				try {
-					PtcimModelFactory.createModel(this, server, repository, getName());
-				} catch (EolRuntimeException e) {
-					throw new EolModelLoadingException(e, this);
-				}
+				// TODO Decide how the readOnLoad/storeOnDisposal flags control how the model is either
+				// loaded or created. 
+//				try {
+//					manager.createModel(server, repository, getModelId());
+//				} catch (EpsilonCOMException e) {
+//					throw new EolModelLoadingException(e, this);
+//				}
 			}
 //			try {
 //				beginTransaction();
@@ -606,6 +597,12 @@ public class PtcimModel extends CachedModel<COMObject> {
 //				throw new EolModelLoadingException(e, this);
 //			}
 			loadDictionary();
+			try {
+				manager.disconnect();
+			} catch (EpsilonCOMException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}
@@ -615,11 +612,11 @@ public class PtcimModel extends CachedModel<COMObject> {
 	 */
 	@Override
 	public boolean owns(Object instance) {
-		if (instance instanceof COMObject) {
-			if (((COMObject) instance).getId() == null) {
+		if (instance instanceof IPtcObject) {
+			if (((IPtcObject) instance).getId() == null) {
 				throw new IllegalStateException("COMObjects can not be found without an Id");
 			}
-			Object other = getElementById(((COMObject) instance).getId());
+			Object other = getElementById(((IPtcObject) instance).getId());
 			return other != null;
 		}
 		return false;
@@ -639,88 +636,59 @@ public class PtcimModel extends CachedModel<COMObject> {
 	 *
 	 * @param model the new model
 	 */
-	protected void setModel(COMModel model) {
-		this.model = model;
-	}
+//	protected void setModel(COMModel model) {
+//		this.model = model;
+//	}
 
 	/**
 	 * @param newInstance
 	 * @throws EpsilonCOMException
 	 */
 	private void setNewInstanceId(Object newInstance) throws EpsilonCOMException {
-		String id = (String) ((COMObject) newInstance).get("Property", "Id");
-		((COMObject) newInstance).setId(id);
+		String id = (String) ((IPtcObject) newInstance).getAttribute("Property", "Id");
+		((IPtcObject) newInstance).setId(id);
 	}
 
-	/**
-	 * Sets the property getter.
-	 *
-	 * @param propertyGetter the new property getter
-	 */
-	public void setPropertyGetter(IPropertyGetter propertyGetter) {
-		this.propertyGetter = propertyGetter;
-	}
 	
-	private void setPropertyManager(COMPropertyManager manager) {
-		this.propertyManager = manager;
-	}
-
-	/**
-	 * Sets the property setter.
-	 *
-	 * @param propertySetter the new property setter
-	 */
-	public void setPropertySetter(IPropertySetter propertySetter) {
-		this.propertySetter = propertySetter;
-	}
-
-	/**
-	 * Sets the the project.
-	 *
-	 * @param theProject the new the project
-	 */
-	protected void setTheProject(COMObject theProject) {
-		this.theProject = theProject;
-	}
-	/**
-	 * Opens the Artisan Sutio Editor and shows the given object. By default the first
-	 * diagram in which the object apperas is selected.
-	 * @throws EpsilonCOMException
-	 */
-	public void showInStudio(Object instance) throws EpsilonCOMException {
-		assert instance instanceof COMObject;
-		COMObject cobject = (COMObject) instance;
-		connectToStudio();
-		studio.invoke("ShowMainWindow");
-		List<Object> args = new ArrayList<Object>();
-		args.add(getModelId());
-		studio.invoke("OpenModel",args);
-		String objectId = getElementId(instance);
-		args.clear();
-		args.add("Using Diagram");
-		COMObject diag = (COMObject) cobject.invoke("Item", args);
-		if (diag != null) {
-			Object diagramId = getElementId(diag);
-			args.clear();
-			args.add("Representing Symbol");
-			Object objSymbol = cobject.invoke("Item", args);
-			Object symboldId = getElementId(objSymbol);
-			args.clear();
-			args.add(diagramId);
-			studio.invoke("OpenDiagram", args);
-			args.clear();
-			args.add(diagramId);
-			args.add(symboldId);
-			studio.invoke("SelectSymbol2", args);
-		}
-		else {		// There is no diagram, use the project tree
-			args.clear();
-			args.add(objectId);
-			args.add("Packages");
-			studio.invoke("SelectBrowserItem", args);
-		}
-		studio.invoke("SetForegroundWindow");
-	}
+//	/**
+//	 * Opens the Artisan Sutio Editor and shows the given object. By default the first
+//	 * diagram in which the object apperas is selected.
+//	 * @throws EpsilonCOMException
+//	 */
+//	public void showInStudio(Object instance) throws EpsilonCOMException {
+//		assert instance instanceof IPtcObject;
+//		IPtcObject cobject = (IPtcObject) instance;
+//		connectToStudio();
+//		studio.invokeMethod("ShowMainWindow");
+//		List<Object> args = new ArrayList<Object>();
+//		args.add(getModelId());
+//		studio.invoke("OpenModel",args);
+//		String objectId = getElementId(instance);
+//		args.clear();
+//		args.add("Using Diagram");
+//		IPtcObject diag = (IPtcObject) cobject.invoke("Item", args);
+//		if (diag != null) {
+//			Object diagramId = getElementId(diag);
+//			args.clear();
+//			args.add("Representing Symbol");
+//			Object objSymbol = cobject.invoke("Item", args);
+//			Object symboldId = getElementId(objSymbol);
+//			args.clear();
+//			args.add(diagramId);
+//			studio.invoke("OpenDiagram", args);
+//			args.clear();
+//			args.add(diagramId);
+//			args.add(symboldId);
+//			studio.invoke("SelectSymbol2", args);
+//		}
+//		else {		// There is no diagram, use the project tree
+//			args.clear();
+//			args.add(objectId);
+//			args.add("Packages");
+//			studio.invoke("SelectBrowserItem", args);
+//		}
+//		studio.invokeMethod("SetForegroundWindow");
+//	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#store()

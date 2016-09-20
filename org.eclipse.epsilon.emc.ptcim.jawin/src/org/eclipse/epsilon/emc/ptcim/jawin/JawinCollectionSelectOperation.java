@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.COMCollection;
-import org.eclipse.epsilon.emc.ptcim.ole.COMObject;
-import org.eclipse.epsilon.emc.ptcim.ole.EpsilonCOMException;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcCollection;
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
+import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.eol.dom.EqualsOperatorExpression;
 import org.eclipse.epsilon.eol.dom.Expression;
 import org.eclipse.epsilon.eol.dom.NameExpression;
@@ -42,13 +42,13 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 			boolean returnOnFirstMatch) throws EolRuntimeException {
 
 //		System.err.println("OptimisableCollectionSelectOperation execute called!");
-		if (!(target instanceof COMCollection)) {
+		if (!(target instanceof IPtcCollection)) {
 			return super.execute(target, iterator, ast, context, returnOnFirstMatch);
 		}
 		try {
 			this.context = context;
 			this.iterator = iterator;
-			return decomposeAST((COMCollection) target, ast,returnOnFirstMatch);
+			return decomposeAST((IPtcCollection) target, ast,returnOnFirstMatch);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -58,7 +58,7 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected Collection<Object> decomposeAST(COMCollection target, Expression ast, boolean returnOnFirstMatch) throws Exception {
+	protected Collection<Object> decomposeAST(IPtcCollection target, Expression ast, boolean returnOnFirstMatch) throws Exception {
 
 		if (isOptimisable(ast)) {
 			return optimisedExecution(target, ast, returnOnFirstMatch);
@@ -73,7 +73,7 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Collection<Object> optimisedExecution(COMCollection target, Expression ast, boolean returnOnFirstMatch) throws EolRuntimeException {
+	private Collection<Object> optimisedExecution(IPtcCollection target, Expression ast, boolean returnOnFirstMatch) throws EolRuntimeException {
 
 		// NOTE: this assumes that isOptimisable(ast) returned true
 		final OperatorExpression opExp = (OperatorExpression) ast;
@@ -100,13 +100,13 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 			List<Object> args = new ArrayList<Object>();
 			args.add(target.getAssociation());
 			args.add(attributevalue);
-			COMObject comresult = null;
+			IPtcObject comresult = null;
 			try {
-				comresult = (COMObject) target.getOwner().invoke("Items", args);
+				comresult = (IPtcObject) target.getOwner().invoke("Items", args);
 			} catch (EpsilonCOMException e) {
 				throw new EolInternalException(e);
 			}
-			Collection<? extends COMObject> result = comresult.wrapInFilteredColleciton(target.getAssociation());
+			Collection<? extends IPtcObject> result = comresult.wrapInFilteredColleciton(target.getAssociation());
 			return (Collection<Object>) result;
 			
 		} else {
