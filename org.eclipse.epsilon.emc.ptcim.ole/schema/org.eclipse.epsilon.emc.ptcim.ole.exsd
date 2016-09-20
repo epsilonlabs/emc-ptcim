@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.epsilon.emc.artisan" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.epsilon.emc.ptcim" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.epsilon.emc.artisan" id="org.eclipse.epsilon.emc.artisan.COM" name="COM"/>
+         <meta.schema plugin="org.eclipse.epsilon.emc.ptcim" id="org.eclipse.epsilon.emc.ptcim.ole" name="PTC IM OLE Extensions"/>
       </appinfo>
       <documentation>
-         An extension point for specifying a bridge and the property getter, setter and manager that use a particular underlying COM library
+         An extension point for specifying a PTC Framework manager to provide access to the different facilities available and requried to work with the PTC Integrity Modler models. 
       </documentation>
    </annotation>
 
@@ -18,10 +18,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="bridge"/>
-            <element ref="getter"/>
-            <element ref="manager"/>
-            <element ref="setter"/>
+            <element ref="factory"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -50,7 +47,7 @@
       </complexType>
    </element>
 
-   <element name="bridge">
+   <element name="factory">
       <complexType>
          <attribute name="class" type="string">
             <annotation>
@@ -58,52 +55,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.epsilon.emc.COM.COMBridge"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="getter">
-      <complexType>
-         <attribute name="class" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="manager">
-      <complexType>
-         <attribute name="class" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.epsilon.emc.COM.COMPropertyManager"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="setter">
-      <complexType>
-         <attribute name="class" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.epsilon.eol.execute.introspection.IPropertySetter"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.epsilon.emc.ptcim.ole.IPtcFrameworkFactory"/>
                </appinfo>
             </annotation>
          </attribute>
