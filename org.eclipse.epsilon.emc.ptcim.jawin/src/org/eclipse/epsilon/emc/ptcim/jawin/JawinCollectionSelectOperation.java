@@ -73,7 +73,7 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Collection<Object> optimisedExecution(IPtcCollection target, Expression ast, boolean returnOnFirstMatch) throws EolRuntimeException {
+	private Collection<Object> optimisedExecution(IPtcCollection<IPtcObject> target, Expression ast, boolean returnOnFirstMatch) throws EolRuntimeException {
 
 		// NOTE: this assumes that isOptimisable(ast) returned true
 		final OperatorExpression opExp = (OperatorExpression) ast;

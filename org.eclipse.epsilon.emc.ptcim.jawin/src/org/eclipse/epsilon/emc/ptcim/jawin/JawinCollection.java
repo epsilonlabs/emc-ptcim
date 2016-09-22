@@ -21,6 +21,7 @@ import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.eol.execute.operations.AbstractOperation;
 import org.eclipse.epsilon.eol.execute.operations.declarative.IAbstractOperationContributor;
+import org.jawin.COMException;
 
 /**
  * The Class JawinCollection. This collection only guarantees the implementation
@@ -28,7 +29,7 @@ import org.eclipse.epsilon.eol.execute.operations.declarative.IAbstractOperation
  * unexpected results. Collections that are a result of a filtered Items only
  * provide iteration. 
  */
-public class JawinCollection extends AbstractList<JawinObject> implements IPtcCollection, IAbstractOperationContributor {
+public class JawinCollection extends AbstractList<JawinObject> implements IPtcCollection<JawinObject>, IAbstractOperationContributor {
 	
 	/** The object that points to the collection. */
 	private final JawinObject comObject;
@@ -103,7 +104,13 @@ public class JawinCollection extends AbstractList<JawinObject> implements IPtcCo
 		}
 	}
 
-
+	public void disconnect() throws EpsilonCOMException {
+		try {
+			comObject.close();
+		} catch (COMException e) {
+			throw new EpsilonCOMException(e);
+		}
+	}
 
 	/**
 	 * Artisan Collections are designed for iterator access. Hence this method is equivalent to

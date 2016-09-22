@@ -10,12 +10,20 @@
  *******************************************************************************/
 package org.eclipse.epsilon.emc.ptcim.ole;
 
+import java.util.Collection;
+
+import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 
 /**
  * The Interface IPtcCollection defines the methods to work with collections that are provided
  * directly by the PTC IM API.
  */
-public interface IPtcCollection {
+public interface IPtcCollection<T extends IPtcObject> extends Collection<T> {
+
+	/**
+	 * Let COM decrease the reference count for the COM-object, and ultimately destroy the object.
+	 */
+	void disconnect() throws EpsilonCOMException;
 
 	/**
 	 * Gets the association name used to generate the collection.
@@ -25,18 +33,18 @@ public interface IPtcCollection {
 	String getAssociation();
 
 	/**
-	 * Gets the owner of the association.
-	 *
-	 * @return the owner
-	 */
-	IPtcObject getOwner();
-
-	/**
 	 * Gets the object that points to the collection.
 	 *
 	 * @return the source
 	 */
-	IPtcObject getCOMObject();
+	T getCOMObject();
+	
+	/**
+	 * Gets the owner of the association.
+	 *
+	 * @return the owner
+	 */
+	T getOwner();
 	
 	/**
 	 * Returns true if the Collection has been filtered. Optimisations can't be done on filtered
