@@ -85,20 +85,12 @@ public class JawinFrameworkFactory implements IPtcFrameworkFactory {
 		return jawinUserInterface;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcFrameworkFactory#initialiseCOM()
-	 */
-	@Override
-	public void initialiseCOM() throws EpsilonCOMException {
+	private void initialiseCOM() throws EpsilonCOMException {
 		bridge.initialiseCOM();
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcFrameworkFactory#uninitialiseCOM()
-	 */
-	@Override
-	public void uninitialiseCOM() throws EpsilonCOMException {
+	private void uninitialiseCOM() throws EpsilonCOMException {
 		bridge.uninitialiseCOM();
 	}
 	
@@ -133,6 +125,12 @@ public class JawinFrameworkFactory implements IPtcFrameworkFactory {
 	@Override
 	public IPtcPropertyManager getPropertyManager() {
 		return jawinPropertyManager;
+	}
+
+	@Override
+	public void startup() throws EpsilonCOMException {
+		initialiseCOM();
+		
 	}
 
 }

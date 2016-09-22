@@ -14,27 +14,64 @@ import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter;
 import org.eclipse.epsilon.eol.execute.introspection.IPropertySetter;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Interface IPtcFrameworkFactory.
  */
 public interface IPtcFrameworkFactory {
 	
+	/**
+	 * Gets the file dialog manager.
+	 *
+	 * @return the file dialog manager
+	 */
 	IPtcFileDialog<? extends IPtcObject> getFileDialogManager();
 	
-	IPtcModelManager<? extends IPtcObject, ? extends IPtcCollection> getModelManager() throws EpsilonCOMException;
+	/**
+	 * Gets the model manager.
+	 *
+	 * @return the model manager
+	 * @throws EpsilonCOMException the epsilon COM exception
+	 */
+	IPtcModelManager<? extends IPtcObject, ? extends IPtcCollection<? extends IPtcObject>> getModelManager() throws EpsilonCOMException;
 	
+	/**
+	 * Gets the property getter.
+	 *
+	 * @return the property getter
+	 */
 	IPropertyGetter getPropertyGetter();
 	
+	/**
+	 * Gets the property manager.
+	 *
+	 * @return the property manager
+	 */
 	IPtcPropertyManager getPropertyManager();
 	
+	/**
+	 * Gets the property setter.
+	 *
+	 * @return the property setter
+	 */
 	IPropertySetter getPropertySetter();
 	
+	/**
+	 * Gets the UI manager.
+	 *
+	 * @return the UI manager
+	 * @throws EpsilonCOMException the epsilon COM exception
+	 */
 	IPtcUserInterface<? extends IPtcObject> getUIManager() throws EpsilonCOMException;
 
-	void initialiseCOM() throws EpsilonCOMException;
+	/**
+	 * Shutdown.
+	 */
+	void shutdown() throws EpsilonCOMException;
 
-	void uninitialiseCOM() throws EpsilonCOMException;
-
-	void shutdown();
+	/**
+	 * Startup.
+	 */
+	void startup() throws EpsilonCOMException;
 
 }

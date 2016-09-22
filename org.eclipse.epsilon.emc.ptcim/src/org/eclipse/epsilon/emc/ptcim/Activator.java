@@ -64,7 +64,7 @@ public class Activator extends Plugin {
 			throw e;
 		}
 		try {
-			factory.initialiseCOM();
+			factory.startup();
 		} catch (EpsilonCOMException e) {
 			throw new IllegalStateException(e);
 		}
