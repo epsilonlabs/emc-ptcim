@@ -24,8 +24,9 @@ public interface IPtcFrameworkFactory {
 	 * Gets the file dialog manager.
 	 *
 	 * @return the file dialog manager
+	 * @throws EpsilonCOMException 
 	 */
-	IPtcFileDialog<? extends IPtcObject> getFileDialogManager();
+	IPtcFileDialog<? extends IPtcObject> getFileDialogManager() throws EpsilonCOMException;
 	
 	/**
 	 * Gets the model manager.

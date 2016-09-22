@@ -81,7 +81,7 @@ public interface IPtcModelManager<T extends IPtcObject, S extends IPtcCollection
 	/**
 	 * Return a reference to the Dictionary Item that currently has the focus
 	 * in the Modeler. If a symbol on a diagram has the focus, a relationship
-	 * with the dictionary item that is the under-lying dictionary item for
+	 * with the dictionary item that is the underlying dictionary item for
 	 * that symbol. If you select multiple items in the active pane, Active
 	 * Dictionary Item will return a collection with all the selected items.
 

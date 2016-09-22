@@ -41,14 +41,16 @@ public class JawinFrameworkFactory implements IPtcFrameworkFactory {
 	
 	/** The jawin property manager. */
 	private JawinPropertyManager jawinPropertyManager = new JawinPropertyManager();
+
+	private JawinFileDialog jawinFileDialog = new JawinFileDialog();
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcFrameworkFactory#getFileDialogManager()
 	 */
 	@Override
-	public IPtcFileDialog<JawinObject> getFileDialogManager() {
-		// TODO Auto-generated method stub
-		return null;
+	public IPtcFileDialog<JawinObject> getFileDialogManager() throws EpsilonCOMException {
+		jawinFileDialog.connect(bridge);
+		return jawinFileDialog;
 	}
 
 	/* (non-Javadoc)
@@ -110,6 +112,12 @@ public class JawinFrameworkFactory implements IPtcFrameworkFactory {
 		} catch (EpsilonCOMException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		try {
+			jawinFileDialog.disconnect();
+		} catch (EpsilonCOMException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		try {
 			uninitialiseCOM();

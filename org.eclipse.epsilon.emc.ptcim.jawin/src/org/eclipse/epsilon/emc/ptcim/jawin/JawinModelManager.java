@@ -21,6 +21,11 @@ import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
  */
 public class JawinModelManager implements IPtcModelManager<JawinObject, JawinCollection> {
 	
+	/**
+	 * This is the root object for Modeler. It is a collection object for all
+	 * the Project objects you can read, that is, the Models available in the
+	 * repositories that are bookmarked in your Model Explorer. 
+	 */
 	private JawinObject projects;
 	boolean isConnected = false;
 

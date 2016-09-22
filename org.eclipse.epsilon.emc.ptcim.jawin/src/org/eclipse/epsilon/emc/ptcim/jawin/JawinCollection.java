@@ -271,6 +271,17 @@ public class JawinCollection extends AbstractList<JawinObject> implements IPtcCo
 			args.add(association);
 			resCount = owner.invoke("ItemCount", args);
 		} catch (EpsilonCOMException e) {
+			// If mesage is "Not implemented", try counting with iterator?
+			if (e.getMessage().contains("Not implemented")) {
+				// We might be able to use the iterator to get the size;
+				int i = 0;
+				Iterator<JawinObject> it = iterator();
+				while(it.hasNext()) {
+					it.next();
+					i++;
+				}
+				return i;
+			}
 			throw new IllegalStateException(e);
 		}
 		return (Integer)resCount;

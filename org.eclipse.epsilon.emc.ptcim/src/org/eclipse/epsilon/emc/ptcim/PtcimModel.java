@@ -47,6 +47,9 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 
 	public static final String PROPERTY_FROM_SELECTION = "fromSelection";
 	
+	public static final String PROPERTY_ELEMENT_ID = "fromSelection";
+	
+	
 	/** IAutomationCaseObject interface id */
 	public static final String DIID = "{c9ff8402-bb2e-11d0-8475-0080C82BFA0C}";
 	

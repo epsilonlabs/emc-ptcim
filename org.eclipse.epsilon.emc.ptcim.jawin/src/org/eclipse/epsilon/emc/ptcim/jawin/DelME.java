@@ -38,6 +38,18 @@ public class DelME {
 	private static void usingJawin() throws COMException {
 		DispatchPtr theProject = getActiveProject("EmcTest");
 		DispatchPtr model = load(theProject);
+		
+		// Get the list of projects that exist in the configured repositories
+		DispatchPtr app = new DispatchPtr("OMTE.Projects");
+		DispatchPtr res = (DispatchPtr) app.invokeN("Items", new Object[] {"Project"});
+		DispatchPtr allPrs = new DispatchPtr();
+		allPrs.stealUnknown(res);
+		while (hasMore(allPrs)) {
+			DispatchPtr prj = next(allPrs);
+			Object name = getAttr(prj, "Name");
+			System.out.println(name);
+		}
+		
 //		//DispatchPtr model = load("HSUV");
 //		String type = "Class";
 //		//DispatchPtr allClasses = allofType(model, type);
@@ -108,8 +120,8 @@ public class DelME {
 //		
 //		
 //		Create a new element by type, use the project
-		DispatchPtr newEx = (DispatchPtr) model.invokeN("Add", new Object[] {"Exception"});
-		DispatchPtr newClass = (DispatchPtr) model.invokeN("Add", new Object[] {"Class"});
+//		DispatchPtr newEx = (DispatchPtr) model.invokeN("Add", new Object[] {"Exception"});
+//		DispatchPtr newClass = (DispatchPtr) model.invokeN("Add", new Object[] {"Class"});
 		//DispatchPtr newClassPck = (DispatchPtr) newClass.invokeN("Items", new Object[] {"Package"});
 		//newClass.invokeN("Remove",  new Object[] {"Category"});
 		//newClass.invokeN("Add",  new Object[] {"Package", newPck});
@@ -122,7 +134,7 @@ public class DelME {
 //		System.out.println(cAttr);
 //		DispatchPtr cAssoc = (DispatchPtr) op.invoke("Item", "Class");
 //		System.out.println(cAssoc);
-		newClass.invokeN("Add", new Object[] {"Contained Exception", newEx});
+//		newClass.invokeN("Add", new Object[] {"Contained Exception", newEx});
 		
 //		String old_props = null;
 //		String props = null;
