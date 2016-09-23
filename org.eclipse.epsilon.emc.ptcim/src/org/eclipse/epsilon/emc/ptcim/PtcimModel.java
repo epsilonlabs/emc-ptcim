@@ -12,6 +12,7 @@ package org.eclipse.epsilon.emc.ptcim;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 
 	public static final String PROPERTY_FROM_SELECTION = "fromSelection";
 	
-	public static final String PROPERTY_ELEMENT_ID = "fromSelection";
+	public static final String PROPERTY_ELEMENT_ID = "elementId";
 	
 	
 	/** IAutomationCaseObject interface id */
@@ -86,6 +87,10 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	private String repository;
 
 	private String version;
+
+	private boolean fromSelection;
+
+	private String selectedElementId;
 
 	/**
 	 * Instantiates a new artisan model. Gets the COM helpers from the extension
@@ -322,19 +327,49 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	@Override
 	public Collection<IPtcObject> getAllOfType(String type) throws EolModelElementTypeNotFoundException {
 		assert model != null;
-		List<? extends IPtcObject> elements;
-		List<Object> args = new ArrayList<Object>();
-		args.add(type);
-		List<Object> byRefArgs = new ArrayList<Object>();
-		byRefArgs.add("*");
-		IPtcObject res;
-		try {
-			res = (IPtcObject) model.invoke("Items", args);	//, byRefArgs);
-		} catch (EpsilonCOMException e) {
-			throw new EolModelElementTypeNotFoundException(name, type);
+		if (!fromSelection) {
+			List<? extends IPtcObject> elements;
+			List<Object> args = new ArrayList<Object>();
+			args.add(type);
+			List<Object> byRefArgs = new ArrayList<Object>();
+			byRefArgs.add("*");
+			IPtcObject res;
+			try {
+				res = (IPtcObject) model.invoke("Items", args);	//, byRefArgs);
+			} catch (EpsilonCOMException e) {
+				throw new EolModelElementTypeNotFoundException(name, type);
+			}
+			elements = res.wrapInColleciton(model, type);	//new JawinCollection(res, model, type);
+			return (List<IPtcObject>) elements;
 		}
-		elements = res.wrapInColleciton(model, type);	//new JawinCollection(res, model, type);
-		return (List<IPtcObject>) elements;
+		else {
+			IPtcObject root = (IPtcObject) getElementById(selectedElementId);
+			List<Object> args = new ArrayList<Object>();
+			args.add("Owned Contents");
+			IPtcObject res;
+			try {
+				res = (IPtcObject) root.invoke("Items", args);
+			} catch (EpsilonCOMException e1) {
+				throw new EolModelElementTypeNotFoundException(name, type);
+			}
+			List<? extends IPtcObject> elements;
+			elements = res.wrapInColleciton(model, "Owned Contents");
+			Iterator<? extends IPtcObject> it = elements.iterator();
+			List<IPtcObject> typeElements = new ArrayList<IPtcObject>();
+			while (it.hasNext()) {
+				IPtcObject e = it.next();
+				Object etype;
+				try {
+					etype = e.getAttribute("Property", "Type");
+				} catch (EpsilonCOMException e1) {
+					throw new EolModelElementTypeNotFoundException(name, type);
+				}
+				if (type.equals(etype)) {
+					typeElements.add(e);
+				}
+			}
+			return typeElements;
+		}
 	}
 
 
@@ -534,10 +569,10 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		server = properties.getProperty(PROPERTY_SERVER_NAME);
 		repository = properties.getProperty(PROPERTY_REPOSITORY_NAME);
 		version = properties.getProperty(PROPERTY_VERSION_NUMBER);
+		fromSelection = properties.getBooleanProperty(PROPERTY_FROM_SELECTION, false);
+		selectedElementId = properties.getProperty(PROPERTY_ELEMENT_ID);
 		load();
 	}
-	
-	
 	
 	public void loadDictionary() throws EolModelLoadingException {
 		//List<Object> args = new ArrayList<Object>();

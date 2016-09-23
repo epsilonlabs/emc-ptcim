@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Dimitrios Kolovos - initial API and implementation
+ *     Horacio Hoyos	 - Additional options
  ******************************************************************************/
 package org.eclipse.epsilon.emc.ptcim.dt;
 
@@ -17,11 +18,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.epsilon.common.dt.launching.dialogs.AbstractCachedModelConfigurationDialog;
 import org.eclipse.epsilon.emc.ptcim.PtcimModel;
 import org.eclipse.epsilon.emc.ptcim.ole.IPtcCollection;
@@ -30,72 +27,106 @@ import org.eclipse.epsilon.emc.ptcim.ole.IPtcFrameworkFactory;
 import org.eclipse.epsilon.emc.ptcim.ole.IPtcModelManager;
 import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
-import org.eclipse.jface.dialogs.ProgressIndicator;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * The Class PtcimModelConfigurationDialog.
+ */
 public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurationDialog {
 	
+	/** The Constant MODEL_TYPE. */
 	private static final String MODEL_TYPE = "PTC IM Model";
 	
+	/** The Constant PTCIM_OLE_EP_ID. */
 	// The Extension Point ID
 	public static final String PTCIM_OLE_EP_ID = "org.eclipse.epsilon.emc.ptcim.ole";
 	
+	/** The Constant ATT_CLASS. */
 	public static final String ATT_CLASS = "class";
 
+	/** The factory. */
 	private IPtcFrameworkFactory factory;
 	
+	/** The file text label. */
 	protected Label fileTextLabel;
 	
+	/** The file text. */
 	protected Text fileText;
 
+	/** The profile directories label. */
 	protected Label profileDirectoriesLabel;
 
+	/** The profile directories text. */
 	protected Text profileDirectoriesText;
 	
+	/** The profile workspace directories label. */
 	protected Label profileWorkspaceDirectoriesLabel;
+	
+	/** The profile workspace directories text. */
 	protected Text profileWorkspaceDirectoriesText;
+	
+	/** The browse model file. */
 	protected Button browseModelFile;
+	
+	/** The ignore argo uml profiles. */
 	protected Button ignoreArgoUmlProfiles;
+	
+	/** The reference label. */
 	protected Label referenceLabel;
+	
+	/** The reference text. */
 	protected Text referenceText;
+	
+	/** The server text. */
 	private Text serverText;
+	
+	/** The server label. */
 	private Label serverLabel;
 	
+	/** The repository text. */
 	private Text repositoryText;
+	
+	/** The repository label. */
 	private Label repositoryLabel;
+	
+	/** The version label. */
 	private Label versionLabel;
+	
+	/** The version text. */
 	private Text versionText;
+	
+	/** The from selection checkbox. */
 	private Button fromSelectionCheckbox;
 
+	/** The from selection label. */
 	private Label fromSelectionLabel;
 
+	/** The selected element id label. */
 	private Label selectedElementIdLabel;
 
+	/** The selected element find id button. */
 	private Button selectedElementFindIdButton;
 
+	/** The selected element id text. */
 	private Text selectedElementIdText;
-
-	private ComboViewer comboDropDown;
 	
+	/** The manager. */
 	IPtcModelManager<? extends IPtcObject, ? extends IPtcCollection<? extends IPtcObject>> manager = null;
 
+	/** The two col. */
 	private GridData twoCol;
 	
+	/**
+	 * Instantiates a new ptcim model configuration dialog.
+	 */
 	public PtcimModelConfigurationDialog() {
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IExtensionPoint ep = reg.getExtensionPoint(PTCIM_OLE_EP_ID);
@@ -136,6 +167,12 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	}
 	
 
+	/**
+	 * Created selected element.
+	 *
+	 * @param parent the parent
+	 * @param groupContent the group content
+	 */
 	private void createdSelectedElement(final Composite parent, final Composite groupContent) {
 		selectedElementIdLabel = new Label(groupContent, SWT.NONE);
 		selectedElementIdLabel.setText("Id of the root element:");
@@ -236,6 +273,9 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		});
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.common.dt.launching.dialogs.AbstractCachedModelConfigurationDialog#createGroups(org.eclipse.swt.widgets.Composite)
+	 */
 	protected void createGroups(Composite control) {
 		super.createGroups(control);
 		//createFilesGroup(control);
@@ -243,6 +283,9 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		createLoadStoreOptionsGroup(control);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.common.dt.launching.dialogs.AbstractModelConfigurationDialog#createNameAliasGroup(org.eclipse.swt.widgets.Composite)
+	 */
 	@Override
 	protected void createNameAliasGroup(final Composite parent) {
 		// FIXME All labels can be local
@@ -345,21 +388,35 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		groupContent.pack();
 	}
 	
+	/**
+	 * Enable element id.
+	 *
+	 * @param enabled the enabled
+	 */
 	private void enableElementId(boolean enabled) {
 		selectedElementIdText.setEnabled(enabled);
 		selectedElementFindIdButton.setEnabled(enabled);
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.common.dt.launching.dialogs.AbstractModelConfigurationDialog#getModelName()
+	 */
 	protected String getModelName() {
 		return "PTC Integrity Modeler Model";
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.common.dt.launching.dialogs.AbstractModelConfigurationDialog#getModelType()
+	 */
 	protected String getModelType() {
 		return MODEL_TYPE;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.common.dt.launching.dialogs.AbstractCachedModelConfigurationDialog#loadProperties()
+	 */
 	protected void loadProperties(){
 		super.loadProperties();
 		if (properties == null) return;
@@ -374,7 +431,10 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	}
 	
 	/**
-	 * @param ap
+	 * Sets the project properties text.
+	 *
+	 * @param ap the ap
+	 * @return the string
 	 */
 	private String setProjectPropertiesText(IPtcObject ap) {
 		// Get current project information
@@ -390,8 +450,11 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		}
 		return "";
 	}
+	
 	/**
-	 * @param ref
+	 * Model reference to fields.
+	 *
+	 * @param ref the ref
 	 */
 	private void modelReferenceToFields(String ref) {
 		String[] info = ref.split("\\\\");
@@ -401,13 +464,17 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		versionText.setText(info[6]);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.common.dt.launching.dialogs.AbstractCachedModelConfigurationDialog#storeProperties()
+	 */
 	protected void storeProperties(){
 		super.storeProperties();
 		properties.put(PtcimModel.PROPERTY_MODEL_REFERENCE, referenceText.getText());
 		properties.put(PtcimModel.PROPERTY_SERVER_NAME, serverText.getText());
 		properties.put(PtcimModel.PROPERTY_REPOSITORY_NAME, repositoryText.getText());
 		properties.put(PtcimModel.PROPERTY_VERSION_NUMBER, versionText.getText());
-		properties.put(PtcimModel.PROPERTY_FROM_SELECTION, Boolean.toString(fromSelectionCheckbox.getSelection()));
+		String fromSelection = Boolean.toString(fromSelectionCheckbox.getSelection());
+		properties.put(PtcimModel.PROPERTY_FROM_SELECTION, fromSelection);
 		properties.put(PtcimModel.PROPERTY_ELEMENT_ID, selectedElementIdText.getText());
 	}
 	
