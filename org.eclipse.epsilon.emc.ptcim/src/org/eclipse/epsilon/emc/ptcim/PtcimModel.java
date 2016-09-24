@@ -97,7 +97,7 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 */
 	public PtcimModel() {
 		
-    	cachingEnabled = false;
+    	//cachingEnabled = false;
 		
 		isInitialized = true;
 	}
@@ -311,28 +311,21 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 * delegates to {@link #getAllOfTypeFromModel(String)}.
 	 */
 	@Override
-	public Collection<IPtcObject> getAllOfKind(String kind) throws EolModelElementTypeNotFoundException {
-		return getAllOfType(kind);
+	public Collection<IPtcObject> getAllOfKindFromModel(String kind) throws EolModelElementTypeNotFoundException {
+		return getAllOfTypeFromModel(kind);
 	}
 	
-	@Override
-	protected Collection<? extends IPtcObject> getAllOfKindFromModel(String kind)
-			throws EolModelElementTypeNotFoundException {
-		throw new UnsupportedOperationException("Artisan models don't use cache.");
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllOfType(java.lang.String)
 	 */
 	@Override
-	public Collection<IPtcObject> getAllOfType(String type) throws EolModelElementTypeNotFoundException {
+	public Collection<IPtcObject> getAllOfTypeFromModel(String type) throws EolModelElementTypeNotFoundException {
 		assert model != null;
 		if (!fromSelection) {
 			List<? extends IPtcObject> elements;
 			List<Object> args = new ArrayList<Object>();
 			args.add(type);
-			List<Object> byRefArgs = new ArrayList<Object>();
-			byRefArgs.add("*");
 			IPtcObject res;
 			try {
 				res = (IPtcObject) model.invoke("Items", args);	//, byRefArgs);
@@ -343,41 +336,95 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 			return (List<IPtcObject>) elements;
 		}
 		else {
+			if ("Package".equals(type)) {	// Important: When you retrieve the type of a Package, it is returned as Category.
+				type = "Category";
+			}
 			IPtcObject root = (IPtcObject) getElementById(selectedElementId);
-			List<Object> args = new ArrayList<Object>();
-			args.add("Owned Contents");
-			IPtcObject res;
-			try {
-				res = (IPtcObject) root.invoke("Items", args);
-			} catch (EpsilonCOMException e1) {
-				throw new EolModelElementTypeNotFoundException(name, type);
-			}
-			List<? extends IPtcObject> elements;
-			elements = res.wrapInColleciton(model, "Owned Contents");
-			Iterator<? extends IPtcObject> it = elements.iterator();
-			List<IPtcObject> typeElements = new ArrayList<IPtcObject>();
-			while (it.hasNext()) {
-				IPtcObject e = it.next();
-				Object etype;
-				try {
-					etype = e.getAttribute("Property", "Type");
-				} catch (EpsilonCOMException e1) {
-					throw new EolModelElementTypeNotFoundException(name, type);
-				}
-				if (type.equals(etype)) {
-					typeElements.add(e);
-				}
-			}
-			return typeElements;
+			List<IPtcObject> result = getOwnedContents(root, type);
+			return result;
 		}
 	}
-
-
-	@Override
-	protected Collection<? extends IPtcObject> getAllOfTypeFromModel(String type)
-			throws EolModelElementTypeNotFoundException {
-		throw new UnsupportedOperationException("Artisan models don't use cache.");
+	
+	private List<IPtcObject> getOwnedContents(IPtcObject root, String type) throws EolModelElementTypeNotFoundException {
+		String rootType = null;
+		try {
+			rootType = (String) root.getAttribute("Property", "Type");
+		} catch (EpsilonCOMException e2) {
+			throw new EolModelElementTypeNotFoundException(name, type);
+		}
+		List<IPtcObject> result = new ArrayList<IPtcObject>();
+		if ("Category".equals(rootType)) {	// Root is a package
+			String asocName = "Package Item";
+			result.addAll(associationToListRecursive(root, type, asocName));
+		}
+		else {
+			// TODO Other types may need specific associations to get the contents
+			String asocName = "Owned Contents";
+			List<? extends IPtcObject> ownedContents = associationToList(root, asocName);
+			result.addAll(filterByType(ownedContents, type));
+		}
+		return result;
 	}
+	
+	private List<IPtcObject> associationToListRecursive(IPtcObject root, String type, String asocName)
+			throws EolModelElementTypeNotFoundException {
+		
+		List<? extends IPtcObject> ownedContents = associationToList(root, asocName);
+		List<IPtcObject> result = filterByType(ownedContents, type);
+		for (IPtcObject e : ownedContents) {
+			result.addAll(getOwnedContents(e, type));
+		}
+		return result;
+	}
+
+	/**
+	 * @param root
+	 * @param type
+	 * @param asocName
+	 * @param result
+	 * @throws EolModelElementTypeNotFoundException
+	 */
+	private List<? extends IPtcObject> associationToList(IPtcObject root, String asocName)
+			throws EolModelElementTypeNotFoundException {
+		
+		List<Object> args = new ArrayList<Object>();
+		args.add(asocName);
+		IPtcObject res = null;
+		try {
+			res = (IPtcObject) root.invoke("Items", args);
+		} catch (EpsilonCOMException e1) {
+			e1.printStackTrace();
+		}
+		if (res != null) {
+			//List<? extends IPtcObject> ownedContents;
+			return res.wrapInColleciton(root, asocName);
+			//return 
+		}
+		return Collections.emptyList();
+	}
+
+	/**
+	 * @param ptcCollection
+	 * @param type
+	 */
+	private List<IPtcObject>  filterByType(List<? extends IPtcObject> ptcCollection, String type) {
+		List<IPtcObject> result = new ArrayList<IPtcObject>();
+		Iterator<? extends IPtcObject> it = ptcCollection.iterator();
+		while (it.hasNext()) {
+			IPtcObject e = it.next();
+			Object etype = null;
+			try {
+				etype = e.getAttribute("Property", "Type");
+			} catch (EpsilonCOMException e1) {
+				e1.printStackTrace();
+			}
+			if (type.equals(etype)) {
+				result.add(e);
+			}
+		}
+		return result;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllTypeNamesOf(java.lang.Object)

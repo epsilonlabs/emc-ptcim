@@ -3,7 +3,9 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
 import org.jawin.COMException;
 import org.jawin.DispatchPtr;
 import org.jawin.Variant;
@@ -15,9 +17,18 @@ public class DelME {
 	
 	public static void main(String[] args) {
 		try {
+			Ole32.CoInitialize();
 			usingJawin();
 		} catch (Exception e) {
 		  e.printStackTrace();
+		}
+		finally {
+			try {
+				Ole32.CoUninitialize();
+			} catch (COMException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
     }
 	
@@ -36,19 +47,40 @@ public class DelME {
 //	}
 	
 	private static void usingJawin() throws COMException {
-		DispatchPtr theProject = getActiveProject("EmcTest");
+		DispatchPtr theProject = getActiveProject("EmcGenTiny");
 		DispatchPtr model = load(theProject);
 		
 		// Get the list of projects that exist in the configured repositories
-		DispatchPtr app = new DispatchPtr("OMTE.Projects");
-		DispatchPtr res = (DispatchPtr) app.invokeN("Items", new Object[] {"Project"});
-		DispatchPtr allPrs = new DispatchPtr();
-		allPrs.stealUnknown(res);
-		while (hasMore(allPrs)) {
-			DispatchPtr prj = next(allPrs);
-			Object name = getAttr(prj, "Name");
+//		DispatchPtr app = new DispatchPtr("OMTE.Projects");
+//		DispatchPtr res = (DispatchPtr) app.invokeN("Items", new Object[] {"Project"});
+//		DispatchPtr allPrs = new DispatchPtr();
+//		allPrs.stealUnknown(res);
+//		while (hasMore(allPrs)) {
+//			DispatchPtr prj = next(allPrs);
+//			Object name = getAttr(prj, "Name");
+//			System.out.println(name);
+//		}
+		DispatchPtr rootItem = (DispatchPtr) model.invoke("Item", "Package", "GenSystem");
+		String strObjId = (String) rootItem.get("Property", "Id");
+		System.out.println(strObjId);
+		System.out.println(strObjId.equals("e8463ee7-4af3-4e24-b871-fbb29b061245"));
+		//DispatchPtr root = (DispatchPtr) theProject.invoke("ItemByID", new Object[] {strObjId});
+		DispatchPtr res = (DispatchPtr) rootItem.invokeN("Items", new Object[] {"Class"});
+		DispatchPtr allInstances = new DispatchPtr();
+		allInstances.stealUnknown(res);
+		while (hasMore(allInstances)) {
+			// Find if the class is a requirement 
+			DispatchPtr clzz = next(allInstances);
+			Object name = getAttr(clzz, "Name");
 			System.out.println(name);
+			Object type = getAttr(clzz, "Type");
+			System.out.println(type);
 		}
+		
+		DispatchPtr p1 = (DispatchPtr) model.invoke("Item", "Class", "VaaiauKones");
+		DispatchPtr sitem = (DispatchPtr) p1.invoke("Item", "Scoping Item");
+		Object name = getAttr(sitem, "Name");
+		System.out.println(name);
 		
 //		//DispatchPtr model = load("HSUV");
 //		String type = "Class";
@@ -256,8 +288,6 @@ public class DelME {
 //		}
 		//ArtisanProject("Transaction") = "Abort"
 //		theProject.invoke("PropertySet", "Transaction", 0, "Abort");
-		
-		Ole32.CoUninitialize();
 		System.out.println("Success");
 	}
 	
@@ -279,9 +309,7 @@ public class DelME {
 	private static DispatchPtr getActiveProject(String name) throws COMException {
 		Ole32.CoInitialize();
 		DispatchPtr app = new DispatchPtr("OMTE.Projects");
-		String Index = name;
 		String Role = "Project";
-		Variant.ByrefHolder varIndex = new Variant.ByrefHolder(Index);
 		DispatchPtr dispPtr = (DispatchPtr) app.invokeN("Item", new Object[] {
 				Role, name});
 		DispatchPtr modelRef = new DispatchPtr();

@@ -40,7 +40,7 @@ public class JawinIterator implements Iterator<JawinObject> {
 	 */
 	public JawinIterator(JawinObject source) {
 		super();
-		this.source = (JawinObject) source;
+		this.source = source;
 		try {
 			// Make sure the iterator is at the beginning of the collection
 			source.invokeMethod("ResetQueryItems");

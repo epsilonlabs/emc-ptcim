@@ -198,7 +198,8 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 					try {
 						ap = manager.getActiveProjet();
 					} catch (EpsilonCOMException e) {
-						showErrorMsg("Failed get active project.");
+						showErrorMsg("Failed to get active project. Make sure the PTC IM Molder is opened and the"
+								+ " desired model loaded, and that an element is selected.");
 					}
 					if (ap != null) {
 //						System.out.println(ap);
@@ -467,7 +468,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.common.dt.launching.dialogs.AbstractCachedModelConfigurationDialog#storeProperties()
 	 */
-	protected void storeProperties(){
+	protected void storeProperties() {
 		super.storeProperties();
 		properties.put(PtcimModel.PROPERTY_MODEL_REFERENCE, referenceText.getText());
 		properties.put(PtcimModel.PROPERTY_SERVER_NAME, serverText.getText());
