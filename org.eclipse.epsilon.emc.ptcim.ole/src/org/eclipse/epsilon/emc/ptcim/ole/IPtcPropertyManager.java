@@ -18,6 +18,13 @@ import org.eclipse.epsilon.emc.ptcim.ole.impl.PtcProperty;
  * to properties values. 
  */
 public interface IPtcPropertyManager {
+	
+	public enum PtcPropertyAttribs {
+		IS_PUBLIC,
+		IS_READ_ONLY,
+		IS_MULTIPLE,
+		IS_ASSOCIATION
+	}
 
 	/**
 	 * Gets the single instance of IPtcPropertyManager.
@@ -25,6 +32,8 @@ public interface IPtcPropertyManager {
 	 * @return single instance of IPtcPropertyManager
 	 */
 	IPtcPropertyManager getInstance();
+	
+	boolean knowsProperty(String property);
 
 	/**
 	 * Gets the property.
@@ -33,11 +42,13 @@ public interface IPtcPropertyManager {
 	 * @param property the property
 	 * @return the property
 	 */
-	PtcProperty getProperty(IPtcObject object, String property);
+	PtcProperty getPtcProperty(String property);
 	
 	/**
 	 *  Clear the cache.
 	 */
 	void dispose();
+
+	PtcProperty getPtcProperty(IPtcObject object, String property);
 
 }

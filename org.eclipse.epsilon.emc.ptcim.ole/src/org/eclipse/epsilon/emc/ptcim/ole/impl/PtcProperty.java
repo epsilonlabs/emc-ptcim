@@ -16,6 +16,8 @@ package org.eclipse.epsilon.emc.ptcim.ole.impl;
  * (multiplicity, visibility, etc.) to return the correct Java wrapper objects. 
  */
 public class PtcProperty {
+	
+		
 		
 		/** The name. */
 		private final String name;

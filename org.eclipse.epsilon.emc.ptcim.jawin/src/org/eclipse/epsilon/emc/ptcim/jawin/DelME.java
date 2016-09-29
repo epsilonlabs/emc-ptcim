@@ -65,13 +65,13 @@ public class DelME {
 		System.out.println(strObjId);
 		System.out.println(strObjId.equals("e8463ee7-4af3-4e24-b871-fbb29b061245"));
 		//DispatchPtr root = (DispatchPtr) theProject.invoke("ItemByID", new Object[] {strObjId});
-		DispatchPtr res = (DispatchPtr) rootItem.invokeN("Items", new Object[] {"Class"});
+		DispatchPtr res = (DispatchPtr) model.invokeN("Items", new Object[] {"Class"});
 		DispatchPtr allInstances = new DispatchPtr();
 		allInstances.stealUnknown(res);
 		while (hasMore(allInstances)) {
 			// Find if the class is a requirement 
 			DispatchPtr clzz = next(allInstances);
-			Object name = getAttr(clzz, "Name");
+			Object name = getAttr(clzz, "isabstract");
 			System.out.println(name);
 			Object type = getAttr(clzz, "Type");
 			System.out.println(type);

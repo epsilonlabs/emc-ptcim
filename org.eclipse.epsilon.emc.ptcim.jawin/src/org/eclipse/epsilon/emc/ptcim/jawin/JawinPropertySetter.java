@@ -39,7 +39,7 @@ public class JawinPropertySetter extends AbstractPropertySetter {
 	 */
 	@Override
 	public void setProperty(String property) {
-		comProperty = manager.getProperty((IPtcObject) object, property);
+		comProperty = manager.getPtcProperty((IPtcObject) object, property);
 		if (comProperty != null) {
 			super.setProperty(property);
 		}

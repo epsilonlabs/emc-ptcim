@@ -68,6 +68,7 @@ public class JawinFrameworkFactory implements IPtcFrameworkFactory {
 	@Override
 	public IPropertyGetter getPropertyGetter() {
 		return jawinPropertyGetter;
+		//return new JawinCachedPropertyXetter();
 	}
 
 	/* (non-Javadoc)
@@ -76,6 +77,7 @@ public class JawinFrameworkFactory implements IPtcFrameworkFactory {
 	@Override
 	public IPropertySetter getPropertySetter() {
 		return jawinPropertySetter;
+		//return new JawinCachedPropertyXetter();
 	}
 
 	/* (non-Javadoc)
@@ -132,7 +134,8 @@ public class JawinFrameworkFactory implements IPtcFrameworkFactory {
 	 */
 	@Override
 	public IPtcPropertyManager getPropertyManager() {
-		return jawinPropertyManager;
+		return (IPtcPropertyManager) new JawinCachedPropertyXetter();
+//		return jawinPropertyManager;
 	}
 
 	@Override

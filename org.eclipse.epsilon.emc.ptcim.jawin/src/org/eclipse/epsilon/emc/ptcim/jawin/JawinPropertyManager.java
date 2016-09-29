@@ -37,7 +37,8 @@ public class JawinPropertyManager implements IPtcPropertyManager {
 	 * @see org.eclipse.epsilon.emc.ptcim.jawin.COMPropertyManager#getProperty(org.eclipse.epsilon.emc.COM.COMObject, java.lang.String)
 	 */
 	@Override
-	public PtcProperty getProperty(IPtcObject object, String property) {
+	public PtcProperty getPtcProperty(IPtcObject object, String property) {
+		long start = System.nanoTime();
 		Map<String, PtcProperty> cachedProps = cache.get(object);
 		if (cachedProps == null) {
 			cachedProps = new HashMap<String, PtcProperty>();
@@ -84,6 +85,8 @@ public class JawinPropertyManager implements IPtcPropertyManager {
 			}
 			cachedProps.put(property, prop);
 		}
+		long total = System.nanoTime() - start;
+		System.out.println("JawinPropertyManager,getProperty," + object + "," + property + "," + total);
 		return prop;
 	}
 
@@ -156,6 +159,12 @@ public class JawinPropertyManager implements IPtcPropertyManager {
 
 	private String unQuote(String name) {
 		return name.replaceAll("^\"|\"$", "");
+	}
+
+	@Override
+	public PtcProperty getPtcProperty(String property) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 

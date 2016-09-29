@@ -13,8 +13,10 @@ package org.eclipse.epsilon.emc.ptcim;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.ptcim.ole.IPtcCollection;
@@ -93,12 +95,20 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	private String selectedElementId;
 
 	/**
+	 * Keeps a reference to the last object for which {@link #knowsAboutProperty(Object, String)}
+	 * was invoked.
+	 */
+	private Object lastPropertyObject;
+	
+	private Map<Object, IPtcPropertyManager> xetterCache;
+
+	/**
 	 * Instantiates a new artisan model. Gets the COM helpers from the extension
 	 */
 	public PtcimModel() {
 		
     	//cachingEnabled = false;
-		
+		xetterCache = new HashMap<Object, IPtcPropertyManager>();
 		isInitialized = true;
 	}
 
@@ -512,7 +522,13 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 */
 	@Override
 	public IPropertyGetter getPropertyGetter() {
-		return Activator.getDefault().getFactory().getPropertyGetter();
+		if (xetterCache.containsKey(lastPropertyObject)) {
+			return (IPropertyGetter) xetterCache.get(lastPropertyObject);
+		}
+		else {
+			return null;
+		}
+//		return Activator.getDefault().getFactory().getPropertyGetter();
 	}
 
 	/**
@@ -527,7 +543,13 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 */
 	@Override
 	public IPropertySetter getPropertySetter() {
-		return Activator.getDefault().getFactory().getPropertySetter();
+		if (xetterCache.containsKey(lastPropertyObject)) {
+			return (IPropertySetter) xetterCache.get(lastPropertyObject);
+		}
+		else {
+			return null;
+		}
+//		return Activator.getDefault().getFactory().getPropertySetter();
 	}
 
 	/* (non-Javadoc)
@@ -601,9 +623,21 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	public boolean knowsAboutProperty(Object instance, String property) {
 		Object p = null;
 		if (instance instanceof IPtcObject) {
-			p = getPropertyManager().getProperty((IPtcObject) instance, property);
+			Object pm = xetterCache.get(instance);
+			if (pm == null) {
+				pm = getPropertyManager();
+				((IPropertySetter) pm).setObject(instance);
+				xetterCache.put(instance, (IPtcPropertyManager) pm);
+			}
+			//p = ((IPtcPropertyManager) pm).getPtcProperty(property);
+			lastPropertyObject = instance;
+			return ((IPtcPropertyManager) pm).knowsProperty(property);
 		}
-		return p != null;
+//		Object p = null;
+//		if (instance instanceof IPtcObject) {
+//			p = getPropertyManager().getPtcProperty((IPtcObject) instance, property);
+//		}
+		return false;
 	}
 
 	/* (non-Javadoc)
