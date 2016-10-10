@@ -36,24 +36,30 @@ import org.eclipse.epsilon.eol.models.CachedModel;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 
 /**
- * The Class PtcimModel provides the EMC access to PTC Intregity Modeler models
+ * The Class PtcimModel provides the EMC access to PTC Intregity Modeler models.
  */
 public class PtcimModel extends CachedModel<IPtcObject> {
 
+	/** The Constant PROPERTY_MODEL_REFERENCE refers to the name of the model in the PTC IM database. */
 	public static final String PROPERTY_MODEL_REFERENCE = "modelRef";
 
+	/** The Constant PROPERTY_SERVER_NAME refers to the name of the server in which a model is stored. */
 	public static final String PROPERTY_SERVER_NAME = "server";
 
+	/** The Constant PROPERTY_REPOSITORY_NAME refers to the name of the repository in which a model is stored. */
 	public static final String PROPERTY_REPOSITORY_NAME = "repository";
 
+	/** The Constant PROPERTY_VERSION_NUMBER refers to the version of a model. */
 	public static final String PROPERTY_VERSION_NUMBER = "version";
 
+	/** The Constant PROPERTY_FROM_SELECTION indicates whether the root of the model or the selected element is used
+	 * as the source for element retreival from the model. */
 	public static final String PROPERTY_FROM_SELECTION = "fromSelection";
 	
+	/** The Constant PROPERTY_ELEMENT_ID refers to the ID of the currently selected element. */
 	public static final String PROPERTY_ELEMENT_ID = "elementId";
 	
-	
-	/** IAutomationCaseObject interface id */
+	/**  IAutomationCaseObject interface id. */
 	public static final String DIID = "{c9ff8402-bb2e-11d0-8475-0080C82BFA0C}";
 	
 	/** The bridge. */
@@ -65,33 +71,25 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	/** The is initialized. */
 	private boolean isInitialized = false;
 	
-	/**  The PTC IM Model. */
+	/**  The PTC IM Model handle. */
 	private IPtcObject model = null;
 	
-	
-//	/** The property getter. */
-//	private IPropertyGetter propertyGetter;
-//
-//	/** The property setter. */
-//	private IPropertySetter propertySetter;
-//	
-//	/** The property manager. */
-//	private IPtcPropertyManager propertyManager;
-	
-	/**  The Artisan Studio. */
-	private IPtcObject studio = null;
-	private boolean connectedToStudio = false;
-
+	/** The model id. */
 	private String modelId;
 
+	/** The server. */
 	private String server;
 
+	/** The repository. */
 	private String repository;
 
+	/** The version. */
 	private String version;
 
+	/** The from selection. */
 	private boolean fromSelection;
 
+	/** The selected element id. */
 	private String selectedElementId;
 
 	/**
@@ -100,6 +98,7 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 */
 	private Object lastPropertyObject;
 	
+	/** The xetter cache. */
 	private Map<Object, IPtcPropertyManager> xetterCache;
 
 	/**
@@ -107,7 +106,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 */
 	public PtcimModel() {
 		
-    	//cachingEnabled = false;
 		xetterCache = new HashMap<Object, IPtcPropertyManager>();
 		isInitialized = true;
 	}
@@ -178,26 +176,18 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	}
 
 	/**
-	 * Connect to artisan studio.
-	 *
-	 * @throws EpsilonCOMException the epsilon COM exception
-	 */
-	public void connectToStudio() throws EpsilonCOMException {
-		// clsid = HKEY_CLASSES_ROOT\WOW6432Node\CLSID\{2EF41D24-F489-11D1-9EC4-0000B45B7329}
-		// IStudio = HKEY_CLASSES_ROOT\WOW6432Node\Interface\{014BC370-49D5-4A9F-AE65-553551E01B10}
-		if (!connectedToStudio ) {
-			studio = bridge.connectByProgId("Studio.Editor");
-			connectedToStudio = true;
-		}
-	}
-
-	/**
 	 * Creates a new instances in a specific parent and association.
 	 * In Artisan, elements created through the API can not be moved from the parent 
 	 * in which they where created. This method allows to create elements in a 
 	 * specific hierarchy. For Add operations the parameters must be the parent object.
 	 * The type must match the name of the association. For AddByType operations,
-	 * the parameters must be the parent object, and the association. 
+	 * the parameters must be the parent object, and the association.
+	 *
+	 * @param type the type
+	 * @param parameters the parameters
+	 * @return the object
+	 * @throws EolModelElementTypeNotFoundException the eol model element type not found exception
+	 * @throws EolNotInstantiableModelElementTypeException the eol not instantiable model element type exception
 	 */
 	@Override
 	public Object createInstance(String type, Collection<Object> parameters)
@@ -278,6 +268,10 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 * a Class is related to its child Attributes through the Attribute association, which has
 	 * its Propagate Delete flag set to TRUE. If you delete a Class, its Attributes will also
 	 * be deleted.
+	 *
+	 * @param instance the instance
+	 * @return true, if successful
+	 * @throws EolRuntimeException the eol runtime exception
 	 */
 	@Override
 	protected boolean deleteElementInModel(Object instance) throws EolRuntimeException {
@@ -311,7 +305,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		try {
 			theProject.disconnect();
 		} catch (EpsilonCOMException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -319,6 +312,10 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	/**
 	 * Artisan does not provide support for all of kind, so for this models this method
 	 * delegates to {@link #getAllOfTypeFromModel(String)}.
+	 *
+	 * @param kind the kind
+	 * @return the all of kind from model
+	 * @throws EolModelElementTypeNotFoundException the eol model element type not found exception
 	 */
 	@Override
 	public Collection<IPtcObject> getAllOfKindFromModel(String kind) throws EolModelElementTypeNotFoundException {
@@ -355,6 +352,14 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		}
 	}
 	
+	/**
+	 * Gets the owned contents.
+	 *
+	 * @param root the root
+	 * @param type the type
+	 * @return the owned contents
+	 * @throws EolModelElementTypeNotFoundException the eol model element type not found exception
+	 */
 	private List<IPtcObject> getOwnedContents(IPtcObject root, String type) throws EolModelElementTypeNotFoundException {
 		String rootType = null;
 		try {
@@ -376,6 +381,15 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		return result;
 	}
 	
+	/**
+	 * Association to list recursive.
+	 *
+	 * @param root the root
+	 * @param type the type
+	 * @param asocName the asoc name
+	 * @return the list
+	 * @throws EolModelElementTypeNotFoundException the eol model element type not found exception
+	 */
 	private List<IPtcObject> associationToListRecursive(IPtcObject root, String type, String asocName)
 			throws EolModelElementTypeNotFoundException {
 		
@@ -388,11 +402,12 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	}
 
 	/**
-	 * @param root
-	 * @param type
-	 * @param asocName
-	 * @param result
-	 * @throws EolModelElementTypeNotFoundException
+	 * Association to list.
+	 *
+	 * @param root the root
+	 * @param asocName the asoc name
+	 * @return the list<? extends I ptc object>
+	 * @throws EolModelElementTypeNotFoundException the eol model element type not found exception
 	 */
 	private List<? extends IPtcObject> associationToList(IPtcObject root, String asocName)
 			throws EolModelElementTypeNotFoundException {
@@ -406,16 +421,17 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 			e1.printStackTrace();
 		}
 		if (res != null) {
-			//List<? extends IPtcObject> ownedContents;
 			return res.wrapInColleciton(root, asocName);
-			//return 
 		}
 		return Collections.emptyList();
 	}
 
 	/**
-	 * @param ptcCollection
-	 * @param type
+	 * Filter by type.
+	 *
+	 * @param ptcCollection the ptc collection
+	 * @param type the type
+	 * @return the list
 	 */
 	private List<IPtcObject>  filterByType(List<? extends IPtcObject> ptcCollection, String type) {
 		List<IPtcObject> result = new ArrayList<IPtcObject>();
@@ -455,6 +471,11 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		return type;
 	}
 
+	/**
+	 * Gets the COM model.
+	 *
+	 * @return the COM model
+	 */
 	public IPtcObject getCOMModel() {
 		return model;
 	}
@@ -509,7 +530,9 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	}
 	
 	/**
-	 * Get the Id of the model used for the PTC IM repository
+	 * Get the Id of the model used for the PTC IM repository.
+	 *
+	 * @return the model id
 	 */
 	public String getModelId() {
 		return modelId;
@@ -528,10 +551,11 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		else {
 			return null;
 		}
-//		return Activator.getDefault().getFactory().getPropertyGetter();
 	}
 
 	/**
+	 * Gets the property manager.
+	 *
 	 * @return the propertyManager
 	 */
 	protected IPtcPropertyManager getPropertyManager() {
@@ -549,7 +573,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		else {
 			return null;
 		}
-//		return Activator.getDefault().getFactory().getPropertySetter();
 	}
 
 	/* (non-Javadoc)
@@ -562,7 +585,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		try {
 			typeName = (String) ((IPtcObject) instance).getAttribute("Property", "Type");
 		} catch (EpsilonCOMException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		}
 		return typeName;
@@ -579,13 +601,15 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		try {
 			errDispPtr = (String) theProject.invoke("GetClassProperties", args);
 		} catch (EpsilonCOMException e) {
-			// TODO Auto-generated catch block
+			// FIXME Log me!
 			e.printStackTrace();
 		}
 		return errDispPtr.length() > 0;
 	}
 
 	/**
+	 * Checks if is initialized.
+	 *
 	 * @return the isInitialized
 	 */
 	public boolean isInitialized() {
@@ -602,18 +626,22 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		return hasType(type);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.eol.models.Model#isOfKind(java.lang.Object, java.lang.String)
+	 */
 	@Override
 	public boolean isOfKind(Object instance, String metaClass) throws EolModelElementTypeNotFoundException {
 		return isOfType(instance, metaClass);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.eol.models.Model#isOfType(java.lang.Object, java.lang.String)
+	 */
 	@Override
 	public boolean isOfType(Object instance, String metaClass) throws EolModelElementTypeNotFoundException {
 		assert instance instanceof IPtcObject;
 		String type = getTypeNameOf(instance);
 		return metaClass.equals(type);
-		
-		
 	}
 	
 	/* (non-Javadoc)
@@ -629,14 +657,9 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 				((IPropertySetter) pm).setObject(instance);
 				xetterCache.put(instance, (IPtcPropertyManager) pm);
 			}
-			//p = ((IPtcPropertyManager) pm).getPtcProperty(property);
 			lastPropertyObject = instance;
 			return ((IPtcPropertyManager) pm).knowsProperty(property);
 		}
-//		Object p = null;
-//		if (instance instanceof IPtcObject) {
-//			p = getPropertyManager().getPtcProperty((IPtcObject) instance, property);
-//		}
 		return false;
 	}
 
@@ -655,9 +678,12 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		load();
 	}
 	
+	/**
+	 * Load dictionary.
+	 *
+	 * @throws EolModelLoadingException the eol model loading exception
+	 */
 	public void loadDictionary() throws EolModelLoadingException {
-		//List<Object> args = new ArrayList<Object>();
-		//args.add("Dictionary");
 		List<Object> byRefArgs = new ArrayList<Object>();
 		byRefArgs.add("Dictionary");
 		byRefArgs.add("Dictionary");
@@ -668,7 +694,7 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 			try {
 				bridge.uninitialiseCOM();
 			} catch (EpsilonCOMException e1) {
-				// TODO Auto-generated catch block
+				// FIXME Log me!
 				e1.printStackTrace();
 			}
 			throw new EolModelLoadingException(e, this);
@@ -686,7 +712,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 			try {
 				manager = activator.getFactory().getModelManager();
 			} catch (EpsilonCOMException e1) {
-				// TODO Auto-generated catch block
 				throw new EolModelLoadingException(e1, this);
 			}
 			if  (readOnLoad) {
@@ -751,15 +776,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	}
 
 	/**
-	 * Sets the model.
-	 *
-	 * @param model the new model
-	 */
-//	protected void setModel(COMModel model) {
-//		this.model = model;
-//	}
-
-	/**
 	 * @param newInstance
 	 * @throws EpsilonCOMException
 	 */
@@ -768,47 +784,7 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		((IPtcObject) newInstance).setId(id);
 	}
 
-	
-//	/**
-//	 * Opens the Artisan Sutio Editor and shows the given object. By default the first
-//	 * diagram in which the object apperas is selected.
-//	 * @throws EpsilonCOMException
-//	 */
-//	public void showInStudio(Object instance) throws EpsilonCOMException {
-//		assert instance instanceof IPtcObject;
-//		IPtcObject cobject = (IPtcObject) instance;
-//		connectToStudio();
-//		studio.invokeMethod("ShowMainWindow");
-//		List<Object> args = new ArrayList<Object>();
-//		args.add(getModelId());
-//		studio.invoke("OpenModel",args);
-//		String objectId = getElementId(instance);
-//		args.clear();
-//		args.add("Using Diagram");
-//		IPtcObject diag = (IPtcObject) cobject.invoke("Item", args);
-//		if (diag != null) {
-//			Object diagramId = getElementId(diag);
-//			args.clear();
-//			args.add("Representing Symbol");
-//			Object objSymbol = cobject.invoke("Item", args);
-//			Object symboldId = getElementId(objSymbol);
-//			args.clear();
-//			args.add(diagramId);
-//			studio.invoke("OpenDiagram", args);
-//			args.clear();
-//			args.add(diagramId);
-//			args.add(symboldId);
-//			studio.invoke("SelectSymbol2", args);
-//		}
-//		else {		// There is no diagram, use the project tree
-//			args.clear();
-//			args.add(objectId);
-//			args.add("Packages");
-//			studio.invoke("SelectBrowserItem", args);
-//		}
-//		studio.invokeMethod("SetForegroundWindow");
-//	}
-	
+		
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#store()
 	 */

@@ -44,7 +44,6 @@ public class PtcimConstraintTracer implements IConstraintTracer {
 			try {
 				EclipseContextManager.setup(context, configuration, monitor, null, true);
 			} catch (EolRuntimeException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return;
 			}
@@ -52,7 +51,6 @@ public class PtcimConstraintTracer implements IConstraintTracer {
 			try {
 				studio = Activator.getDefault().getFactory().getUIManager();
 			} catch (EpsilonCOMException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				return;
 			}
@@ -62,11 +60,16 @@ public class PtcimConstraintTracer implements IConstraintTracer {
 				e.printStackTrace();
 				return;
 			}
+			// Free the memory of the newly created context
 			context.getModelRepository().dispose();
+			context.dispose();
 		}
 	}
 
 	/**
+	 * Show an specific model element in the Artisan Modeler. If the object is associated with a diagram, the first 
+	 * diagram in the list of associated diagrams is opened and then a visual object related to the element is selected.
+	 * If the element does not have an associated diagram, then we show it in the Packages tree view. 
 	 * @param instance
 	 * @param context
 	 * @param studio

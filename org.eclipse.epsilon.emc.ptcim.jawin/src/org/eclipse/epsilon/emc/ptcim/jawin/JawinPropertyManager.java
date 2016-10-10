@@ -166,6 +166,12 @@ public class JawinPropertyManager implements IPtcPropertyManager {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public boolean knowsProperty(String property) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 
 }

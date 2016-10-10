@@ -6,16 +6,11 @@ Bundle-Version: 1.4.0.qualifier
 Export-Package: org.eclipse.epsilon.emc.ptcim
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.eclipse.epsilon.eol.engine,
- org.eclipse.epsilon.emc.ptcim.jawin,
- org.eclipse.epsilon.emc.ptcim.ole,
- org.eclipse.equinox.registry,
+Require-Bundle: org.eclipse.epsilon.emc.ptcim.ole,
  org.eclipse.core.runtime,
- org.eclipse.jface,
  org.eclipse.debug.core,
  org.eclipse.epsilon.eol.dt,
  org.eclipse.epsilon.evl.dt,
- org.eclipse.epsilon.evl.engine,
- org.eclipse.osgi
+ org.eclipse.epsilon.evl.engine
 Bundle-Activator: org.eclipse.epsilon.emc.ptcim.Activator
 Bundle-ActivationPolicy: lazy
