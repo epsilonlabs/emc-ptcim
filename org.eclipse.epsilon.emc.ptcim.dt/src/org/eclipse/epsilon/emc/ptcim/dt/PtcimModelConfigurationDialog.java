@@ -118,11 +118,18 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	/** The selected element id text. */
 	private Text selectedElementIdText;
 	
+	/** The selected element name and type label. */
+	private Label selectedElementNameAndTypeLabel;
+
+	/** The selected element name and type text. */
+	private Label selectedElementNameAndTypeTextLabel;
+	
 	/** The manager. */
 	IPtcModelManager<? extends IPtcObject, ? extends IPtcCollection<? extends IPtcObject>> manager = null;
 
 	/** The two col. */
 	private GridData twoCol;
+
 	
 	/**
 	 * Instantiates a new ptcim model configuration dialog.
@@ -184,6 +191,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		selectedElementIdText.setEnabled(false);
 		
 		selectedElementFindIdButton = new Button(groupContent, SWT.NONE);
+		selectedElementFindIdButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		selectedElementFindIdButton.setText("Find ID");
 		selectedElementFindIdButton.setToolTipText("Opens the current (or last) opened model and locates the current"
 				+ " (or last) selected element. The model information would be updated to match the project.");
@@ -225,13 +233,19 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 							if (seletionExists) {
 								IPtcObject current = it.next();
 								Object id = null;
+								Object name = null;
+								Object type = null;
 								try {
 									id = current.getAttribute("Property", "Id");
+									name = current.getAttribute("Property", "Name");
+									type = current.getAttribute("Property", "Type");
 								} catch (EpsilonCOMException e) {
 									showErrorMsg("Failed to get the current selected element ID.");
 								}
-								if (id != null) {
+								if ((id != null) && (name != null) && (type != null)) {
 									selectedElementIdText.setText((String) id);
+									String displayedNameAndText = (String) name + " (" + (String) type + ")";
+									selectedElementNameAndTypeTextLabel.setText(displayedNameAndText);
 									String res = setProjectPropertiesText(ap);
 									if (res.length() > 0) {
 										showErrorMsg(res);
@@ -272,6 +286,13 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 			    messageBox.open();
 			}
 		});
+		
+		selectedElementNameAndTypeLabel = new Label(groupContent, SWT.NONE);
+		selectedElementNameAndTypeLabel.setText("");
+		
+		selectedElementNameAndTypeTextLabel = new Label(groupContent, SWT.NONE);
+		selectedElementNameAndTypeTextLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		selectedElementNameAndTypeTextLabel.setEnabled(true);
 	}
 	
 	/* (non-Javadoc)
@@ -313,6 +334,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		
 		Button openButton = new Button(groupContent, SWT.NONE);
 		openButton.setText("Open Model");
+		openButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		openButton.addListener(SWT.Selection, new Listener() {
 			
 			@Override
@@ -429,6 +451,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		fromSelectionCheckbox.setSelection(fromSelection);
 		enableElementId(fromSelection);
 		selectedElementIdText.setText(properties.getProperty(PtcimModel.PROPERTY_ELEMENT_ID));
+		selectedElementNameAndTypeTextLabel.setText(properties.getProperty(PtcimModel.PROPERTY_ELEMENT_NAME_AND_TYPE));
 	}
 	
 	/**
@@ -477,6 +500,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		String fromSelection = Boolean.toString(fromSelectionCheckbox.getSelection());
 		properties.put(PtcimModel.PROPERTY_FROM_SELECTION, fromSelection);
 		properties.put(PtcimModel.PROPERTY_ELEMENT_ID, selectedElementIdText.getText());
+		properties.put(PtcimModel.PROPERTY_ELEMENT_NAME_AND_TYPE, selectedElementNameAndTypeTextLabel.getText());
 	}
 	
 }
