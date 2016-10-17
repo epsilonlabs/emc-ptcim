@@ -15,6 +15,7 @@ package org.eclipse.epsilon.emc.ptcim.ole.impl;
  * The Class PtcProperty is used to access PTC IM properties, using their characteristics
  * (multiplicity, visibility, etc.) to return the correct Java wrapper objects. 
  */
+@Deprecated
 public class PtcProperty {
 	
 		

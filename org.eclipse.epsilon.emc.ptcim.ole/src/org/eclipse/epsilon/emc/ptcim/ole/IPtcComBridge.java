@@ -10,20 +10,18 @@
  *******************************************************************************/
 package org.eclipse.epsilon.emc.ptcim.ole;
 
-import java.util.Collection;
-
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 
 /**
- * The Interface IPtcComBridge.
+ * The Interface IPtcComBridge defines the methods to opening/closing the COM session and connecting to a specific
+ * program.
  *
- * @param <S> the generic type
  * @param <T> the generic type
  */
 public interface IPtcComBridge<T extends IPtcObject> {
 	
 	/**
-	 * Connect to COM Object using a CLSID
+	 * Connect to COM DLL/Program using a CLSID
 	 *
 	 * @param clsid the CLSID in the format {4 bytes - 2 bytes - 2 bytes - 2 bytes - 6 bytes}
 	 * @return the COM object
@@ -32,7 +30,7 @@ public interface IPtcComBridge<T extends IPtcObject> {
 	T connectByClsId(String clsid) throws EpsilonCOMException;
 	
 	/**
-	 * Connect to COM Object using the Program Id .
+	 * Connect to COM DLL/Program using the Program Id .
 	 *
 	 * @param progId the program id of the form &lt;vendor&gt;.&lt;component&gt;.&lt;version&gt;
 	 * @return the t

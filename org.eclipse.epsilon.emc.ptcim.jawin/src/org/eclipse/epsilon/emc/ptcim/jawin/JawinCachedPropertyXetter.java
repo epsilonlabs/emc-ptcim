@@ -16,7 +16,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;

@@ -14,7 +14,7 @@ import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter;
 import org.eclipse.epsilon.eol.execute.introspection.IPropertySetter;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Interface IPtcFrameworkFactory.
  */
