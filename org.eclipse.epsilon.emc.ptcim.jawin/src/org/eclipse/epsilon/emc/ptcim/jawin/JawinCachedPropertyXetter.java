@@ -38,27 +38,23 @@ import org.eclipse.epsilon.eol.execute.introspection.IPropertySetter;
 public class JawinCachedPropertyXetter implements IPtcPropertyManager, IPropertyGetter, IPropertySetter {
 
 	private static final Object ASSOCIATION_ROLE = "Association";
-	
+
 	public enum PtcPropertyEnum {
-		IS_PUBLIC,
-		IS_READ_ONLY,
-		IS_MULTIPLE,
-		IS_ASSOCIATION
+		IS_PUBLIC, IS_READ_ONLY, IS_MULTIPLE, IS_ASSOCIATION
 	}
-	
+
 	private ModuleElement ast;
 	private IEolContext context;
 	private IPtcObject object;
-	
-	private Map<String, PtcProperty> ptcCache
-		=  new HashMap<String,PtcProperty>();
-	
-	private Map<String, EnumSet<PtcPropertyEnum>> ptcCache2
-	=  new HashMap<String,EnumSet<PtcPropertyEnum>>();
-	
+
+	private Map<String, PtcProperty> ptcCache = new HashMap<String, PtcProperty>();
+
+	private Map<String, EnumSet<PtcPropertyEnum>> ptcCache2 = new HashMap<String, EnumSet<PtcPropertyEnum>>();
+
 	private Map<String, Object> valueCache = new HashMap<String, Object>();
 
-	private String lastSetProperty;		// Assumes invoke(object) always comes after setProperty
+	private String lastSetProperty; // Assumes invoke(object) always comes after
+									// setProperty
 
 	@Override
 	public void dispose() {
@@ -69,7 +65,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 	public ModuleElement getAst() {
 		return ast;
 	}
-	
+
 	@Override
 	public IEolContext getContext() {
 		return context;
@@ -99,12 +95,12 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 
 	@Override
 	public PtcProperty getPtcProperty(String property) {
-//		System.out.println("getPtcProperty");
+		// System.out.println("getPtcProperty");
 		long start = System.nanoTime();
-		//PtcProperty cachedProp = ptcCache.get(property);
+		// PtcProperty cachedProp = ptcCache.get(property);
 		EnumSet<PtcPropertyEnum> cachedProp = ptcCache2.get(property);
 		if (cachedProp == null) {
-//			long substart = System.nanoTime();
+			// long substart = System.nanoTime();
 			List<Object> args = new ArrayList<Object>();
 			args.add("All Property Descriptors");
 			String descriptors = null;
@@ -114,87 +110,91 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 				// TODO We probably need better understanding of errors
 				return null;
 			}
-//			long subtotal = System.nanoTime() - substart;
-//			StringBuilder sb = new StringBuilder("COMCAll,");
-//			sb.append(subtotal);
-//			System.out.println(sb);
+			// long subtotal = System.nanoTime() - substart;
+			// StringBuilder sb = new StringBuilder("COMCAll,");
+			// sb.append(subtotal);
+			// System.out.println(sb);
 			// Count find property with split.
-//			substart = System.nanoTime();
+			// substart = System.nanoTime();
 			List<String> list = Arrays.asList(descriptors.split("\\n"));
-			//subtotal = System.nanoTime() - substart;
-			//sb = new StringBuilder("AllSplit,");
-			//sb.append(subtotal);
-			//System.out.println(sb);
-			//substart = System.nanoTime();
-//			for (String d : list) {
-//				String[] info = d.split(",");
-//				String name = info[0].substring(1, info[0].length()-1);
-//				if (nameMatches(name, property)) {
-//					final Set<PtcPropertyEnum> ptcProp = EnumSet.noneOf(PtcPropertyEnum.class);
-//					String role = info[1].substring(1, info[1].length()-1);
-//					boolean isAssociation = false;
-//					if (role.equals(ASSOCIATION_ROLE)) {
-//						isAssociation = true;
-//						ptcProp.add(PtcPropertyEnum.IS_ASSOCIATION);
-//					}
-//					boolean isPublic = true;
-//					String access = info[2].substring(1, info[2].length()-1);
-//					if (access.length() > 2) {		// private access is 3 letters: xxP
-//						isPublic = false;
-//					}
-//					boolean readOnly = false;
-//					if (access.contains("O")) {		// RO or ROP
-//						readOnly = true;
-//						ptcProp.add(PtcPropertyEnum.IS_READ_ONLY);
-//					}
-//					boolean isMultiple = false;
-//					String multy = info[3].substring(1, info[3].length()-1);
-//					if (multy.contains("+")) {
-//						isMultiple = true;
-//						ptcProp.add(PtcPropertyEnum.IS_MULTIPLE);
-//					}
-//					cachedProp = new PtcProperty(name, isPublic, readOnly, isMultiple, isAssociation);
-//					break;
-//				}
-//			}
-//			subtotal = System.nanoTime() - substart;
-//			sb = new StringBuilder("FindProperty,");
-//			sb.append(subtotal);
-//			System.out.println(sb);
-			
+			// subtotal = System.nanoTime() - substart;
+			// sb = new StringBuilder("AllSplit,");
+			// sb.append(subtotal);
+			// System.out.println(sb);
+			// substart = System.nanoTime();
+			// for (String d : list) {
+			// String[] info = d.split(",");
+			// String name = info[0].substring(1, info[0].length()-1);
+			// if (nameMatches(name, property)) {
+			// final Set<PtcPropertyEnum> ptcProp =
+			// EnumSet.noneOf(PtcPropertyEnum.class);
+			// String role = info[1].substring(1, info[1].length()-1);
+			// boolean isAssociation = false;
+			// if (role.equals(ASSOCIATION_ROLE)) {
+			// isAssociation = true;
+			// ptcProp.add(PtcPropertyEnum.IS_ASSOCIATION);
+			// }
+			// boolean isPublic = true;
+			// String access = info[2].substring(1, info[2].length()-1);
+			// if (access.length() > 2) { // private access is 3 letters: xxP
+			// isPublic = false;
+			// }
+			// boolean readOnly = false;
+			// if (access.contains("O")) { // RO or ROP
+			// readOnly = true;
+			// ptcProp.add(PtcPropertyEnum.IS_READ_ONLY);
+			// }
+			// boolean isMultiple = false;
+			// String multy = info[3].substring(1, info[3].length()-1);
+			// if (multy.contains("+")) {
+			// isMultiple = true;
+			// ptcProp.add(PtcPropertyEnum.IS_MULTIPLE);
+			// }
+			// cachedProp = new PtcProperty(name, isPublic, readOnly,
+			// isMultiple, isAssociation);
+			// break;
+			// }
+			// }
+			// subtotal = System.nanoTime() - substart;
+			// sb = new StringBuilder("FindProperty,");
+			// sb.append(subtotal);
+			// System.out.println(sb);
+
 			// Compare Init all props
-//			substart = System.nanoTime();
+			// substart = System.nanoTime();
 			for (String d : list) {
 				String[] info = d.split(",");
-				String name = info[0].substring(1, info[0].length()-1);
-				String noBlanks = name.replaceAll("\\s","");
+				String name = info[0].substring(1, info[0].length() - 1);
+				String noBlanks = name.replaceAll("\\s", "");
 				String normalised = noBlanks.toLowerCase();
-				//if (nameMatches(name, property)) {
-					final EnumSet<PtcPropertyEnum> ptcProp = EnumSet.noneOf(PtcPropertyEnum.class);
-					String role = info[1].substring(1, info[1].length()-1);
-					if (role.equals(ASSOCIATION_ROLE)) {
-						ptcProp.add(PtcPropertyEnum.IS_ASSOCIATION);
-					}
-					String access = info[2];
-					if (access.length() == 4) {		// private access is 5 letters: "xxP"
-						ptcProp.add(PtcPropertyEnum.IS_PUBLIC);
-					}
-					if (access.contains("O")) {		// RO or ROP
-						ptcProp.add(PtcPropertyEnum.IS_READ_ONLY);
-					}
-					String multy = info[3];
-					if (multy.contains("+")) {
-						ptcProp.add(PtcPropertyEnum.IS_MULTIPLE);
-					}
-					ptcCache2.put(normalised, ptcProp);
-					//cachedProp = new PtcProperty(name, isPublic, readOnly, isMultiple, isAssociation);
-				//}
+				// if (nameMatches(name, property)) {
+				final EnumSet<PtcPropertyEnum> ptcProp = EnumSet.noneOf(PtcPropertyEnum.class);
+				String role = info[1].substring(1, info[1].length() - 1);
+				if (role.equals(ASSOCIATION_ROLE)) {
+					ptcProp.add(PtcPropertyEnum.IS_ASSOCIATION);
+				}
+				String access = info[2];
+				if (access.length() == 4) { // private access is 5 letters:
+											// "xxP"
+					ptcProp.add(PtcPropertyEnum.IS_PUBLIC);
+				}
+				if (access.contains("O")) { // RO or ROP
+					ptcProp.add(PtcPropertyEnum.IS_READ_ONLY);
+				}
+				String multy = info[3];
+				if (multy.contains("+")) {
+					ptcProp.add(PtcPropertyEnum.IS_MULTIPLE);
+				}
+				ptcCache2.put(normalised, ptcProp);
+				// cachedProp = new PtcProperty(name, isPublic, readOnly,
+				// isMultiple, isAssociation);
+				// }
 			}
-//			subtotal = System.nanoTime() - substart;
-//			sb = new StringBuilder("CacheAll,");
-//			sb.append(subtotal);
-//			System.out.println(sb);
-			//ptcCache.put(property, cachedProp);
+			// subtotal = System.nanoTime() - substart;
+			// sb = new StringBuilder("CacheAll,");
+			// sb.append(subtotal);
+			// System.out.println(sb);
+			// ptcCache.put(property, cachedProp);
 		}
 		long total = System.nanoTime() - start;
 		StringBuilder sb = new StringBuilder("getPtcProperty,");
@@ -203,8 +203,12 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter#hasProperty(java.lang.Object, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter#
+	 * hasProperty(java.lang.Object, java.lang.String)
 	 */
 	@Override
 	public boolean hasProperty(Object object, String property) {
@@ -217,107 +221,97 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 		return ptcCache2.containsKey(property);
 	}
 
-//	@Override
-//	public void invoke(Object value) throws EolRuntimeException {
-//		
-//		PtcProperty comProperty = getPtcProperty(lastSetProperty);
-//		// TODO Check if value matches property? See EMF Setter
-//		if (comProperty .isReadOnly()) {
-//			throw new EolReadOnlyPropertyException();
-//		}
-//		List<Object> args = new ArrayList<Object>();
-//		args.add(comProperty.getName());
-//		if (comProperty.isAssociation()) {
-//			if (!(value instanceof JawinObject)) {
-//				throw new EolRuntimeException("Association (0..1) properties' values must be COM objects.");
-//			}
-//			try {
-//				args.add(((JawinObject) value));
-//				((IPtcObject) object).invoke("Add", args);
-//			} catch (EpsilonCOMException e) {
-//				// TODO Auto-generated catch block
-//				System.err.println("Error for " + comProperty.getName() + " for value " + value);
-//				e.printStackTrace();
-//				throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
-//			}
-//		}
-//		else {
-//			args.add(0);
-//			args.add(value);			
-//			try {
-//				((IPtcObject) object).invoke("PropertySet", args);
-//			} catch (EpsilonCOMException e) {
-//				// Get additional information about the error
-////						Object extendedErr = null;
-////						try {
-////							extendedErr = ((IPtcObject) object).get("Property", "ExtendedErrorInfo");
-////						} catch (EpsilonCOMException e1) {
-////							// TODO Auto-generated catch block
-////							e1.printStackTrace();
-////						}
-////						// objItem.Property("ExtendedErrorInfo") to get more info?
-////						System.err.println("Error for " + comProperty.getName() + " for value " + value + ". Err " + extendedErr );
-////						e.printStackTrace();
-//				throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
-//			}
-//		}
-//		// If all good, update cache
-//		valueCache.put(lastSetProperty, value);
-//	}
-	
+	// @Override
+	// public void invoke(Object value) throws EolRuntimeException {
+	//
+	// PtcProperty comProperty = getPtcProperty(lastSetProperty);
+	// // TODO Check if value matches property? See EMF Setter
+	// if (comProperty .isReadOnly()) {
+	// throw new EolReadOnlyPropertyException();
+	// }
+	// List<Object> args = new ArrayList<Object>();
+	// args.add(comProperty.getName());
+	// if (comProperty.isAssociation()) {
+	// if (!(value instanceof JawinObject)) {
+	// throw new EolRuntimeException("Association (0..1) properties' values must
+	// be COM objects.");
+	// }
+	// try {
+	// args.add(((JawinObject) value));
+	// ((IPtcObject) object).invoke("Add", args);
+	// } catch (EpsilonCOMException e) {
+	// // TODO Auto-generated catch block
+	// System.err.println("Error for " + comProperty.getName() + " for value " +
+	// value);
+	// e.printStackTrace();
+	// throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
+	// }
+	// }
+	// else {
+	// args.add(0);
+	// args.add(value);
+	// try {
+	// ((IPtcObject) object).invoke("PropertySet", args);
+	// } catch (EpsilonCOMException e) {
+	// // Get additional information about the error
+	//// Object extendedErr = null;
+	//// try {
+	//// extendedErr = ((IPtcObject) object).get("Property",
+	// "ExtendedErrorInfo");
+	//// } catch (EpsilonCOMException e1) {
+	//// // TODO Auto-generated catch block
+	//// e1.printStackTrace();
+	//// }
+	//// // objItem.Property("ExtendedErrorInfo") to get more info?
+	//// System.err.println("Error for " + comProperty.getName() + " for value "
+	// + value + ". Err " + extendedErr );
+	//// e.printStackTrace();
+	// throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
+	// }
+	// }
+	// // If all good, update cache
+	// valueCache.put(lastSetProperty, value);
+	// }
+
 	@Override
 	public void invoke(Object value) throws EolRuntimeException {
-		
+
 		// Thanos
 		EnumSet<PtcPropertyEnum> props = ptcCache2.get(lastSetProperty);
 		if (props.contains(PtcPropertyEnum.IS_READ_ONLY)) {
 			throw new EolReadOnlyPropertyException();
 		}
-		
+
 		List<Object> args = new ArrayList<Object>();
 		args.add(lastSetProperty);
-		
-		if (props.contains(PtcPropertyEnum.IS_ASSOCIATION)) {
-			//FIXME We ammend the list. We need to find way to clear the list first and then add the new args. See comments below.
-			// X.child -> List<Y>
-			// x:X;
-			// x.child = [y1, y2]
-			//
-			// Currently
-			// x.child.add([y1, y2])  WRONG!
-			
-			// FIX?
-			// x.child.clear()
-			// for (y in [y1, y2]) {
-			//   x.child.add(y)
-			//  }
-			
-			if (!(value instanceof JawinObject)) {
-				throw new EolRuntimeException("Association (0..1) properties' values must be COM objects.");
-			}
+
+		// Caution: the ReturnType (for type Operation) is both an association
+		// and an attribute.
+		// So, when we store it, we store the first type once and then the
+		// second ovewrites (race condition).
+		// To solve it here we additionally check that if it IS_ASSOCIATION, the
+		// value is a collection.
+		if (props.contains(PtcPropertyEnum.IS_ASSOCIATION) && (value instanceof Collection)) {
 			try {
 				args.add(lastSetProperty);
 				((IPtcObject) object).invoke("Remove", args);
-				if (!(value instanceof Collection)) {
-					// FIXME Check the type of exception I should throw!
-					throw new EolIllegalPropertyAssignmentException("A collection was expected as input.", null);
-				} else {
-					for (Object aValue : (Collection<Object>) value) {
-						// TODO Change that to an if statement and throw the correct exception
-						assert aValue instanceof IPtcObject;
-						args.clear();
-						args.add(lastSetProperty);
-						args.add(aValue);
-						object.invoke("Add", args);
-					}
-					if (!ptcCache2.containsKey(lastSetProperty)) {
-						args.clear();
-						args.add(lastSetProperty);
-						IPtcObject allItems = (IPtcObject) object.invoke("Items", args);
-						JawinCollection allItemsJawin = new JawinCollection(allItems, object, lastSetProperty);
-						valueCache.put(lastSetProperty, allItemsJawin);
-					}
+				for (Object aValue : (Collection<Object>) value) {
+					// TODO Change that to an if statement and throw the correct
+					// exception
+					assert aValue instanceof IPtcObject;
+					args.clear();
+					args.add(lastSetProperty);
+					args.add(aValue);
+					object.invoke("Add", args);
 				}
+				if (!ptcCache2.containsKey(lastSetProperty)) {
+					args.clear();
+					args.add(lastSetProperty);
+					IPtcObject allItems = (IPtcObject) object.invoke("Items", args);
+					JawinCollection allItemsJawin = new JawinCollection(allItems, object, lastSetProperty);
+					valueCache.put(lastSetProperty, allItemsJawin);
+				}
+
 			} catch (EpsilonCOMException e) {
 				// TODO Auto-generated catch block
 				System.err.println("Error for " + lastSetProperty + " for value " + value);
@@ -327,7 +321,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 			// End of FIX ME
 		} else {
 			args.add(0);
-			args.add(value);			
+			args.add(value);
 			try {
 				((IPtcObject) object).invoke("PropertySet", args);
 			} catch (EpsilonCOMException e) {
@@ -336,60 +330,48 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 			valueCache.put(lastSetProperty, value);
 		}
 		// End Thanos
-		
-		
-		/* Commented out Horacio's code here
-		PtcProperty comProperty = getPtcProperty(lastSetProperty);
-		// TODO Check if value matches property? See EMF Setter
-		if (comProperty.isReadOnly()) {
-			throw new EolReadOnlyPropertyException();
-		}
-		
-		
-		List<Object> args = new ArrayList<Object>();
-		args.add(comProperty.getName());
-		
-		if (comProperty.isAssociation()) {
-			if (!(value instanceof JawinObject)) {
-				throw new EolRuntimeException("Association (0..1) properties' values must be COM objects.");
-			}
-			try {
-				args.add(((JawinObject) value));
-				((IPtcObject) object).invoke("Add", args);
-			} catch (EpsilonCOMException e) {
-				// TODO Auto-generated catch block
-				System.err.println("Error for " + comProperty.getName() + " for value " + value);
-				e.printStackTrace();
-				throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
-			}
-		}
-		else {
-			args.add(0);
-			args.add(value);			
-			try {
-				((IPtcObject) object).invoke("PropertySet", args);
-			} catch (EpsilonCOMException e) {
-				// Get additional information about the error
-//						Object extendedErr = null;
-//						try {
-//							extendedErr = ((IPtcObject) object).get("Property", "ExtendedErrorInfo");
-//						} catch (EpsilonCOMException e1) {
-//							// TODO Auto-generated catch block
-//							e1.printStackTrace();
-//						}
-//						// objItem.Property("ExtendedErrorInfo") to get more info?
-//						System.err.println("Error for " + comProperty.getName() + " for value " + value + ". Err " + extendedErr );
-//						e.printStackTrace();
-				throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
-			}
-		}
-		// If all good, update cache
-		valueCache.put(lastSetProperty, value);
-		Commented Horacio's code ends here.*/
+
+		/*
+		 * Commented out Horacio's code here PtcProperty comProperty =
+		 * getPtcProperty(lastSetProperty); // TODO Check if value matches
+		 * property? See EMF Setter if (comProperty.isReadOnly()) { throw new
+		 * EolReadOnlyPropertyException(); }
+		 * 
+		 * 
+		 * List<Object> args = new ArrayList<Object>();
+		 * args.add(comProperty.getName());
+		 * 
+		 * if (comProperty.isAssociation()) { if (!(value instanceof
+		 * JawinObject)) { throw new EolRuntimeException(
+		 * "Association (0..1) properties' values must be COM objects."); } try
+		 * { args.add(((JawinObject) value)); ((IPtcObject)
+		 * object).invoke("Add", args); } catch (EpsilonCOMException e) { //
+		 * TODO Auto-generated catch block System.err.println("Error for " +
+		 * comProperty.getName() + " for value " + value); e.printStackTrace();
+		 * throw new EolIllegalPropertyAssignmentException(getProperty(),
+		 * getAst()); } } else { args.add(0); args.add(value); try {
+		 * ((IPtcObject) object).invoke("PropertySet", args); } catch
+		 * (EpsilonCOMException e) { // Get additional information about the
+		 * error // Object extendedErr = null; // try { // extendedErr =
+		 * ((IPtcObject) object).get("Property", "ExtendedErrorInfo"); // }
+		 * catch (EpsilonCOMException e1) { // // TODO Auto-generated catch
+		 * block // e1.printStackTrace(); // } // //
+		 * objItem.Property("ExtendedErrorInfo") to get more info? //
+		 * System.err.println("Error for " + comProperty.getName() +
+		 * " for value " + value + ". Err " + extendedErr ); //
+		 * e.printStackTrace(); throw new
+		 * EolIllegalPropertyAssignmentException(getProperty(), getAst()); } }
+		 * // If all good, update cache valueCache.put(lastSetProperty, value);
+		 * Commented Horacio's code ends here.
+		 */
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter#invoke(java.lang.Object, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter#invoke(java
+	 * .lang.Object, java.lang.String)
 	 */
 	@Override
 	public Object invoke(Object object, String property) throws EolRuntimeException {
@@ -398,18 +380,20 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 		property = property.replaceAll("\\s", "").toLowerCase();
 		o = valueCache.get(property);
 		if (o == null) {
-//			assert object instanceof JawinObject;
-//			JawinObject jObject = (JawinObject) object;
-//			try {
-//				PtcProperty p = getPtcProperty(property);
-//				if (p == null) {
-//					throw new EolRuntimeException("No such property");
-//				}
-//				o = queryPtcPropertyValue(property, jObject, p);
-//			} catch (EpsilonCOMException e) {
-//				throw new EolRuntimeException(e.getMessage());
-//			}
-			assert ptcCache2.containsKey(property); // knowsProperty always invoked first, which populates the cache
+			// assert object instanceof JawinObject;
+			// JawinObject jObject = (JawinObject) object;
+			// try {
+			// PtcProperty p = getPtcProperty(property);
+			// if (p == null) {
+			// throw new EolRuntimeException("No such property");
+			// }
+			// o = queryPtcPropertyValue(property, jObject, p);
+			// } catch (EpsilonCOMException e) {
+			// throw new EolRuntimeException(e.getMessage());
+			// }
+			assert ptcCache2.containsKey(property); // knowsProperty always
+													// invoked first, which
+													// populates the cache
 			try {
 				o = queryPtcPropertyValue(property);
 			} catch (EpsilonCOMException e) {
@@ -424,7 +408,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 
 	private Object queryPtcPropertyValue(String property) throws EolRuntimeException, EpsilonCOMException {
 		Object o;
-		//normalise property
+		// normalise property
 		// TODO: Write documentation about normalisation
 		property = property.replaceAll("\\s", "").toLowerCase();
 		EnumSet<PtcPropertyEnum> ptcprop = ptcCache2.get(property);
@@ -436,16 +420,15 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 				try {
 					Object res = object.invoke("Items", args);
 					assert res instanceof JawinObject;
-					elements = new JawinCollection((JawinObject) res,  object, property);
+					elements = new JawinCollection((JawinObject) res, object, property);
 				} catch (EpsilonCOMException e) {
 					throw new EolRuntimeException(e.getMessage());
 				}
 				o = elements;
-			}
-			else {
+			} else {
 				try {
 					o = object.invoke("Item", args);
-					if ( o instanceof JawinObject) {
+					if (o instanceof JawinObject) {
 						String strId = (String) ((JawinObject) o).getAttribute("Property", "Id");
 						((JawinObject) o).setId(strId);
 					}
@@ -453,8 +436,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 					throw new EolRuntimeException(e.getMessage());
 				}
 			}
-		}
-		else {
+		} else {
 			o = object.getAttribute("Property", property);
 		}
 		return o;
@@ -462,42 +444,43 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 
 	/**
 	 * Remove spaces from the Artisan name and compare case insensitive
+	 * 
 	 * @param name
 	 * @param property
 	 * @return
 	 */
 	private boolean nameMatches(String name, String property) {
-		String noBlanks = name.replaceAll("\\s","");
-//		String p = property.toLowerCase()
-//		
-//		List<Integer> idx = new ArrayList&ltInteger>();
-//		03
-//		  int id = -1;
-//		04
-//		  int shift = pattern.length();
-//		05
-//		  int scnIdx = -shift;
-//		06
-//		  while (scnIdx != -1 || id == -1) {
-//		07
-//		   idx.add(scnIdx);
-//		08
-//		   id = scnIdx + shift;
-//		09
-//		   scnIdx = source.indexOf(pattern, id);
-//		10
-//		  }
-//		11
-//		  idx.remove(0);
-//		12
-//		 
-//		13
-//		  return idx;
-//		long substart = System.nanoTime();
-//		long subtotal = System.nanoTime() - substart;
-//		StringBuilder sb = new StringBuilder("nameMatches,");
-//		sb.append(subtotal);
-//		System.out.println(sb);
+		String noBlanks = name.replaceAll("\\s", "");
+		// String p = property.toLowerCase()
+		//
+		// List<Integer> idx = new ArrayList&ltInteger>();
+		// 03
+		// int id = -1;
+		// 04
+		// int shift = pattern.length();
+		// 05
+		// int scnIdx = -shift;
+		// 06
+		// while (scnIdx != -1 || id == -1) {
+		// 07
+		// idx.add(scnIdx);
+		// 08
+		// id = scnIdx + shift;
+		// 09
+		// scnIdx = source.indexOf(pattern, id);
+		// 10
+		// }
+		// 11
+		// idx.remove(0);
+		// 12
+		//
+		// 13
+		// return idx;
+		// long substart = System.nanoTime();
+		// long subtotal = System.nanoTime() - substart;
+		// StringBuilder sb = new StringBuilder("nameMatches,");
+		// sb.append(subtotal);
+		// System.out.println(sb);
 		return noBlanks.compareToIgnoreCase(property) == 0;
 	}
 
@@ -512,7 +495,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 	 */
 	private Object queryPtcPropertyValue(String property, JawinObject jObject, PtcProperty p)
 			throws EolRuntimeException, EpsilonCOMException {
-		
+
 		Object o;
 		if (p.isAssociation()) {
 			List<Object> args = new ArrayList<Object>();
@@ -527,11 +510,10 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 					throw new EolRuntimeException(e.getMessage());
 				}
 				o = elements;
-			}
-			else {
+			} else {
 				try {
-					o = jObject.invoke("Item", args);		//, byRefArgs);
-					if ( o instanceof JawinObject) {
+					o = jObject.invoke("Item", args); // , byRefArgs);
+					if (o instanceof JawinObject) {
 						String strId = (String) ((JawinObject) o).getAttribute("Property", "Id");
 						((JawinObject) o).setId(strId);
 					}
@@ -539,8 +521,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 					throw new EolRuntimeException(e.getMessage());
 				}
 			}
-		}
-		else {
+		} else {
 			o = jObject.getAttribute("Property", property);
 		}
 		return o;
@@ -555,7 +536,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 	public void setContext(IEolContext context) {
 		this.context = context;
 	}
-	
+
 	@Override
 	public void setObject(Object object) {
 		assert object instanceof IPtcObject;
@@ -571,7 +552,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 
 	@Override
 	public boolean knowsProperty(String property) {
-		String normalisedProperty = property.replaceAll("\\s","").toLowerCase();
+		String normalisedProperty = property.replaceAll("\\s", "").toLowerCase();
 		getPtcProperty(normalisedProperty);
 		return ptcCache2.containsKey(normalisedProperty);
 	}
