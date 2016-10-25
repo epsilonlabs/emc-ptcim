@@ -40,7 +40,7 @@ public class JawinUserInterface implements IPtcUserInterface<JawinObject> {
 	@Override
 	public void connect(IPtcComBridge<JawinObject> bridge) throws EpsilonCOMException {
 		if (!isConnected)
-			studio = bridge.connectByProgId("Studio.ModelManager");
+			studio = bridge.connectByProgId("Studio.Editor");
 		isConnected = true;
 	}
 

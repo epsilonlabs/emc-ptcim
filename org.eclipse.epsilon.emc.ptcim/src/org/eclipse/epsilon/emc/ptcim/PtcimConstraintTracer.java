@@ -81,6 +81,7 @@ public class PtcimConstraintTracer implements IConstraintTracer {
 		String modelId = ((PtcimModel) model).getModelId();
 		String itemId = ((IPtcObject) instance).getId();
 		IPtcObject item = (IPtcObject) ((PtcimModel) model).getElementById(itemId);
+		studio.showMainWindow();
 		studio.openModel(modelId);
 		List<Object> args = new ArrayList<Object>();
 		args.clear();
@@ -88,12 +89,15 @@ public class PtcimConstraintTracer implements IConstraintTracer {
 		IPtcObject diag;
 		diag = (IPtcObject) item.invoke("Item", args);
 		if (diag != null) {
-			String diagId = diag.getId();
+			String diagId = (String) diag.getAttribute("Property", "Id");
+			//String diagId = diag.getId();
 			args.clear();
 			args.add("Representing Symbol");
 			IPtcObject objSymbol;
 			objSymbol = (IPtcObject) item.invoke("Item", args);
-			String symboldId = objSymbol.getId();
+			// FIXME What if the objSymbol does not exist? Test for Null
+			//String symboldId = objSymbol.getId();
+			String symboldId = (String) objSymbol.getAttribute("Property", "Id");
 			args.clear();
 			args.add(diagId);
 			studio.openDiagram(diagId);
