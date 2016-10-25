@@ -12,10 +12,13 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
@@ -165,6 +168,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 				String[] info = d.split(",");
 				String name = info[0].substring(1, info[0].length()-1);
 				String noBlanks = name.replaceAll("\\s","");
+				String normalised = noBlanks.toLowerCase();
 				//if (nameMatches(name, property)) {
 					final EnumSet<PtcPropertyEnum> ptcProp = EnumSet.noneOf(PtcPropertyEnum.class);
 					String role = info[1].substring(1, info[1].length()-1);
@@ -182,7 +186,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 					if (multy.contains("+")) {
 						ptcProp.add(PtcPropertyEnum.IS_MULTIPLE);
 					}
-					ptcCache2.put(noBlanks, ptcProp);
+					ptcCache2.put(normalised, ptcProp);
 					//cachedProp = new PtcProperty(name, isPublic, readOnly, isMultiple, isAssociation);
 				//}
 			}
@@ -205,6 +209,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 	@Override
 	public boolean hasProperty(Object object, String property) {
 		assert object.equals(this.object);
+		property = property.replaceAll("\\s", "").toLowerCase();
 		if (ptcCache2.containsKey(property)) {
 			return true;
 		}
@@ -263,13 +268,87 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 	@Override
 	public void invoke(Object value) throws EolRuntimeException {
 		
-		PtcProperty comProperty = getPtcProperty(lastSetProperty);
-		// TODO Check if value matches property? See EMF Setter
-		if (comProperty .isReadOnly()) {
+		// Thanos
+		EnumSet<PtcPropertyEnum> props = ptcCache2.get(lastSetProperty);
+		if (props.contains(PtcPropertyEnum.IS_READ_ONLY)) {
 			throw new EolReadOnlyPropertyException();
 		}
+		
+		List<Object> args = new ArrayList<Object>();
+		args.add(lastSetProperty);
+		
+		if (props.contains(PtcPropertyEnum.IS_ASSOCIATION)) {
+			//FIXME We ammend the list. We need to find way to clear the list first and then add the new args. See comments below.
+			// X.child -> List<Y>
+			// x:X;
+			// x.child = [y1, y2]
+			//
+			// Currently
+			// x.child.add([y1, y2])  WRONG!
+			
+			// FIX?
+			// x.child.clear()
+			// for (y in [y1, y2]) {
+			//   x.child.add(y)
+			//  }
+			
+			if (!(value instanceof JawinObject)) {
+				throw new EolRuntimeException("Association (0..1) properties' values must be COM objects.");
+			}
+			try {
+				args.add(lastSetProperty);
+				((IPtcObject) object).invoke("Remove", args);
+				if (!(value instanceof Collection)) {
+					// FIXME Check the type of exception I should throw!
+					throw new EolIllegalPropertyAssignmentException("A collection was expected as input.", null);
+				} else {
+					for (Object aValue : (Collection<Object>) value) {
+						// TODO Change that to an if statement and throw the correct exception
+						assert aValue instanceof IPtcObject;
+						args.clear();
+						args.add(lastSetProperty);
+						args.add(aValue);
+						object.invoke("Add", args);
+					}
+					if (!ptcCache2.containsKey(lastSetProperty)) {
+						args.clear();
+						args.add(lastSetProperty);
+						IPtcObject allItems = (IPtcObject) object.invoke("Items", args);
+						JawinCollection allItemsJawin = new JawinCollection(allItems, object, lastSetProperty);
+						valueCache.put(lastSetProperty, allItemsJawin);
+					}
+				}
+			} catch (EpsilonCOMException e) {
+				// TODO Auto-generated catch block
+				System.err.println("Error for " + lastSetProperty + " for value " + value);
+				e.printStackTrace();
+				throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
+			}
+			// End of FIX ME
+		} else {
+			args.add(0);
+			args.add(value);			
+			try {
+				((IPtcObject) object).invoke("PropertySet", args);
+			} catch (EpsilonCOMException e) {
+				throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
+			}
+			valueCache.put(lastSetProperty, value);
+		}
+		// End Thanos
+		
+		
+		/* Commented out Horacio's code here
+		PtcProperty comProperty = getPtcProperty(lastSetProperty);
+		// TODO Check if value matches property? See EMF Setter
+		if (comProperty.isReadOnly()) {
+			throw new EolReadOnlyPropertyException();
+		}
+		
+		
 		List<Object> args = new ArrayList<Object>();
 		args.add(comProperty.getName());
+		
 		if (comProperty.isAssociation()) {
 			if (!(value instanceof JawinObject)) {
 				throw new EolRuntimeException("Association (0..1) properties' values must be COM objects.");
@@ -306,6 +385,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 		}
 		// If all good, update cache
 		valueCache.put(lastSetProperty, value);
+		Commented Horacio's code ends here.*/
 	}
 
 	/* (non-Javadoc)
@@ -315,6 +395,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 	public Object invoke(Object object, String property) throws EolRuntimeException {
 		long start = System.nanoTime();
 		Object o = null;
+		property = property.replaceAll("\\s", "").toLowerCase();
 		o = valueCache.get(property);
 		if (o == null) {
 //			assert object instanceof JawinObject;
@@ -343,6 +424,9 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 
 	private Object queryPtcPropertyValue(String property) throws EolRuntimeException, EpsilonCOMException {
 		Object o;
+		//normalise property
+		// TODO: Write documentation about normalisation
+		property = property.replaceAll("\\s", "").toLowerCase();
 		EnumSet<PtcPropertyEnum> ptcprop = ptcCache2.get(property);
 		if (ptcprop.contains(PtcPropertyEnum.IS_ASSOCIATION)) {
 			List<Object> args = new ArrayList<Object>();
@@ -481,13 +565,15 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 	@Override
 	public void setProperty(String property) {
 		getPtcProperty(property);
+		property = property.replaceAll("\\s", "").toLowerCase();
 		lastSetProperty = property;
 	}
 
 	@Override
 	public boolean knowsProperty(String property) {
-		getPtcProperty(property);
-		return ptcCache2.containsKey(property);
+		String normalisedProperty = property.replaceAll("\\s","").toLowerCase();
+		getPtcProperty(normalisedProperty);
+		return ptcCache2.containsKey(normalisedProperty);
 	}
 
 }
