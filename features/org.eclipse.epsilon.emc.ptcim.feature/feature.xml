@@ -18,9 +18,14 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.epsilon.core.dependencies.feature" version="1.4.0.qualifier"/>
-      <import feature="org.eclipse.epsilon.core.dt.feature" version="1.4.0.qualifier"/>
-      <import feature="org.eclipse.epsilon.core.feature" version="1.4.0.qualifier"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.epsilon.eol.dt"/>
+      <import plugin="org.eclipse.epsilon.common.dt"/>
+      <import plugin="org.jawin_2.0-alpha1" version="2.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.epsilon.eol.engine"/>
+      <import plugin="org.eclipse.epsilon.evl.dt"/>
+      <import plugin="org.eclipse.epsilon.evl.engine"/>
    </requires>
 
    <plugin
