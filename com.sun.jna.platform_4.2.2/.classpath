@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="" sourcepath="C:/git/jna/dist/src-full.zip"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/com.sun.jna_4.2.2"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>

@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Epsilon PTC Integrity Modeler Developer Tools
+Bundle-SymbolicName: org.eclipse.epsilon.emc.ptcim.dt;singleton:=true
+Bundle-Version: 0.2.0.qualifier
+Bundle-Activator: org.eclipse.epsilon.emc.ptcim.dt.Activator
+Require-Bundle: org.eclipse.epsilon.common.dt,
+ org.eclipse.epsilon.emc.ptcim,
+ org.eclipse.epsilon.emc.ptcim.ole,
+ org.eclipse.jface
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.eclipse.epsilon.emc.ptcim.dt
+Bundle-Vendor: Epsilon Framework

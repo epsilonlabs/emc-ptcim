@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.epsilon.emc.ptcim.feature"
+      label="EMC PTC Integrity Modeller"
+      version="0.2.0.qualifier"
+      provider-name="Epsilon Framework">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <requires>
+      <import feature="org.eclipse.epsilon.core.dependencies.feature" version="1.4.0.qualifier"/>
+      <import feature="org.eclipse.epsilon.core.dt.feature" version="1.4.0.qualifier"/>
+      <import feature="org.eclipse.epsilon.core.feature" version="1.4.0.qualifier"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.epsilon.emc.ptcim"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.epsilon.emc.ptcim.dt"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.epsilon.emc.ptcim.jawin"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.epsilon.emc.ptcim.ole"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.jawin_2.0-alpha1"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
