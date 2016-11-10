@@ -17,6 +17,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
@@ -55,6 +56,8 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 
 	private String lastSetProperty; // Assumes invoke(object) always comes after
 									// setProperty
+	
+	private ObservableList<Object> queuedItemsToBeInvoked = new ObservableList<Object>();
 
 	@Override
 	public void dispose() {
@@ -275,13 +278,53 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 
 	@Override
 	public void invoke(Object value) throws EolRuntimeException {
-
+		
+		queuedItemsToBeInvoked.clear();
+		queuedItemsToBeInvoked.add(value);
+		System.err.println(queuedItemsToBeInvoked);
+		
+		/*
+		 * Commented out Horacio's code here PtcProperty comProperty =
+		 * getPtcProperty(lastSetProperty); // TODO Check if value matches
+		 * property? See EMF Setter if (comProperty.isReadOnly()) { throw new
+		 * EolReadOnlyPropertyException(); }
+		 * 
+		 * 
+		 * List<Object> args = new ArrayList<Object>();
+		 * args.add(comProperty.getName());
+		 * 
+		 * if (comProperty.isAssociation()) { if (!(value instanceof
+		 * JawinObject)) { throw new EolRuntimeException(
+		 * "Association (0..1) properties' values must be COM objects."); } try
+		 * { args.add(((JawinObject) value)); ((IPtcObject)
+		 * object).invoke("Add", args); } catch (EpsilonCOMException e) { //
+		 * TODO Auto-generated catch block System.err.println("Error for " +
+		 * comProperty.getName() + " for value " + value); e.printStackTrace();
+		 * throw new EolIllegalPropertyAssignmentException(getProperty(),
+		 * getAst()); } } else { args.add(0); args.add(value); try {
+		 * ((IPtcObject) object).invoke("PropertySet", args); } catch
+		 * (EpsilonCOMException e) { // Get additional information about the
+		 * error // Object extendedErr = null; // try { // extendedErr =
+		 * ((IPtcObject) object).get("Property", "ExtendedErrorInfo"); // }
+		 * catch (EpsilonCOMException e1) { // // TODO Auto-generated catch
+		 * block // e1.printStackTrace(); // } // //
+		 * objItem.Property("ExtendedErrorInfo") to get more info? //
+		 * System.err.println("Error for " + comProperty.getName() +
+		 * " for value " + value + ". Err " + extendedErr ); //
+		 * e.printStackTrace(); throw new
+		 * EolIllegalPropertyAssignmentException(getProperty(), getAst()); } }
+		 * // If all good, update cache valueCache.put(lastSetProperty, value);
+		 * Commented Horacio's code ends here.
+		 */
+	}
+	
+	public void invokeQueuedItems(Object value) throws EolRuntimeException {
 		// Thanos
 		EnumSet<PtcPropertyEnum> props = ptcCache2.get(lastSetProperty);
 		if (props.contains(PtcPropertyEnum.IS_READ_ONLY)) {
 			throw new EolReadOnlyPropertyException();
 		}
-
+		
 		List<Object> args = new ArrayList<Object>();
 		args.add(lastSetProperty);
 
@@ -323,47 +366,15 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 			args.add(0);
 			args.add(value);
 			try {
+				System.err.println(Thread.currentThread().getName());
 				((IPtcObject) object).invoke("PropertySet", args);
 			} catch (EpsilonCOMException e) {
+				System.err.println(Thread.currentThread().getName());
 				throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
 			}
 			valueCache.put(lastSetProperty, value);
 		}
 		// End Thanos
-
-		/*
-		 * Commented out Horacio's code here PtcProperty comProperty =
-		 * getPtcProperty(lastSetProperty); // TODO Check if value matches
-		 * property? See EMF Setter if (comProperty.isReadOnly()) { throw new
-		 * EolReadOnlyPropertyException(); }
-		 * 
-		 * 
-		 * List<Object> args = new ArrayList<Object>();
-		 * args.add(comProperty.getName());
-		 * 
-		 * if (comProperty.isAssociation()) { if (!(value instanceof
-		 * JawinObject)) { throw new EolRuntimeException(
-		 * "Association (0..1) properties' values must be COM objects."); } try
-		 * { args.add(((JawinObject) value)); ((IPtcObject)
-		 * object).invoke("Add", args); } catch (EpsilonCOMException e) { //
-		 * TODO Auto-generated catch block System.err.println("Error for " +
-		 * comProperty.getName() + " for value " + value); e.printStackTrace();
-		 * throw new EolIllegalPropertyAssignmentException(getProperty(),
-		 * getAst()); } } else { args.add(0); args.add(value); try {
-		 * ((IPtcObject) object).invoke("PropertySet", args); } catch
-		 * (EpsilonCOMException e) { // Get additional information about the
-		 * error // Object extendedErr = null; // try { // extendedErr =
-		 * ((IPtcObject) object).get("Property", "ExtendedErrorInfo"); // }
-		 * catch (EpsilonCOMException e1) { // // TODO Auto-generated catch
-		 * block // e1.printStackTrace(); // } // //
-		 * objItem.Property("ExtendedErrorInfo") to get more info? //
-		 * System.err.println("Error for " + comProperty.getName() +
-		 * " for value " + value + ". Err " + extendedErr ); //
-		 * e.printStackTrace(); throw new
-		 * EolIllegalPropertyAssignmentException(getProperty(), getAst()); } }
-		 * // If all good, update cache valueCache.put(lastSetProperty, value);
-		 * Commented Horacio's code ends here.
-		 */
 	}
 
 	/*
@@ -556,5 +567,23 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 		getPtcProperty(normalisedProperty);
 		return ptcCache2.containsKey(normalisedProperty);
 	}
-
+	
+	public class ObservableList<Object> extends ArrayList<Object>{
+		
+		@Override
+		public boolean add(final Object value) {
+			super.add(value);
+			new Thread(new Runnable() {
+			    public void run() {
+					try {
+						JawinCachedPropertyXetter.this.invokeQueuedItems(value);
+					} catch (EolRuntimeException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			    }
+			}).start();
+		    return true;
+		  }
+	}
 }
