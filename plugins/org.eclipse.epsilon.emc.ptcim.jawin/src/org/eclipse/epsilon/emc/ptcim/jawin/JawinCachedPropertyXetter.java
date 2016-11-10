@@ -57,8 +57,6 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 	private String lastSetProperty; // Assumes invoke(object) always comes after
 									// setProperty
 	
-	private ObservableList<Object> queuedItemsToBeInvoked = new ObservableList<Object>();
-
 	@Override
 	public void dispose() {
 		ptcCache.clear();
@@ -277,11 +275,71 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 	// }
 
 	@Override
-	public void invoke(Object value) throws EolRuntimeException {
-		
-		queuedItemsToBeInvoked.clear();
-		queuedItemsToBeInvoked.add(value);
-		System.err.println(queuedItemsToBeInvoked);
+	public void invoke(final Object value) throws EolRuntimeException {
+		new Thread(new Runnable() {
+		    public void run() {
+				try {
+					EnumSet<PtcPropertyEnum> props = ptcCache2.get(lastSetProperty);
+					if (props.contains(PtcPropertyEnum.IS_READ_ONLY)) {
+						throw new EolReadOnlyPropertyException();
+					}
+					
+					List<Object> args = new ArrayList<Object>();
+					args.add(lastSetProperty);
+			
+					// Caution: the ReturnType (for type Operation) is both an association
+					// and an attribute.
+					// So, when we store it, we store the first type once and then the
+					// second ovewrites (race condition).
+					// To solve it here we additionally check that if it IS_ASSOCIATION, the
+					// value is a collection.
+					if (props.contains(PtcPropertyEnum.IS_ASSOCIATION) && (value instanceof Collection)) {
+						try {
+							args.add(lastSetProperty);
+							((IPtcObject) object).invoke("Remove", args);
+							for (Object aValue : (Collection<Object>) value) {
+								// TODO Change that to an if statement and throw the correct
+								// exception
+								assert aValue instanceof IPtcObject;
+								args.clear();
+								args.add(lastSetProperty);
+								args.add(aValue);
+								object.invoke("Add", args);
+							}
+							if (!ptcCache2.containsKey(lastSetProperty)) {
+								args.clear();
+								args.add(lastSetProperty);
+								IPtcObject allItems = (IPtcObject) object.invoke("Items", args);
+								JawinCollection allItemsJawin = new JawinCollection(allItems, object, lastSetProperty);
+								valueCache.put(lastSetProperty, allItemsJawin);
+							}
+			
+						} catch (EpsilonCOMException e) {
+							// TODO Auto-generated catch block
+							System.err.println("Error for " + lastSetProperty + " for value " + value);
+							e.printStackTrace();
+							throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
+						}
+						// End of FIX ME
+					} else {
+						args.add(0);
+						args.add(value);
+						try {
+							System.err.println(Thread.currentThread().getName());
+							((IPtcObject) object).invoke("PropertySet", args);
+						} catch (EpsilonCOMException e) {
+							System.err.println(Thread.currentThread().getName());
+							throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
+						}
+						valueCache.put(lastSetProperty, value);
+					}
+				} catch (EolRuntimeException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    }
+		}).start();
+			
 		
 		/*
 		 * Commented out Horacio's code here PtcProperty comProperty =
@@ -318,65 +376,6 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 		 */
 	}
 	
-	public void invokeQueuedItems(Object value) throws EolRuntimeException {
-		// Thanos
-		EnumSet<PtcPropertyEnum> props = ptcCache2.get(lastSetProperty);
-		if (props.contains(PtcPropertyEnum.IS_READ_ONLY)) {
-			throw new EolReadOnlyPropertyException();
-		}
-		
-		List<Object> args = new ArrayList<Object>();
-		args.add(lastSetProperty);
-
-		// Caution: the ReturnType (for type Operation) is both an association
-		// and an attribute.
-		// So, when we store it, we store the first type once and then the
-		// second ovewrites (race condition).
-		// To solve it here we additionally check that if it IS_ASSOCIATION, the
-		// value is a collection.
-		if (props.contains(PtcPropertyEnum.IS_ASSOCIATION) && (value instanceof Collection)) {
-			try {
-				args.add(lastSetProperty);
-				((IPtcObject) object).invoke("Remove", args);
-				for (Object aValue : (Collection<Object>) value) {
-					// TODO Change that to an if statement and throw the correct
-					// exception
-					assert aValue instanceof IPtcObject;
-					args.clear();
-					args.add(lastSetProperty);
-					args.add(aValue);
-					object.invoke("Add", args);
-				}
-				if (!ptcCache2.containsKey(lastSetProperty)) {
-					args.clear();
-					args.add(lastSetProperty);
-					IPtcObject allItems = (IPtcObject) object.invoke("Items", args);
-					JawinCollection allItemsJawin = new JawinCollection(allItems, object, lastSetProperty);
-					valueCache.put(lastSetProperty, allItemsJawin);
-				}
-
-			} catch (EpsilonCOMException e) {
-				// TODO Auto-generated catch block
-				System.err.println("Error for " + lastSetProperty + " for value " + value);
-				e.printStackTrace();
-				throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
-			}
-			// End of FIX ME
-		} else {
-			args.add(0);
-			args.add(value);
-			try {
-				System.err.println(Thread.currentThread().getName());
-				((IPtcObject) object).invoke("PropertySet", args);
-			} catch (EpsilonCOMException e) {
-				System.err.println(Thread.currentThread().getName());
-				throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
-			}
-			valueCache.put(lastSetProperty, value);
-		}
-		// End Thanos
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -566,24 +565,5 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 		String normalisedProperty = property.replaceAll("\\s", "").toLowerCase();
 		getPtcProperty(normalisedProperty);
 		return ptcCache2.containsKey(normalisedProperty);
-	}
-	
-	public class ObservableList<Object> extends ArrayList<Object>{
-		
-		@Override
-		public boolean add(final Object value) {
-			super.add(value);
-			new Thread(new Runnable() {
-			    public void run() {
-					try {
-						JawinCachedPropertyXetter.this.invokeQueuedItems(value);
-					} catch (EolRuntimeException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			    }
-			}).start();
-		    return true;
-		  }
 	}
 }
