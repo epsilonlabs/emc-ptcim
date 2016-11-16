@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.eclipse.epsilon.emc.ptcim;
+package org.eclipse.epsilon.emc.ptcim.test;
 
 import java.util.Collection;
 import java.util.Iterator;

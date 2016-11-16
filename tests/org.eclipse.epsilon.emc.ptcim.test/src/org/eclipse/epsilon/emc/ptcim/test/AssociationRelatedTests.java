@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.emc.ptcim;
+package org.eclipse.epsilon.emc.ptcim.test;
 
 import static org.junit.Assert.assertEquals;
 

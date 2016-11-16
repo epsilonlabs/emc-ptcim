@@ -5,10 +5,10 @@ Bundle-SymbolicName: org.eclipse.epsilon.emc.ptcim.test;singleton:=true
 Bundle-Version: 0.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: Epsilon Framework
-Require-Bundle: org.junit,
- org.jawin_2.0-alpha1;bundle-version="2.0.0",
+Require-Bundle: org.jawin_2.0-alpha1;bundle-version="2.0.0",
  org.eclipse.epsilon.emc.ptcim,
  org.eclipse.epsilon.emc.ptcim.jawin,
  org.eclipse.epsilon.eol.engine,
- org.eclipse.epsilon.emc.ptcim.ole
-Export-Package: org.eclipse.epsilon.emc.ptcim
+ org.eclipse.epsilon.emc.ptcim.ole,
+ org.junit
+Export-Package: org.eclipse.epsilon.emc.ptcim.test

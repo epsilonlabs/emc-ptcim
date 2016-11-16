@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.emc.ptcim;
+package org.eclipse.epsilon.emc.ptcim.test;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
