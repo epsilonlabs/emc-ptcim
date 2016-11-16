@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.rmi.CORBA.Util;
+
 import org.eclipse.epsilon.emc.ptcim.jawin.DelME;
 import org.eclipse.epsilon.emc.ptcim.jawin.JawinObject;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
@@ -28,6 +30,9 @@ public class AttributeRelatedTests {
 			foo.testPropertySetter();
 			foo.testPropertyGetterTwiceSameElementSamePropertyNoChange();
 			foo.testPropertyGetterTwiceSameElementSamePropertyWithChange();
+			foo.testPropertyGetterTwiceSameElementDifferentProperty();
+			foo.testPropertyGetterTwiceDifferentElement();
+			foo.testGetAllChildrenOfSpecificType();
 		} catch (COMException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -35,7 +40,6 @@ public class AttributeRelatedTests {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 	
 	private JawinObject model;
@@ -47,7 +51,6 @@ public class AttributeRelatedTests {
 		DispatchPtr modelptr = Utilities.load(theProject);
 		model = new JawinObject(modelptr);
 	}
-	
 
 	@After
 	public void tearDown() throws Exception {
@@ -98,6 +101,35 @@ public class AttributeRelatedTests {
 		// Reset back
 		softwarePackage.invokeN("PropertySet", new Object[] {"Description", 0, "Test"});
 		System.out.println("Test property getter twice same element, same property, with change: Success");
+	}
+	
+	@Test
+	public void testPropertyGetterTwiceSameElementDifferentProperty() throws COMException {
+		DispatchPtr softwarePackage = (DispatchPtr) model.invoke("Item", "Package", "Software");
+		String strObjDescription = (String) softwarePackage.get("Property", "Description");
+		assertEquals("Test", strObjDescription);
+		String strObjId = (String) softwarePackage.get("Property", "Id");
+		assertEquals("80a27e73-0121-436a-abf7-1e01ebb33c7e", strObjId);
+		System.out.println("Test property getter twice same element, different property: Success");
+	}
+	
+	@Test
+	public void testPropertyGetterTwiceDifferentElement() throws COMException {
+		DispatchPtr softwarePackage = (DispatchPtr) model.invoke("Item", "Package", "Software");
+		String strObjDescription = (String) softwarePackage.get("Property", "Description");
+		assertEquals("Test", strObjDescription);
+		DispatchPtr hardwarePackage = (DispatchPtr) model.invoke("Item", "Package", "Hardware");
+		String strObjId = (String) hardwarePackage.get("Property", "Id");
+		assertEquals("fda68d40-8346-400c-bf40-70f24c80465d", strObjId);
+		System.out.println("Test property getter twice different element: Success");
+	}
+	
+	@Test
+	public void testGetAllChildrenOfSpecificType() throws COMException {
+		DispatchPtr softwarePackage = (DispatchPtr) model.invoke("Item", "Package", "Software");
+		int numOfAllClasses = (Integer) softwarePackage.invokeN("ItemCount", new Object[] {"Class"});
+		assertEquals(2, numOfAllClasses);
+		System.out.println("Test get all children of specific type: Success");
 	}
 	
 }
