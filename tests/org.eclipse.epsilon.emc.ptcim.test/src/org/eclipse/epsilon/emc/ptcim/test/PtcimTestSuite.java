@@ -9,7 +9,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({AttributeRelatedTests.class,
-	AssociationRelatedTests.class})
+	AssociationRelatedTests.class,
+	ElementRelatedTests.class})
 public class PtcimTestSuite {
 
 	public static Test suite() {

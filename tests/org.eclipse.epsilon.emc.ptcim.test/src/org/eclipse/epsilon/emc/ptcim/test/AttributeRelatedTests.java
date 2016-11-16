@@ -32,7 +32,7 @@ public class AttributeRelatedTests {
 			foo.testPropertyGetterTwiceSameElementSamePropertyWithChange();
 			foo.testPropertyGetterTwiceSameElementDifferentProperty();
 			foo.testPropertyGetterTwiceDifferentElement();
-			foo.testGetAllChildrenOfSpecificType();
+			foo.tearDown();
 		} catch (COMException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -123,13 +123,4 @@ public class AttributeRelatedTests {
 		assertEquals("fda68d40-8346-400c-bf40-70f24c80465d", strObjId);
 		System.out.println("Test property getter twice different element: Success");
 	}
-	
-	@Test
-	public void testGetAllChildrenOfSpecificType() throws COMException {
-		DispatchPtr softwarePackage = (DispatchPtr) model.invoke("Item", "Package", "Software");
-		int numOfAllClasses = (Integer) softwarePackage.invokeN("ItemCount", new Object[] {"Class"});
-		assertEquals(2, numOfAllClasses);
-		System.out.println("Test get all children of specific type: Success");
-	}
-	
 }
