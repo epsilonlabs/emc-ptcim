@@ -18,6 +18,8 @@ public class ElementRelatedTests {
 			ElementRelatedTests foo = new ElementRelatedTests();
 			foo.setUp();
 			foo.testGetAllChildrenOfSpecificType();
+			foo.tearDown();
+			foo.setUp();
 			foo.testAddAndRemoveElement();
 			foo.tearDown();
 		} catch (COMException e) {

@@ -27,10 +27,20 @@ public class AttributeRelatedTests {
 			AttributeRelatedTests foo = new AttributeRelatedTests();
 			foo.setUp();
 			foo.testPropertyGetter();
+			foo.tearDown();
+			foo.setUp();
 			foo.testPropertySetter();
+			foo.tearDown();
+			foo.setUp();
 			foo.testPropertyGetterTwiceSameElementSamePropertyNoChange();
+			foo.tearDown();
+			foo.setUp();
 			foo.testPropertyGetterTwiceSameElementSamePropertyWithChange();
+			foo.tearDown();
+			foo.setUp();
 			foo.testPropertyGetterTwiceSameElementDifferentProperty();
+			foo.tearDown();
+			foo.setUp();
 			foo.testPropertyGetterTwiceDifferentElement();
 			foo.tearDown();
 		} catch (COMException e) {
