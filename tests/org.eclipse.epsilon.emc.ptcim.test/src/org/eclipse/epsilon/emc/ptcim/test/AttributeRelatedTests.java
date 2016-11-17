@@ -22,36 +22,6 @@ import org.junit.Test;
 
 public class AttributeRelatedTests {
 	
-	public static void main (String args[]) {
-		try {
-			AttributeRelatedTests foo = new AttributeRelatedTests();
-			foo.setUp();
-			foo.testPropertyGetter();
-			foo.tearDown();
-			foo.setUp();
-			foo.testPropertySetter();
-			foo.tearDown();
-			foo.setUp();
-			foo.testPropertyGetterTwiceSameElementSamePropertyNoChange();
-			foo.tearDown();
-			foo.setUp();
-			foo.testPropertyGetterTwiceSameElementSamePropertyWithChange();
-			foo.tearDown();
-			foo.setUp();
-			foo.testPropertyGetterTwiceSameElementDifferentProperty();
-			foo.tearDown();
-			foo.setUp();
-			foo.testPropertyGetterTwiceDifferentElement();
-			foo.tearDown();
-		} catch (COMException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 	private JawinObject model;
 	private DispatchPtr theProject;
 	

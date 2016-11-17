@@ -13,24 +13,6 @@ import org.junit.Test;
 
 public class ElementRelatedTests {
 
-	public static void main (String args[]) {
-		try {
-			ElementRelatedTests foo = new ElementRelatedTests();
-			foo.setUp();
-			foo.testGetAllChildrenOfSpecificType();
-			foo.tearDown();
-			foo.setUp();
-			foo.testAddAndRemoveElement();
-			foo.tearDown();
-		} catch (COMException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 	private JawinObject model;
 	private DispatchPtr theProject;
 	
