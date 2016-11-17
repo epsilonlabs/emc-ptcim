@@ -14,7 +14,6 @@ import org.junit.runners.Suite.SuiteClasses;
 public class PtcimTestSuite {
 
 	public static void main(String args[]) throws Exception {
-		
 		PUnit fooPUnit = new PUnit();
 		fooPUnit.run(new AttributeRelatedTests(), new AssociationRelatedTests(), new ElementRelatedTests());
 	}
