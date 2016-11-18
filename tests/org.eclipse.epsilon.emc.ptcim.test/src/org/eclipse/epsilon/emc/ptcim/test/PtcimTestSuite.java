@@ -13,11 +13,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	ElementRelatedTests.class})
 public class PtcimTestSuite {
 
-	public static void main(String args[]) throws Exception {
-		PUnit fooPUnit = new PUnit();
-		fooPUnit.run(new AttributeRelatedTests(), new AssociationRelatedTests(), new ElementRelatedTests());
-	}
-	
 	public static Test suite() {
 		return new JUnit4TestAdapter(PtcimTestSuite.class);
 	}
