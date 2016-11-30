@@ -35,7 +35,7 @@ public class ElementRelatedTests {
 	@Test
 	public void testGetAllChildrenOfSpecificType() throws COMException {
 		DispatchPtr softwarePackage = (DispatchPtr) model.invoke("Item", "Package", "Software");
-		int numOfAllClasses = (Integer) softwarePackage.invokeN("ItemCount", new Object[] {"Class"});
+		int numOfAllClasses = (Integer) softwarePackage.invoke("ItemCount", "Class");
 		assertEquals(2, numOfAllClasses);
 		System.out.println("Test get all children of specific type: Success");
 	}
@@ -44,12 +44,12 @@ public class ElementRelatedTests {
 	public void testAddAndRemoveElement() throws COMException {
 		//TODO: This test works but when the class is removed from package Software it is created in the root element
 		DispatchPtr softwarePackage = (DispatchPtr) model.invoke("Item", "Package", "Software");
-		softwarePackage.invoke("Add","Class","Test Class");
-		int numOfAllClasses = (Integer) softwarePackage.invokeN("ItemCount", new Object[] {"Class"});
+		softwarePackage.invoke("Add","Class","TestClass");
+		int numOfAllClasses = (Integer) softwarePackage.invoke("ItemCount", "Class");
 		assertEquals(3, numOfAllClasses);
 		// Reset back by removing it
-		softwarePackage.invoke("Remove","Class","Test Class");
-		numOfAllClasses = (Integer) softwarePackage.invokeN("ItemCount", new Object[] {"Class"});
+		model.invoke("Remove","Class","TestClass");
+		numOfAllClasses = (Integer) softwarePackage.invoke("ItemCount", "Class");
 		assertEquals(2, numOfAllClasses);
 		System.out.println("Test add and then remove element: Success");
 	}

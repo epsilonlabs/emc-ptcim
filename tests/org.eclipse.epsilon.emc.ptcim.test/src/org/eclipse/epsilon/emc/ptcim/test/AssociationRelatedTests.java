@@ -34,10 +34,22 @@ public class AssociationRelatedTests {
 		
 	@Test
 	public void testAssociationGetter() throws COMException {
-		DispatchPtr softwarePackage = (DispatchPtr) model.invoke("Item", "Package", "Software");
-		String strObjId = (String) softwarePackage.get("Property", "Id");
-		assertEquals("80a27e73-0121-436a-abf7-1e01ebb33c7e", strObjId);
-		System.out.println("Test property getter: Success");
+		DispatchPtr lightsClass = (DispatchPtr) model.invoke("Item", "Class", "Lights");
+		int numOfAllOperations = (Integer) lightsClass.invoke("ItemCount", "Operation");
+		assertEquals(4, numOfAllOperations);
+		System.out.println("Test association getter: Success");
+	}
+	
+	@Test
+	public void testAssociationSetter() throws COMException {
+		DispatchPtr lightsClass = (DispatchPtr) model.invoke("Item", "Class", "Lights");
+		lightsClass.invoke("AddByType", "Operation", "Operation");
+		int numOfAllOperations = (Integer) lightsClass.invoke("ItemCount", "Operation");
+		assertEquals(5, numOfAllOperations);
+		model.invoke("Remove", "Operation", "Operation1");
+		numOfAllOperations = (Integer) lightsClass.invoke("ItemCount", "Operation");
+		assertEquals(4, numOfAllOperations);
+		System.out.println("Test association setter: Success");
 	}
 	
 }

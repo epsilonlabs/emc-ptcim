@@ -35,6 +35,7 @@ public class Utilities {
 		return allInstances;
 	}
 	
+	// This is wrong.
 	protected static int size(DispatchPtr collection) throws COMException {
 		Object classDispPtr = collection.invokeN("ItemCount", new Object[] {"Id"});
 		return (Integer)classDispPtr;
