@@ -24,24 +24,12 @@ import org.eclipse.epsilon.eol.execute.introspection.IPropertySetter;
  */
 public class JawinFrameworkFactory implements IPtcFrameworkFactory {
 	
-	/** The bridge. */
 	private JawinComBridge bridge = new JawinComBridge();
-	
-	/** The jawin model manager. */
 	private JawinModelManager jawinModelManager = new JawinModelManager();
-	
-	/** The jawin property getter. */
 	private JawinPropertyGetter jawinPropertyGetter = new JawinPropertyGetter();
-	
-	/** The jawin property setter. */
 	private JawinPropertySetter jawinPropertySetter = new JawinPropertySetter();
-	
-	/** The jawin user interface. */
 	private JawinUserInterface jawinUserInterface = new JawinUserInterface();
-	
-	/** The jawin property manager. */
 	private JawinPropertyManager jawinPropertyManager = new JawinPropertyManager();
-
 	private JawinFileDialog jawinFileDialog = new JawinFileDialog();
 	
 	/* (non-Javadoc)
@@ -68,7 +56,6 @@ public class JawinFrameworkFactory implements IPtcFrameworkFactory {
 	@Override
 	public IPropertyGetter getPropertyGetter() {
 		return jawinPropertyGetter;
-		//return new JawinCachedPropertyXetter();
 	}
 
 	/* (non-Javadoc)
@@ -77,7 +64,6 @@ public class JawinFrameworkFactory implements IPtcFrameworkFactory {
 	@Override
 	public IPropertySetter getPropertySetter() {
 		return jawinPropertySetter;
-		//return new JawinCachedPropertyXetter();
 	}
 
 	/* (non-Javadoc)
@@ -106,25 +92,21 @@ public class JawinFrameworkFactory implements IPtcFrameworkFactory {
 		try {
 			jawinModelManager.disconnect();
 		} catch (EpsilonCOMException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
 			jawinUserInterface.disconnect();
 		} catch (EpsilonCOMException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
 			jawinFileDialog.disconnect();
 		} catch (EpsilonCOMException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		try {
 			uninitialiseCOM();
 		} catch (EpsilonCOMException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -135,13 +117,10 @@ public class JawinFrameworkFactory implements IPtcFrameworkFactory {
 	@Override
 	public IPtcPropertyManager getPropertyManager() {
 		return (IPtcPropertyManager) new JawinCachedPropertyXetter();
-//		return jawinPropertyManager;
 	}
 
 	@Override
 	public void startup() throws EpsilonCOMException {
 		initialiseCOM();
-		
 	}
-
 }

@@ -23,47 +23,19 @@ import org.jawin.GUID;
 import org.jawin.Variant;
 import org.jawin.win32.Ole32;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class JawinObject.
- */
 public class JawinObject extends DispatchPtr implements IPtcObject {
 
-	
-	/** The id. */
 	private String id;
 	
-	/**
-	 * Instantiates a new jawin object.
-	 */
 	public JawinObject() { }
-
-	/**
-	 * Instantiates a new jawin object.
-	 *
-	 * @param comObject the com object
-	 * @throws COMException the COM exception
-	 */
+	
 	public JawinObject(COMPtr comObject) throws COMException {
 		super(comObject);
 	}
 
-	/**
-	 * Instantiates a new jawin object.
-	 *
-	 * @param clsid the GUID of the COM-object to create.
-	 * @throws COMException the COM exception
-	 */
 	public JawinObject(GUID clsid) throws COMException {
 		super(clsid);
 	}
-
-	/**
-	 * Instantiates a new jawin object.
-	 *
-	 * @param progid the progid
-	 * @throws COMException the COM exception
-	 */
 
 	public JawinObject(String progid) throws COMException {
 		super(progid);
@@ -109,10 +81,8 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 	 */
 	@Override
 	public Object addByType(String association, String type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcObject#disconnect()
@@ -124,7 +94,6 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 			throw new EpsilonCOMException(e);
 		}
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -153,7 +122,6 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 	public Object getAttribute(String name, List<Object> args) throws EpsilonCOMException {
 		Object res;	// = new JawinObject();
 		try {
-			//Object o = delegate.getN("Property", new Object[] { name, null });
 			Object comres = getN(name, args.toArray());
 			if (comres instanceof DispatchPtr) {
 				res = new JawinObject();
@@ -181,7 +149,6 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 				((JawinObject) res).stealUnknown((DispatchPtr) comres);
 			}
 			else {
-				//res = new JawinPrimitive(comres);
 				res = comres;
 			}
 		} catch (COMException e) {
@@ -224,7 +191,6 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 				}
 			}
 			else {
-				//res = new JawinPrimitive(comres);
 				res = comres;
 			}
 		} catch (COMException e) {
@@ -295,7 +261,7 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 		return res;
 	}
 
-//	// FIXME this seems to be a invoke with pointer args, not suer if we need a invoke by value
+//	// FIXME this seems to be a invoke with pointer args, not sure if we need a invoke by value
 //	/* (non-Javadoc)
 //	 * @see org.eclipse.epsilon.emc.COM.COMObject#invoke(java.lang.String, java.lang.String, java.util.List)
 //	 */

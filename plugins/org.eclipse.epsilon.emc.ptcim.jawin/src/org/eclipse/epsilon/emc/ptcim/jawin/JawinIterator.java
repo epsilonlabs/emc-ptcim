@@ -45,18 +45,15 @@ public class JawinIterator implements Iterator<JawinObject> {
 			// Make sure the iterator is at the beginning of the collection
 			source.invokeMethod("ResetQueryItems");
 		} catch (EpsilonCOMException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
 
 	/* (non-Javadoc)
 	 * @see java.util.Iterator#hasNext()
 	 */
 	@Override
 	public boolean hasNext() {
-		
 		Object more;
 		try {
 			more = source.invokeMethod("MoreItems");
@@ -90,5 +87,4 @@ public class JawinIterator implements Iterator<JawinObject> {
 	public void remove() {
 		throw new UnsupportedOperationException("Not supported");
 	}
-
 }

@@ -55,11 +55,6 @@ public class JawinCollection extends AbstractList<JawinObject> implements IPtcCo
 		this.association = association;
 	}
 
-
-
-	/* (non-Javadoc)
-	 * @see java.util.AbstractCollection#add(java.lang.Object)
-	 */
 	@Override
 	public boolean add(JawinObject e) {
 		assert e.getId() != null;
@@ -83,9 +78,6 @@ public class JawinCollection extends AbstractList<JawinObject> implements IPtcCo
 		}
 		return true;
 	}
-
-
-
 	/**
 	 * Important:  If you remove objects from an association that has its Propagate Delete flag set to TRUE,
 	 * the objects will be deleted from the model. For example, a Class is related to its child Attributes
@@ -140,35 +132,21 @@ public class JawinCollection extends AbstractList<JawinObject> implements IPtcCo
 		return it.next();
 	}
 	
-
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.jawin.COMCollection#getAssociation()
-	 */
 	@Override
 	public String getAssociation() {
 		return association;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.jawin.COMCollection#getSource()
-	 */
 	@Override
 	public JawinObject getCOMObject() {
 		return comObject;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.jawin.COMCollection#getOwner()
-	 */
+
 	@Override
 	public JawinObject getOwner() {
 		return owner;
 	}
 	
-	
-
 	/**
      * {@inheritDoc}
      *
@@ -240,8 +218,6 @@ public class JawinCollection extends AbstractList<JawinObject> implements IPtcCo
 		return true;
 	}
 
-
-
 	/**
 	 * The Artisan API does not provide this functionality.
 	 *
@@ -257,8 +233,6 @@ public class JawinCollection extends AbstractList<JawinObject> implements IPtcCo
 		}
 		return modified;
 	}
-
-
 
 	/* (non-Javadoc)
 	 * @see java.util.AbstractCollection#size()
@@ -286,8 +260,6 @@ public class JawinCollection extends AbstractList<JawinObject> implements IPtcCo
 		}
 		return (Integer)resCount;
 	}
-
-
 
 	@Override
 	public AbstractOperation getAbstractOperation(String name) {

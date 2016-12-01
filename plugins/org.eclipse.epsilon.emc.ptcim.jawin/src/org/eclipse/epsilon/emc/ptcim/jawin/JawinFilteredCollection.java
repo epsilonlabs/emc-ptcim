@@ -27,7 +27,6 @@ public class JawinFilteredCollection extends AbstractCollection<JawinObject> imp
 	/** The object that points to the collection. */
 	private final JawinObject comObject;
 	
-	/** The association. */
 	private final String association;
 	
 	/**
@@ -111,6 +110,4 @@ public class JawinFilteredCollection extends AbstractCollection<JawinObject> imp
 		}
 		return size;
 	}
-
-	
 }

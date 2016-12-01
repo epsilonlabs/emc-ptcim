@@ -43,8 +43,6 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 
 	@Override
 	public Object execute(Object target, Variable iterator, Expression ast, IEolContext context) throws EolRuntimeException {
-
-		//System.err.println("OptimisableCollectionSelectOneOperation execute called!");
 		if (!(target instanceof IPtcCollection)) {
 			return super.execute(target, iterator, ast, context);
 		}
@@ -57,20 +55,15 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 			e.printStackTrace();
 			throw new EolRuntimeException("OptimisableCollectionSelectOperation: parseAST(iterator, ast) failed:", ast);
 		}
-
 	}
 
 	protected Object decomposeAST(IPtcCollection target, Expression ast) throws Exception {
-
 		if (isOptimisable(ast)) {
 			return optimisedExecution(target, ast);
 		} else {
-			// System.err.println("giving to super: "+ast.toStringTree());
 			Object ret = super.execute(target, iterator, (Expression) ast, context);
-			// System.err.println("super returns: "+ret.getClass());
 			return ret;
 		}
-
 	}
 
 	private Object optimisedExecution(IPtcCollection target, Expression ast) throws EolRuntimeException {
@@ -104,7 +97,6 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 			}
 		}
 		else {
-
 			// FIXME Validate that the attribute exists and use the property getter? Apparently Artisan understands all lower case no spaces
 			args.add(attributename);
 			try {
@@ -140,7 +132,6 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 			if (!(ast instanceof EqualsOperatorExpression)) {
 				return false;
 			}
-
 			// LEFT - we should have iterator.property
 			// L1. Check for a property call expression
 			final OperatorExpression opExp = (OperatorExpression) ast;
@@ -159,48 +150,16 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 			if (!iterator.getName().equals(nameExpression.getName())) {
 				return false;
 			}
-			
 			// RIGHT - we should have a value (String)
-//			final Expression rawROperand = opExp.getSecondOperand();
-//			return (rawROperand instanceof StringLiteral)
-//					|| (rawROperand instanceof BooleanLiteral)
-//					|| (rawROperand instanceof IntegerLiteral)
-//					|| (rawROperand instanceof RealLiteral);
+			// final Expression rawROperand = opExp.getSecondOperand();
+			// return (rawROperand instanceof StringLiteral)
+			//		|| (rawROperand instanceof BooleanLiteral)
+			//		|| (rawROperand instanceof IntegerLiteral)
+			//		|| (rawROperand instanceof RealLiteral);
 			return true;
 			
 		} catch (Exception e) {
 			return false;
 		}
 	}
-
-//	private String isIndexed(String attributename) {
-//
-//		String result = null;
-//
-//		try (IGraphTransaction ignored = graph.beginTransaction()) {
-//
-//			String indexname = metaclass.getOutgoingWithType("epackage").iterator().next().getEndNode()
-//					.getProperty(IModelIndexer.IDENTIFIER_PROPERTY) + "##"
-//					+ metaclass.getProperty(IModelIndexer.IDENTIFIER_PROPERTY) + "##" + attributename;
-//
-//			// if (indexManager == null) indexManager = graph.index();
-//
-//			// System.err.println(indexname);
-//			// System.err.println(graph.getNodeIndexNames());
-//
-//			if (graph.nodeIndexExists(indexname))
-//				result = indexname;
-//
-//			ignored.success();
-//
-//		} catch (Exception e) {
-//			System.err
-//					.println("OptimisableCollectionSelectOperation, isIndexed, suppressed exception: " + e.getCause());
-//			e.printStackTrace();
-//		}
-//
-//		return result;
-//
-//	}
-
 }

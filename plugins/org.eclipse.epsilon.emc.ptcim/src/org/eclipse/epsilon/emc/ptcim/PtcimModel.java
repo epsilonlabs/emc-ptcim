@@ -64,34 +64,21 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 
 	public static final String PROPERTY_ELEMENT_NAME_AND_TYPE = "elementNameAndType";
 	
-	/** The bridge. */
 	protected IPtcComBridge<IPtcObject> bridge;
 	
 	/**  The Project, needed for type testing and instantiation. */ 
 	private IPtcObject theProject;
 	
-	/** The is initialized. */
 	private boolean isInitialized = false;
 	
 	/**  The PTC IM Model handle. */
 	private IPtcObject model = null;
 	
-	/** The model id. */
 	private String modelId;
-
-	/** The server. */
 	private String server;
-
-	/** The repository. */
 	private String repository;
-
-	/** The version. */
 	private String version;
-
-	/** The from selection. */
 	private boolean fromSelection;
-
-	/** The selected element id. */
 	private String selectedElementId;
 
 	/**
@@ -246,21 +233,11 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		try {
 			newInstance = model.invoke("Add", args);
 			setNewInstanceId(newInstance);
-			// check that the instance is correct
-//			Object ref = getElementById(((IPtcObject) newInstance).getId());
-//			while (ref == null) {
-//				// Some how the element was not created, try again
-//				newInstance = model.invoke("Add", args);
-//				setNewInstanceId(newInstance);
-//				// check that the instance is correct
-//				ref = getElementById(((IPtcObject) newInstance).getId());
-//			}
 		} catch (EpsilonCOMException e) {
 			throw new EolModelElementTypeNotFoundException(getName(), type);
 		}
 		return (IPtcObject) newInstance;
 	}
-	
 	
 	/**
 	 * Deletes an object from the model.
@@ -296,12 +273,7 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		getPropertyManager().dispose();
 		if (isInitialized()) {
 			if (!storeOnDisposal) {
-//				try {
-//					abortTransaction();
-//				} catch (EpsilonCOMException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+				// TODO: Discuss with Dimitris about store on disposal strategy
 			}
 		}
 		try {
@@ -324,7 +296,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		return getAllOfTypeFromModel(kind);
 	}
 	
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllOfType(java.lang.String)
 	 */
@@ -354,14 +325,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		}
 	}
 	
-	/**
-	 * Gets the owned contents.
-	 *
-	 * @param root the root
-	 * @param type the type
-	 * @return the owned contents
-	 * @throws EolModelElementTypeNotFoundException the eol model element type not found exception
-	 */
 	private List<IPtcObject> getOwnedContents(IPtcObject root, String type) throws EolModelElementTypeNotFoundException {
 		String rootType = null;
 		try {
@@ -383,15 +346,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		return result;
 	}
 	
-	/**
-	 * Association to list recursive.
-	 *
-	 * @param root the root
-	 * @param type the type
-	 * @param asocName the asoc name
-	 * @return the list
-	 * @throws EolModelElementTypeNotFoundException the eol model element type not found exception
-	 */
 	private List<IPtcObject> associationToListRecursive(IPtcObject root, String type, String asocName)
 			throws EolModelElementTypeNotFoundException {
 		
@@ -403,14 +357,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		return result;
 	}
 
-	/**
-	 * Association to list.
-	 *
-	 * @param root the root
-	 * @param asocName the asoc name
-	 * @return the list<? extends I ptc object>
-	 * @throws EolModelElementTypeNotFoundException the eol model element type not found exception
-	 */
 	private List<? extends IPtcObject> associationToList(IPtcObject root, String asocName)
 			throws EolModelElementTypeNotFoundException {
 		
@@ -428,13 +374,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		return Collections.emptyList();
 	}
 
-	/**
-	 * Filter by type.
-	 *
-	 * @param ptcCollection the ptc collection
-	 * @param type the type
-	 * @return the list
-	 */
 	private List<IPtcObject>  filterByType(List<? extends IPtcObject> ptcCollection, String type) {
 		List<IPtcObject> result = new ArrayList<IPtcObject>();
 		Iterator<? extends IPtcObject> it = ptcCollection.iterator();
@@ -452,7 +391,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		}
 		return result;
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllTypeNamesOf(java.lang.Object)
@@ -473,11 +411,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		return type;
 	}
 
-	/**
-	 * Gets the COM model.
-	 *
-	 * @return the COM model
-	 */
 	public IPtcObject getCOMModel() {
 		return model;
 	}
@@ -539,8 +472,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	public String getModelId() {
 		return modelId;
 	}
-	
-	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.Model#getPropertyGetter()
@@ -555,11 +486,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		}
 	}
 
-	/**
-	 * Gets the property manager.
-	 *
-	 * @return the propertyManager
-	 */
 	protected IPtcPropertyManager getPropertyManager() {
 		return Activator.getDefault().getFactory().getPropertyManager();
 	}
@@ -609,11 +535,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		return errDispPtr.length() > 0;
 	}
 
-	/**
-	 * Checks if is initialized.
-	 *
-	 * @return the isInitialized
-	 */
 	public boolean isInitialized() {
 		return isInitialized;
 	}
@@ -680,11 +601,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		load();
 	}
 	
-	/**
-	 * Load dictionary.
-	 *
-	 * @throws EolModelLoadingException the eol model loading exception
-	 */
 	public void loadDictionary() throws EolModelLoadingException {
 		List<Object> byRefArgs = new ArrayList<Object>();
 		byRefArgs.add("Dictionary");
@@ -731,17 +647,7 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 			else if (storeOnDisposal) {
 				// TODO Decide how the readOnLoad/storeOnDisposal flags control how the model is either
 				// loaded or created. 
-//				try {
-//					manager.createModel(server, repository, getModelId());
-//				} catch (EpsilonCOMException e) {
-//					throw new EolModelLoadingException(e, this);
-//				}
 			}
-//			try {
-//				beginTransaction();
-//			} catch (EpsilonCOMException e) {
-//				throw new EolModelLoadingException(e, this);
-//			}
 			loadDictionary();
 			try {
 				manager.disconnect();
@@ -750,7 +656,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 				e.printStackTrace();
 			}
 		}
-		
 	}
 
 	/* (non-Javadoc)
@@ -774,7 +679,6 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	@Override
 	public void setElementId(Object instance, String newId) {
 		throw new UnsupportedOperationException("Artisan objects Ids are read only.");
-		
 	}
 
 	/**
@@ -786,22 +690,13 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		((IPtcObject) newInstance).setId(id);
 	}
 
-		
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#store()
 	 */
 	@Override
 	public boolean store() {
 		assert storeOnDisposal;
-//		try {
-//			commitTransaction();
-//		} catch (EpsilonCOMException e) {
-//			// FIXME Log! or exception
-//			System.err.println("There was an error finishing the transaction on model store. Changes to the model might have been partially commited.");
-//			return false;
-//		}
 		return true;
-
 	}
 
 	/* (non-Javadoc)
@@ -812,5 +707,4 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		// FIXME We could do a CloneModel?
 		throw new UnsupportedOperationException("Artisan models are updated per invocation.");
 	}
-
 }

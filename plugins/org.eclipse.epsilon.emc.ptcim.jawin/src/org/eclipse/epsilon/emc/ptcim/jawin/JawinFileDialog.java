@@ -56,5 +56,4 @@ public class JawinFileDialog implements IPtcFileDialog<JawinObject> {
 		}
 		return byRefArgs.toArray(new String[] {});
 	}
-
 }

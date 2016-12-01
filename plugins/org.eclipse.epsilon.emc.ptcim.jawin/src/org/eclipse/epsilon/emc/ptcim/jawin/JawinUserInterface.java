@@ -23,14 +23,9 @@ import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
  */
 public class JawinUserInterface implements IPtcUserInterface<JawinObject> {
 	
-	/** The studio. */
 	IPtcObject studio;
-	
 	boolean isConnected = false;
 	
-	/**
-	 * Instantiates a new jawin user interface.
-	 */
 	public JawinUserInterface() {
 	}
 	
@@ -49,23 +44,6 @@ public class JawinUserInterface implements IPtcUserInterface<JawinObject> {
 	 */
 	@Override
 	public String createModel(String server, String repository, String name) throws EpsilonCOMException {
-//		String fullName = "\\\\Enabler\\" + server + "\\" + repository; 
-//		List<Object> args = new ArrayList<Object>();
-//		args.add(fullName);
-//		args.add(name);
-//		Object res = null;
-//		try {
-//			res = manager.invoke("AddModel", args);
-//		} catch (EpsilonCOMException e) {
-//			// FIXME This results in a New Model being crated... we have to delete it or rename it or ?
-//			if (!e.getMessage().contains("already exists")) {
-//				throw new EolRuntimeException(e.getMessage());
-//			}
-//			else {
-//				throw new EolRuntimeException("The model " + name + " already exits. Perhaps you ment to load the model instead?");
-//			}
-//		}
-//		System.out.println(res);
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 
@@ -225,5 +203,4 @@ public class JawinUserInterface implements IPtcUserInterface<JawinObject> {
 		}
 		
 	}
-
 }

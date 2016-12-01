@@ -42,98 +42,42 @@ import org.eclipse.swt.widgets.Text;
  */
 public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurationDialog {
 	
-	/** The Constant MODEL_TYPE. */
 	private static final String MODEL_TYPE = "PTC IM Model";
 	
-	/** The Constant PTCIM_OLE_EP_ID. */
-	// The Extension Point ID
 	public static final String PTCIM_OLE_EP_ID = "org.eclipse.epsilon.emc.ptcim.ole";
 	
-	/** The Constant ATT_CLASS. */
 	public static final String ATT_CLASS = "class";
 
-	/** The factory. */
 	private IPtcFrameworkFactory factory;
 	
-	/** The file text label. */
 	protected Label fileTextLabel;
-	
-	/** The file text. */
 	protected Text fileText;
-
-	/** The profile directories label. */
 	protected Label profileDirectoriesLabel;
-
-	/** The profile directories text. */
 	protected Text profileDirectoriesText;
-	
-	/** The profile workspace directories label. */
 	protected Label profileWorkspaceDirectoriesLabel;
-	
-	/** The profile workspace directories text. */
 	protected Text profileWorkspaceDirectoriesText;
-	
-	/** The browse model file. */
 	protected Button browseModelFile;
-	
-	/** The ignore argo uml profiles. */
 	protected Button ignoreArgoUmlProfiles;
-	
-	/** The reference label. */
 	protected Label referenceLabel;
-	
-	/** The reference text. */
 	protected Text referenceText;
-	
-	/** The server text. */
 	private Text serverText;
-	
-	/** The server label. */
 	private Label serverLabel;
-	
-	/** The repository text. */
 	private Text repositoryText;
-	
-	/** The repository label. */
 	private Label repositoryLabel;
-	
-	/** The version label. */
 	private Label versionLabel;
-	
-	/** The version text. */
 	private Text versionText;
-	
-	/** The from selection checkbox. */
 	private Button fromSelectionCheckbox;
-
-	/** The from selection label. */
 	private Label fromSelectionLabel;
-
-	/** The selected element id label. */
 	private Label selectedElementIdLabel;
-
-	/** The selected element find id button. */
 	private Button selectedElementFindIdButton;
-
-	/** The selected element id text. */
 	private Text selectedElementIdText;
-	
-	/** The selected element name and type label. */
 	private Label selectedElementNameAndTypeLabel;
-
-	/** The selected element name and type text. */
 	private Label selectedElementNameAndTypeTextLabel;
 	
-	/** The manager. */
 	IPtcModelManager<? extends IPtcObject, ? extends IPtcCollection<? extends IPtcObject>> manager = null;
 
-	/** The two col. */
 	private GridData twoCol;
 
-	
-	/**
-	 * Instantiates a new ptcim model configuration dialog.
-	 */
 	public PtcimModelConfigurationDialog() {
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IExtensionPoint ep = reg.getExtensionPoint(PTCIM_OLE_EP_ID);
@@ -167,19 +111,11 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 			manager.disconnect();
 			factory.shutdown();
 		} catch (EpsilonCOMException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return super.close();
 	}
 	
-
-	/**
-	 * Created selected element.
-	 *
-	 * @param parent the parent
-	 * @param groupContent the group content
-	 */
 	private void createdSelectedElement(final Composite parent, final Composite groupContent) {
 		selectedElementIdLabel = new Label(groupContent, SWT.NONE);
 		selectedElementIdLabel.setText("Id of the root element:");
@@ -210,13 +146,6 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 								+ " desired model loaded, and that an element is selected.");
 					}
 					if (ap != null) {
-//						System.out.println(ap);
-//						try {
-//							System.out.println(ap.getAttribute("Property", "Name"));
-//						} catch (EpsilonCOMException e1) {
-//							// TODO Auto-generated catch block
-//							e1.printStackTrace();
-//						}
 						IPtcCollection<? extends IPtcObject> selection = null;
 						try {
 							selection = manager.getActiveItems();
@@ -254,31 +183,25 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 								try {
 									current.disconnect();
 								} catch (EpsilonCOMException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
 							}
 							try {
 								selection.disconnect();
 							} catch (EpsilonCOMException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
 						try {
 							ap.disconnect();
 						} catch (EpsilonCOMException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
 				}
-				
 			}
 
 			private void showErrorMsg(String localizedMessage) {
-				//Display display = new Display();
-			    //Shell shell = new Shell(display);
 				int style = SWT.ICON_ERROR;
 				MessageBox messageBox = new MessageBox(parent.getShell(), style);
 				messageBox.setText("Error");
@@ -300,8 +223,6 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	 */
 	protected void createGroups(Composite control) {
 		super.createGroups(control);
-		//createFilesGroup(control);
-		//createProfilesGroup(control);
 		createLoadStoreOptionsGroup(control);
 	}
 	
@@ -411,11 +332,6 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		groupContent.pack();
 	}
 	
-	/**
-	 * Enable element id.
-	 *
-	 * @param enabled the enabled
-	 */
 	private void enableElementId(boolean enabled) {
 		selectedElementIdText.setEnabled(enabled);
 		selectedElementFindIdButton.setEnabled(enabled);
@@ -428,7 +344,6 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	protected String getModelName() {
 		return "PTC Integrity Modeler Model";
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.common.dt.launching.dialogs.AbstractModelConfigurationDialog#getModelType()
@@ -453,13 +368,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		selectedElementIdText.setText(properties.getProperty(PtcimModel.PROPERTY_ELEMENT_ID));
 		selectedElementNameAndTypeTextLabel.setText(properties.getProperty(PtcimModel.PROPERTY_ELEMENT_NAME_AND_TYPE));
 	}
-	
-	/**
-	 * Sets the project properties text.
-	 *
-	 * @param ap the ap
-	 * @return the string
-	 */
+
 	private String setProjectPropertiesText(IPtcObject ap) {
 		// Get current project information
 		String ref = null;
@@ -475,11 +384,6 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		return "";
 	}
 	
-	/**
-	 * Model reference to fields.
-	 *
-	 * @param ref the ref
-	 */
 	private void modelReferenceToFields(String ref) {
 		String[] info = ref.split("\\\\");
 		serverText.setText(info[3]);
@@ -502,5 +406,4 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		properties.put(PtcimModel.PROPERTY_ELEMENT_ID, selectedElementIdText.getText());
 		properties.put(PtcimModel.PROPERTY_ELEMENT_NAME_AND_TYPE, selectedElementNameAndTypeTextLabel.getText());
 	}
-	
 }

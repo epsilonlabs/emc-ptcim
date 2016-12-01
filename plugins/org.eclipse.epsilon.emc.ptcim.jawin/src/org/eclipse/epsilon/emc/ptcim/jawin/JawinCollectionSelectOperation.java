@@ -40,8 +40,6 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 	@Override
 	public Object execute(Object target, Variable iterator, Expression ast, IEolContext context,
 			boolean returnOnFirstMatch) throws EolRuntimeException {
-
-//		System.err.println("OptimisableCollectionSelectOperation execute called!");
 		if (!(target instanceof IPtcCollection)) {
 			return super.execute(target, iterator, ast, context, returnOnFirstMatch);
 		}
@@ -54,7 +52,6 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 			e.printStackTrace();
 			throw new EolRuntimeException("OptimisableCollectionSelectOperation: parseAST(iterator, ast) failed:", ast);
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -63,18 +60,14 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 		if (isOptimisable(ast)) {
 			return optimisedExecution(target, ast, returnOnFirstMatch);
 		} else {
-			// System.err.println("giving to super: "+ast.toStringTree());
 			Object ret = super.execute(target, iterator, (Expression) ast, context, returnOnFirstMatch);
-			// System.err.println("super returns: "+ret.getClass());
 			return (Collection<Object>) ret;
 
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
 	private Collection<Object> optimisedExecution(IPtcCollection<IPtcObject> target, Expression ast, boolean returnOnFirstMatch) throws EolRuntimeException {
-
 		// NOTE: this assumes that isOptimisable(ast) returned true
 		final OperatorExpression opExp = (OperatorExpression) ast;
 		final PropertyCallExpression lOperand = (PropertyCallExpression) opExp.getFirstOperand();
@@ -130,7 +123,6 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 			if (!(ast instanceof EqualsOperatorExpression)) {
 				return false;
 			}
-
 			// LEFT - we should have iterator.property
 			// L1. Check for a property call expression
 			final OperatorExpression opExp = (OperatorExpression) ast;
@@ -139,7 +131,6 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 				return false;
 			}
 			final PropertyCallExpression lOperand = (PropertyCallExpression) rawLOperand;
-
 			// L2. Check that we're using the iterator
 			final Expression rawTargetExpression = lOperand.getTargetExpression();
 			if (!(lOperand.getTargetExpression() instanceof NameExpression)) {
@@ -149,46 +140,12 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 			if (!iterator.getName().equals(nameExpression.getName())) {
 				return false;
 			}
-			
 			// We cant validate the right unless we execute it, and then it would mean double execution of a probably complex expression
 			//final Expression rawROperand = opExp.getSecondOperand();
 			//return rawROperand instanceof StringLiteral;
 			return true;
-			
-			
 		} catch (Exception e) {
 			return false;
 		}
 	}
-
-//	private String isIndexed(String attributename) {
-//
-//		String result = null;
-//
-//		try (IGraphTransaction ignored = graph.beginTransaction()) {
-//
-//			String indexname = metaclass.getOutgoingWithType("epackage").iterator().next().getEndNode()
-//					.getProperty(IModelIndexer.IDENTIFIER_PROPERTY) + "##"
-//					+ metaclass.getProperty(IModelIndexer.IDENTIFIER_PROPERTY) + "##" + attributename;
-//
-//			// if (indexManager == null) indexManager = graph.index();
-//
-//			// System.err.println(indexname);
-//			// System.err.println(graph.getNodeIndexNames());
-//
-//			if (graph.nodeIndexExists(indexname))
-//				result = indexname;
-//
-//			ignored.success();
-//
-//		} catch (Exception e) {
-//			System.err
-//					.println("OptimisableCollectionSelectOperation, isIndexed, suppressed exception: " + e.getCause());
-//			e.printStackTrace();
-//		}
-//
-//		return result;
-//
-//	}
-
 }

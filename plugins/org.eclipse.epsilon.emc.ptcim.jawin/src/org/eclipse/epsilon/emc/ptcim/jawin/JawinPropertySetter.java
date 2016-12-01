@@ -49,7 +49,6 @@ public class JawinPropertySetter extends AbstractPropertySetter {
 		}
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.execute.introspection.IPropertySetter#invoke(java.lang.Object)
 	 */
@@ -81,20 +80,8 @@ public class JawinPropertySetter extends AbstractPropertySetter {
 			try {
 				((IPtcObject) object).invoke("PropertySet", args);
 			} catch (EpsilonCOMException e) {
-				// Get additional information about the error
-//				Object extendedErr = null;
-//				try {
-//					extendedErr = ((IPtcObject) object).get("Property", "ExtendedErrorInfo");
-//				} catch (EpsilonCOMException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-//				// objItem.Property("ExtendedErrorInfo") to get more info?
-//				System.err.println("Error for " + comProperty.getName() + " for value " + value + ". Err " + extendedErr );
-//				e.printStackTrace();
 				throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
 			}
 		}
 	}
-
 }

@@ -54,8 +54,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 
 	private Map<String, Object> valueCache = new HashMap<String, Object>();
 
-	private String lastSetProperty; // Assumes invoke(object) always comes after
-									// setProperty
+	private String lastSetProperty; // Assumes invoke(object) always comes after setProperty
 	
 	@Override
 	public void dispose() {
@@ -74,7 +73,6 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 
 	@Override
 	public IPtcPropertyManager getInstance() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -90,15 +88,12 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 
 	@Override
 	public PtcProperty getPtcProperty(IPtcObject object, String property) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public PtcProperty getPtcProperty(String property) {
-		// System.out.println("getPtcProperty");
 		long start = System.nanoTime();
-		// PtcProperty cachedProp = ptcCache.get(property);
 		EnumSet<PtcPropertyEnum> cachedProp = ptcCache2.get(property);
 		if (cachedProp == null) {
 			// long substart = System.nanoTime();
@@ -111,58 +106,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 				// TODO We probably need better understanding of errors
 				return null;
 			}
-			// long subtotal = System.nanoTime() - substart;
-			// StringBuilder sb = new StringBuilder("COMCAll,");
-			// sb.append(subtotal);
-			// System.out.println(sb);
-			// Count find property with split.
-			// substart = System.nanoTime();
 			List<String> list = Arrays.asList(descriptors.split("\\n"));
-			// subtotal = System.nanoTime() - substart;
-			// sb = new StringBuilder("AllSplit,");
-			// sb.append(subtotal);
-			// System.out.println(sb);
-			// substart = System.nanoTime();
-			// for (String d : list) {
-			// String[] info = d.split(",");
-			// String name = info[0].substring(1, info[0].length()-1);
-			// if (nameMatches(name, property)) {
-			// final Set<PtcPropertyEnum> ptcProp =
-			// EnumSet.noneOf(PtcPropertyEnum.class);
-			// String role = info[1].substring(1, info[1].length()-1);
-			// boolean isAssociation = false;
-			// if (role.equals(ASSOCIATION_ROLE)) {
-			// isAssociation = true;
-			// ptcProp.add(PtcPropertyEnum.IS_ASSOCIATION);
-			// }
-			// boolean isPublic = true;
-			// String access = info[2].substring(1, info[2].length()-1);
-			// if (access.length() > 2) { // private access is 3 letters: xxP
-			// isPublic = false;
-			// }
-			// boolean readOnly = false;
-			// if (access.contains("O")) { // RO or ROP
-			// readOnly = true;
-			// ptcProp.add(PtcPropertyEnum.IS_READ_ONLY);
-			// }
-			// boolean isMultiple = false;
-			// String multy = info[3].substring(1, info[3].length()-1);
-			// if (multy.contains("+")) {
-			// isMultiple = true;
-			// ptcProp.add(PtcPropertyEnum.IS_MULTIPLE);
-			// }
-			// cachedProp = new PtcProperty(name, isPublic, readOnly,
-			// isMultiple, isAssociation);
-			// break;
-			// }
-			// }
-			// subtotal = System.nanoTime() - substart;
-			// sb = new StringBuilder("FindProperty,");
-			// sb.append(subtotal);
-			// System.out.println(sb);
-
-			// Compare Init all props
-			// substart = System.nanoTime();
 			for (String d : list) {
 				String[] info = d.split(",");
 				String name = info[0].substring(1, info[0].length() - 1);
@@ -186,15 +130,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 					ptcProp.add(PtcPropertyEnum.IS_MULTIPLE);
 				}
 				ptcCache2.put(name, ptcProp);
-				// cachedProp = new PtcProperty(name, isPublic, readOnly,
-				// isMultiple, isAssociation);
-				// }
 			}
-			// subtotal = System.nanoTime() - substart;
-			// sb = new StringBuilder("CacheAll,");
-			// sb.append(subtotal);
-			// System.out.println(sb);
-			// ptcCache.put(property, cachedProp);
 		}
 		long total = System.nanoTime() - start;
 		StringBuilder sb = new StringBuilder("getPtcProperty,");
@@ -203,13 +139,6 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter#
-	 * hasProperty(java.lang.Object, java.lang.String)
-	 */
 	@Override
 	public boolean hasProperty(Object object, String property) {
 		assert object.equals(this.object);
@@ -220,58 +149,6 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 		getPtcProperty(property);
 		return ptcCache2.containsKey(property);
 	}
-
-	// @Override
-	// public void invoke(Object value) throws EolRuntimeException {
-	//
-	// PtcProperty comProperty = getPtcProperty(lastSetProperty);
-	// // TODO Check if value matches property? See EMF Setter
-	// if (comProperty .isReadOnly()) {
-	// throw new EolReadOnlyPropertyException();
-	// }
-	// List<Object> args = new ArrayList<Object>();
-	// args.add(comProperty.getName());
-	// if (comProperty.isAssociation()) {
-	// if (!(value instanceof JawinObject)) {
-	// throw new EolRuntimeException("Association (0..1) properties' values must
-	// be COM objects.");
-	// }
-	// try {
-	// args.add(((JawinObject) value));
-	// ((IPtcObject) object).invoke("Add", args);
-	// } catch (EpsilonCOMException e) {
-	// // TODO Auto-generated catch block
-	// System.err.println("Error for " + comProperty.getName() + " for value " +
-	// value);
-	// e.printStackTrace();
-	// throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
-	// }
-	// }
-	// else {
-	// args.add(0);
-	// args.add(value);
-	// try {
-	// ((IPtcObject) object).invoke("PropertySet", args);
-	// } catch (EpsilonCOMException e) {
-	// // Get additional information about the error
-	//// Object extendedErr = null;
-	//// try {
-	//// extendedErr = ((IPtcObject) object).get("Property",
-	// "ExtendedErrorInfo");
-	//// } catch (EpsilonCOMException e1) {
-	//// // TODO Auto-generated catch block
-	//// e1.printStackTrace();
-	//// }
-	//// // objItem.Property("ExtendedErrorInfo") to get more info?
-	//// System.err.println("Error for " + comProperty.getName() + " for value "
-	// + value + ". Err " + extendedErr );
-	//// e.printStackTrace();
-	// throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
-	// }
-	// }
-	// // If all good, update cache
-	// valueCache.put(lastSetProperty, value);
-	// }
 
 	@Override
 	public void invoke(final Object value) throws EolRuntimeException {
@@ -286,12 +163,9 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 					List<Object> args = new ArrayList<Object>();
 					args.add(lastSetProperty);
 			
-					// Caution: the ReturnType (for type Operation) is both an association
-					// and an attribute.
-					// So, when we store it, we store the first type once and then the
-					// second ovewrites (race condition).
-					// To solve it here we additionally check that if it IS_ASSOCIATION, the
-					// value is a collection.
+					// Caution: the ReturnType (for type Operation) is both an association and an attribute.
+					// So, when we store it, we store the first type once and then the second ovewrites (race condition).
+					// To solve it here we additionally check that if it IS_ASSOCIATION, the value is a collection.
 					if (props.contains(PtcPropertyEnum.IS_ASSOCIATION) && (value instanceof Collection)) {
 						try {
 							args.add(lastSetProperty);
@@ -314,7 +188,6 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 							}
 			
 						} catch (EpsilonCOMException e) {
-							// TODO Auto-generated catch block
 							System.err.println("Error for " + lastSetProperty + " for value " + value);
 							e.printStackTrace();
 							throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
@@ -333,55 +206,12 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 						valueCache.put(lastSetProperty, value);
 					}
 				} catch (EolRuntimeException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		    }
 		}).start();
-			
-		
-		/*
-		 * Commented out Horacio's code here PtcProperty comProperty =
-		 * getPtcProperty(lastSetProperty); // TODO Check if value matches
-		 * property? See EMF Setter if (comProperty.isReadOnly()) { throw new
-		 * EolReadOnlyPropertyException(); }
-		 * 
-		 * 
-		 * List<Object> args = new ArrayList<Object>();
-		 * args.add(comProperty.getName());
-		 * 
-		 * if (comProperty.isAssociation()) { if (!(value instanceof
-		 * JawinObject)) { throw new EolRuntimeException(
-		 * "Association (0..1) properties' values must be COM objects."); } try
-		 * { args.add(((JawinObject) value)); ((IPtcObject)
-		 * object).invoke("Add", args); } catch (EpsilonCOMException e) { //
-		 * TODO Auto-generated catch block System.err.println("Error for " +
-		 * comProperty.getName() + " for value " + value); e.printStackTrace();
-		 * throw new EolIllegalPropertyAssignmentException(getProperty(),
-		 * getAst()); } } else { args.add(0); args.add(value); try {
-		 * ((IPtcObject) object).invoke("PropertySet", args); } catch
-		 * (EpsilonCOMException e) { // Get additional information about the
-		 * error // Object extendedErr = null; // try { // extendedErr =
-		 * ((IPtcObject) object).get("Property", "ExtendedErrorInfo"); // }
-		 * catch (EpsilonCOMException e1) { // // TODO Auto-generated catch
-		 * block // e1.printStackTrace(); // } // //
-		 * objItem.Property("ExtendedErrorInfo") to get more info? //
-		 * System.err.println("Error for " + comProperty.getName() +
-		 * " for value " + value + ". Err " + extendedErr ); //
-		 * e.printStackTrace(); throw new
-		 * EolIllegalPropertyAssignmentException(getProperty(), getAst()); } }
-		 * // If all good, update cache valueCache.put(lastSetProperty, value);
-		 * Commented Horacio's code ends here.
-		 */
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter#invoke(java
-	 * .lang.Object, java.lang.String)
-	 */
+
 	@Override
 	public Object invoke(Object object, String property) throws EolRuntimeException {
 		long start = System.nanoTime();
@@ -389,20 +219,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 		property = normalise(property);
 		o = valueCache.get(property);
 		if (o == null) {
-			// assert object instanceof JawinObject;
-			// JawinObject jObject = (JawinObject) object;
-			// try {
-			// PtcProperty p = getPtcProperty(property);
-			// if (p == null) {
-			// throw new EolRuntimeException("No such property");
-			// }
-			// o = queryPtcPropertyValue(property, jObject, p);
-			// } catch (EpsilonCOMException e) {
-			// throw new EolRuntimeException(e.getMessage());
-			// }
-			assert ptcCache2.containsKey(property); // knowsProperty always
-													// invoked first, which
-													// populates the cache
+			assert ptcCache2.containsKey(property); // knowsProperty always invoked first, which populates the cache
 			try {
 				o = queryPtcPropertyValue(property);
 			} catch (EpsilonCOMException e) {
@@ -458,48 +275,9 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 	 */
 	private boolean nameMatches(String name, String property) {
 		String noBlanks = normalise(name);
-		// String p = property.toLowerCase()
-		//
-		// List<Integer> idx = new ArrayList&ltInteger>();
-		// 03
-		// int id = -1;
-		// 04
-		// int shift = pattern.length();
-		// 05
-		// int scnIdx = -shift;
-		// 06
-		// while (scnIdx != -1 || id == -1) {
-		// 07
-		// idx.add(scnIdx);
-		// 08
-		// id = scnIdx + shift;
-		// 09
-		// scnIdx = source.indexOf(pattern, id);
-		// 10
-		// }
-		// 11
-		// idx.remove(0);
-		// 12
-		//
-		// 13
-		// return idx;
-		// long substart = System.nanoTime();
-		// long subtotal = System.nanoTime() - substart;
-		// StringBuilder sb = new StringBuilder("nameMatches,");
-		// sb.append(subtotal);
-		// System.out.println(sb);
 		return noBlanks.compareToIgnoreCase(property) == 0;
 	}
 
-	/**
-	 * @param property
-	 * @param o
-	 * @param jObject
-	 * @param p
-	 * @return
-	 * @throws EolRuntimeException
-	 * @throws EpsilonCOMException
-	 */
 	private Object queryPtcPropertyValue(String property, JawinObject jObject, PtcProperty p)
 			throws EolRuntimeException, EpsilonCOMException {
 

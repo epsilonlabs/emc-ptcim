@@ -92,5 +92,4 @@ public class JawinPropertyGetter extends AbstractPropertyGetter {
 		PtcProperty p = manager.getPtcProperty(jObject, property);
 		return p != null;
 	}
-
 }
