@@ -166,8 +166,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 			for (String d : list) {
 				String[] info = d.split(",");
 				String name = info[0].substring(1, info[0].length() - 1);
-				String noBlanks = name.replaceAll("\\s", "");
-				String normalised = noBlanks.toLowerCase();
+				name = normalise(name);
 				// if (nameMatches(name, property)) {
 				final EnumSet<PtcPropertyEnum> ptcProp = EnumSet.noneOf(PtcPropertyEnum.class);
 				String role = info[1].substring(1, info[1].length() - 1);
@@ -186,7 +185,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 				if (multy.contains("+")) {
 					ptcProp.add(PtcPropertyEnum.IS_MULTIPLE);
 				}
-				ptcCache2.put(normalised, ptcProp);
+				ptcCache2.put(name, ptcProp);
 				// cachedProp = new PtcProperty(name, isPublic, readOnly,
 				// isMultiple, isAssociation);
 				// }
@@ -214,7 +213,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 	@Override
 	public boolean hasProperty(Object object, String property) {
 		assert object.equals(this.object);
-		property = property.replaceAll("\\s", "").toLowerCase();
+		property = normalise(property);
 		if (ptcCache2.containsKey(property)) {
 			return true;
 		}
@@ -387,7 +386,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 	public Object invoke(Object object, String property) throws EolRuntimeException {
 		long start = System.nanoTime();
 		Object o = null;
-		property = property.replaceAll("\\s", "").toLowerCase();
+		property = normalise(property);
 		o = valueCache.get(property);
 		if (o == null) {
 			// assert object instanceof JawinObject;
@@ -418,9 +417,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 
 	private Object queryPtcPropertyValue(String property) throws EolRuntimeException, EpsilonCOMException {
 		Object o;
-		// normalise property
-		// TODO: Write documentation about normalisation
-		property = property.replaceAll("\\s", "").toLowerCase();
+		property = normalise(property);
 		EnumSet<PtcPropertyEnum> ptcprop = ptcCache2.get(property);
 		if (ptcprop.contains(PtcPropertyEnum.IS_ASSOCIATION)) {
 			List<Object> args = new ArrayList<Object>();
@@ -460,7 +457,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 	 * @return
 	 */
 	private boolean nameMatches(String name, String property) {
-		String noBlanks = name.replaceAll("\\s", "");
+		String noBlanks = normalise(name);
 		// String p = property.toLowerCase()
 		//
 		// List<Integer> idx = new ArrayList&ltInteger>();
@@ -556,14 +553,20 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 	@Override
 	public void setProperty(String property) {
 		getPtcProperty(property);
-		property = property.replaceAll("\\s", "").toLowerCase();
+		property = normalise(property);
 		lastSetProperty = property;
 	}
 
 	@Override
 	public boolean knowsProperty(String property) {
-		String normalisedProperty = property.replaceAll("\\s", "").toLowerCase();
+		String normalisedProperty = normalise(property);
 		getPtcProperty(normalisedProperty);
 		return ptcCache2.containsKey(normalisedProperty);
+	}
+	
+	// Normalisation: we assume that for example "Child Object" is treated the same as "child object", 
+	// "childObject" or "childobject" so we remove the spaces and transform the input to lowercase. 
+	public static String normalise(String theString) {
+		return theString.replaceAll("\\s", "").toLowerCase();
 	}
 }
