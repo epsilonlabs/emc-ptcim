@@ -13,8 +13,6 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcPropertyManager;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.PtcProperty;
 import org.eclipse.epsilon.eol.exceptions.EolIllegalPropertyAssignmentException;
@@ -28,7 +26,7 @@ import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertySetter;
 public class JawinPropertySetter extends AbstractPropertySetter {
 	
 	/** The property  manager (cache). */
-	private final IPtcPropertyManager manager = JawinPropertyManager.INSTANCE;
+	private final JawinPropertyManager manager = JawinPropertyManager.INSTANCE;
 	
 	/** The COM property. */
 	private PtcProperty comProperty;
@@ -39,7 +37,7 @@ public class JawinPropertySetter extends AbstractPropertySetter {
 	 */
 	@Override
 	public void setProperty(String property) {
-		comProperty = manager.getPtcProperty((IPtcObject) object, property);
+		comProperty = manager.getPtcProperty((JawinObject) object, property);
 		if (comProperty != null) {
 			super.setProperty(property);
 		}
@@ -66,7 +64,7 @@ public class JawinPropertySetter extends AbstractPropertySetter {
 			}
 			try {
 				args.add(((JawinObject) value));
-				((IPtcObject) object).invoke("Add", args);
+				((JawinObject) object).invoke("Add", args);
 			} catch (EpsilonCOMException e) {
 				// TODO Auto-generated catch block
 				System.err.println("Error for " + comProperty.getName() + " for value " + value);
@@ -78,7 +76,7 @@ public class JawinPropertySetter extends AbstractPropertySetter {
 			args.add(0);
 			args.add(value);			
 			try {
-				((IPtcObject) object).invoke("PropertySet", args);
+				((JawinObject) object).invoke("PropertySet", args);
 			} catch (EpsilonCOMException e) {
 				throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
 			}

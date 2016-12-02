@@ -14,3 +14,4 @@ Require-Bundle: org.eclipse.epsilon.emc.ptcim.ole,
  org.eclipse.epsilon.evl.engine
 Bundle-Activator: org.eclipse.epsilon.emc.ptcim.Activator
 Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.epsilon.emc.ptcim.jawin

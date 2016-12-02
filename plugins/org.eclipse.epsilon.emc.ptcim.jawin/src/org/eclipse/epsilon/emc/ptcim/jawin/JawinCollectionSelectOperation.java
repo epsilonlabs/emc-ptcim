@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcCollection;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.eol.dom.EqualsOperatorExpression;
 import org.eclipse.epsilon.eol.dom.Expression;
@@ -40,13 +38,13 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 	@Override
 	public Object execute(Object target, Variable iterator, Expression ast, IEolContext context,
 			boolean returnOnFirstMatch) throws EolRuntimeException {
-		if (!(target instanceof IPtcCollection)) {
+		if (!(target instanceof JawinCollection)) {
 			return super.execute(target, iterator, ast, context, returnOnFirstMatch);
 		}
 		try {
 			this.context = context;
 			this.iterator = iterator;
-			return decomposeAST((IPtcCollection) target, ast,returnOnFirstMatch);
+			return decomposeAST((JawinCollection) target, ast,returnOnFirstMatch);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -55,26 +53,26 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected Collection<Object> decomposeAST(IPtcCollection target, Expression ast, boolean returnOnFirstMatch) throws Exception {
+	protected Collection<JawinObject> decomposeAST(JawinCollection target, Expression ast, boolean returnOnFirstMatch) throws Exception {
 
 		if (isOptimisable(ast)) {
 			return optimisedExecution(target, ast, returnOnFirstMatch);
 		} else {
 			Object ret = super.execute(target, iterator, (Expression) ast, context, returnOnFirstMatch);
-			return (Collection<Object>) ret;
+			return (Collection<JawinObject>) ret;
 
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private Collection<Object> optimisedExecution(IPtcCollection<IPtcObject> target, Expression ast, boolean returnOnFirstMatch) throws EolRuntimeException {
+	private Collection<JawinObject> optimisedExecution(JawinCollection target, Expression ast, boolean returnOnFirstMatch) throws EolRuntimeException {
 		// NOTE: this assumes that isOptimisable(ast) returned true
 		final OperatorExpression opExp = (OperatorExpression) ast;
 		final PropertyCallExpression lOperand = (PropertyCallExpression) opExp.getFirstOperand();
 		final String attributename = lOperand.getPropertyNameExpression().getName();
 		// FIXME Think there are some types that have another default
 		if (!"name".equals(attributename.toLowerCase())) {		// Name is the default Id
-			return (Collection<Object>) super.execute(target, iterator, (Expression) ast, context, returnOnFirstMatch);
+			return (Collection<JawinObject>) super.execute(target, iterator, (Expression) ast, context, returnOnFirstMatch);
 		}
 		final Expression valueAST = opExp.getSecondOperand();
 		Object attributevalue = null;
@@ -93,17 +91,17 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 			List<Object> args = new ArrayList<Object>();
 			args.add(target.getAssociation());
 			args.add(attributevalue);
-			IPtcObject comresult = null;
+			JawinObject comresult = null;
 			try {
-				comresult = (IPtcObject) target.getOwner().invoke("Items", args);
+				comresult = (JawinObject) target.getOwner().invoke("Items", args);
 			} catch (EpsilonCOMException e) {
 				throw new EolInternalException(e);
 			}
-			Collection<? extends IPtcObject> result = comresult.wrapInFilteredColleciton(target.getAssociation());
-			return (Collection<Object>) result;
+			Collection<JawinObject> result = comresult.wrapInFilteredColleciton(target.getAssociation());
+			return (Collection<JawinObject>) result;
 			
 		} else {
-			return (Collection<Object>) super.execute(target, iterator, (Expression) ast, context, returnOnFirstMatch);
+			return (Collection<JawinObject>) super.execute(target, iterator, (Expression) ast, context, returnOnFirstMatch);
 		}
 	}
 	

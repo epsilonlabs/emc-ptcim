@@ -4,7 +4,6 @@ Bundle-Name: Epsilon EMC COM Interface
 Bundle-SymbolicName: org.eclipse.epsilon.emc.ptcim.ole;singleton:=true
 Bundle-Version: 0.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.eclipse.epsilon.emc.ptcim.ole,
- org.eclipse.epsilon.emc.ptcim.ole.impl
+Export-Package: org.eclipse.epsilon.emc.ptcim.ole.impl
 Require-Bundle: org.eclipse.epsilon.eol.engine
 Bundle-Vendor: Epsilon Framework

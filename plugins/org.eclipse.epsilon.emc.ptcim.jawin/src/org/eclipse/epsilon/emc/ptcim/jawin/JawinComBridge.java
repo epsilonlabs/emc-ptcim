@@ -1,14 +1,12 @@
 package org.eclipse.epsilon.emc.ptcim.jawin;
 
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcComBridge;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.jawin.COMException;
 import org.jawin.GUID;
 import org.jawin.win32.Ole32;
 
-public class JawinComBridge implements IPtcComBridge<JawinObject> {
+public class JawinComBridge {
 	
-	@Override
 	public JawinObject connectByClsId(String clsId) throws EpsilonCOMException {
 		GUID ciid = new GUID(clsId);
 		try {
@@ -18,7 +16,6 @@ public class JawinComBridge implements IPtcComBridge<JawinObject> {
 		}
 	}
 
-	@Override
 	public JawinObject connectByProgId(String progId) throws EpsilonCOMException {
 		try {
 			return new JawinObject(progId);
@@ -27,7 +24,6 @@ public class JawinComBridge implements IPtcComBridge<JawinObject> {
 		}
 	}
 
-	@Override
 	public void initialiseCOM() throws EpsilonCOMException {
 		try {
 			Ole32.CoInitialize();
@@ -37,7 +33,6 @@ public class JawinComBridge implements IPtcComBridge<JawinObject> {
 		}
 	}
 
-	@Override
 	public void uninitialiseCOM() throws EpsilonCOMException {
 		try {
 			Ole32.CoUninitialize();

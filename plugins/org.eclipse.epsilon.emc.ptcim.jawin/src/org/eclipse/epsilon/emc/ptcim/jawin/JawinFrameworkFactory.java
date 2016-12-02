@@ -10,11 +10,6 @@
  *******************************************************************************/
 package org.eclipse.epsilon.emc.ptcim.jawin;
 
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcFileDialog;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcFrameworkFactory;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcModelManager;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcPropertyManager;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcUserInterface;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter;
 import org.eclipse.epsilon.eol.execute.introspection.IPropertySetter;
@@ -22,7 +17,7 @@ import org.eclipse.epsilon.eol.execute.introspection.IPropertySetter;
 /**
  * A factory for creating JawinFramework objects.
  */
-public class JawinFrameworkFactory implements IPtcFrameworkFactory {
+public class JawinFrameworkFactory {
 	
 	private JawinComBridge bridge = new JawinComBridge();
 	private JawinModelManager jawinModelManager = new JawinModelManager();
@@ -32,45 +27,25 @@ public class JawinFrameworkFactory implements IPtcFrameworkFactory {
 	private JawinPropertyManager jawinPropertyManager = new JawinPropertyManager();
 	private JawinFileDialog jawinFileDialog = new JawinFileDialog();
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcFrameworkFactory#getFileDialogManager()
-	 */
-	@Override
-	public IPtcFileDialog<JawinObject> getFileDialogManager() throws EpsilonCOMException {
+	public JawinFileDialog getFileDialogManager() throws EpsilonCOMException {
 		jawinFileDialog.connect(bridge);
 		return jawinFileDialog;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcFrameworkFactory#getModelManager()
-	 */
-	@Override
-	public IPtcModelManager<JawinObject, JawinCollection> getModelManager() throws EpsilonCOMException {
+	public JawinModelManager getModelManager() throws EpsilonCOMException {
 		jawinModelManager.connect(bridge);
 		return jawinModelManager;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcFrameworkFactory#getPropertyGetter()
-	 */
-	@Override
-	public IPropertyGetter getPropertyGetter() {
+	public JawinPropertyGetter getPropertyGetter() {
 		return jawinPropertyGetter;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcFrameworkFactory#getPropertySetter()
-	 */
-	@Override
-	public IPropertySetter getPropertySetter() {
+	public JawinPropertySetter getPropertySetter() {
 		return jawinPropertySetter;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcFrameworkFactory#getUIManager()
-	 */
-	@Override
-	public IPtcUserInterface<JawinObject> getUIManager() throws EpsilonCOMException {
+	public JawinUserInterface getUIManager() throws EpsilonCOMException {
 		jawinUserInterface.connect(bridge);
 		return jawinUserInterface;
 	}
@@ -84,10 +59,6 @@ public class JawinFrameworkFactory implements IPtcFrameworkFactory {
 		bridge.uninitialiseCOM();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcFrameworkFactory#shutdown()
-	 */
-	@Override
 	public void shutdown() {
 		try {
 			jawinModelManager.disconnect();
@@ -111,15 +82,10 @@ public class JawinFrameworkFactory implements IPtcFrameworkFactory {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcFrameworkFactory#getPropertyManager()
-	 */
-	@Override
-	public IPtcPropertyManager getPropertyManager() {
-		return (IPtcPropertyManager) new JawinCachedPropertyXetter();
+	public JawinPropertyManager getPropertyManager() {
+		return (JawinPropertyManager) new JawinCachedPropertyXetter();
 	}
 
-	@Override
 	public void startup() throws EpsilonCOMException {
 		initialiseCOM();
 	}

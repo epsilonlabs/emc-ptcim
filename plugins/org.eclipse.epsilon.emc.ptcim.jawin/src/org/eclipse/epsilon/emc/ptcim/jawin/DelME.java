@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
 import org.jawin.COMException;
 import org.jawin.DispatchPtr;
 import org.jawin.Variant;

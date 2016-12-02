@@ -3,12 +3,10 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcComBridge;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcFileDialog;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.jawin.COMException;
 
-public class JawinFileDialog implements IPtcFileDialog<JawinObject> {
+public class JawinFileDialog {
 	
 	/**
 	 * The ArtisanModelFileDialog COM object
@@ -17,14 +15,12 @@ public class JawinFileDialog implements IPtcFileDialog<JawinObject> {
 	
 	boolean isConnected = false;
 
-	@Override
-	public void connect(IPtcComBridge<JawinObject> bridge) throws EpsilonCOMException {
+	public void connect(JawinComBridge bridge) throws EpsilonCOMException {
 		if (!isConnected)
 			dialog = bridge.connectByProgId("COMGUIUtil.ArtisanModelFileDialog");
 		isConnected = true;
 	}
 
-	@Override
 	public void disconnect() throws EpsilonCOMException {
 		if (isConnected) {
 			dialog.disconnect();
@@ -32,7 +28,6 @@ public class JawinFileDialog implements IPtcFileDialog<JawinObject> {
 		}
 	}
 
-	@Override
 	public String openDialog() throws EpsilonCOMException {
 		try {
 			return (String) dialog.invoke("Create", "True");
@@ -41,7 +36,6 @@ public class JawinFileDialog implements IPtcFileDialog<JawinObject> {
 		}
 	}
 
-	@Override
 	public String[] openDialogEx() throws EpsilonCOMException {
 		String ref = null, id = null, modelName = null;
 		List<Object> args = new ArrayList<Object>();

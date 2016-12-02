@@ -21,11 +21,11 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.epsilon.common.dt.launching.dialogs.AbstractCachedModelConfigurationDialog;
 import org.eclipse.epsilon.emc.ptcim.PtcimModel;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcCollection;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcFileDialog;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcFrameworkFactory;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcModelManager;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
+import org.eclipse.epsilon.emc.ptcim.jawin.JawinCollection;
+import org.eclipse.epsilon.emc.ptcim.jawin.JawinFileDialog;
+import org.eclipse.epsilon.emc.ptcim.jawin.JawinFrameworkFactory;
+import org.eclipse.epsilon.emc.ptcim.jawin.JawinModelManager;
+import org.eclipse.epsilon.emc.ptcim.jawin.JawinObject;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -48,7 +48,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	
 	public static final String ATT_CLASS = "class";
 
-	private IPtcFrameworkFactory factory;
+	private JawinFrameworkFactory factory;
 	
 	protected Label fileTextLabel;
 	protected Text fileText;
@@ -74,7 +74,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	private Label selectedElementNameAndTypeLabel;
 	private Label selectedElementNameAndTypeTextLabel;
 	
-	IPtcModelManager<? extends IPtcObject, ? extends IPtcCollection<? extends IPtcObject>> manager = null;
+	JawinModelManager manager = null;
 
 	private GridData twoCol;
 
@@ -86,7 +86,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		IExtension ext = extensions[0];
 		IConfigurationElement[] ce = ext.getConfigurationElements();
     	try {
-    		factory = (IPtcFrameworkFactory) ce[0].createExecutableExtension(ATT_CLASS);
+    		factory = (JawinFrameworkFactory) ce[0].createExecutableExtension(ATT_CLASS);
 		} catch (CoreException e) {
 			throw new IllegalStateException(e);
 		}
@@ -138,7 +138,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 			public void handleEvent(Event event) {
 				selectedElementIdText.setText("");
 				if (manager != null) {
-					IPtcObject ap = null;
+					JawinObject ap = null;
 					try {
 						ap = manager.getActiveProjet();
 					} catch (EpsilonCOMException e) {
@@ -146,21 +146,21 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 								+ " desired model loaded, and that an element is selected.");
 					}
 					if (ap != null) {
-						IPtcCollection<? extends IPtcObject> selection = null;
+						JawinCollection selection = null;
 						try {
 							selection = manager.getActiveItems();
 						} catch (EpsilonCOMException e1) {
 							showErrorMsg("Failed to connect to the PTC IM Modeler.");
 						}
 						if (selection != null) {
-							Iterator<? extends IPtcObject> it = selection.iterator();
+							Iterator<JawinObject> it = selection.iterator();
 							boolean seletionExists = true;
 							if (!it.hasNext()) {
 								showErrorMsg("There is no element selected.");
 								seletionExists = false;
 							}
 							if (seletionExists) {
-								IPtcObject current = it.next();
+								JawinObject current = it.next();
 								Object id = null;
 								Object name = null;
 								Object type = null;
@@ -260,7 +260,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 			
 			@Override
 			public void handleEvent(Event event) {
-				IPtcFileDialog<? extends IPtcObject> diag;
+				JawinFileDialog diag;
 				try {
 					diag = factory.getFileDialogManager();
 				} catch (EpsilonCOMException e1) {
@@ -369,7 +369,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		selectedElementNameAndTypeTextLabel.setText(properties.getProperty(PtcimModel.PROPERTY_ELEMENT_NAME_AND_TYPE));
 	}
 
-	private String setProjectPropertiesText(IPtcObject ap) {
+	private String setProjectPropertiesText(JawinObject ap) {
 		// Get current project information
 		String ref = null;
 		try {

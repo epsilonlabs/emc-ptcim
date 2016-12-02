@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcFrameworkFactory;
+import org.eclipse.epsilon.emc.ptcim.jawin.JawinFrameworkFactory;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.osgi.framework.BundleContext;
 
@@ -37,7 +37,7 @@ public class Activator extends Plugin {
 	// The shared instance
 	private static Activator plugin;
 
-	private IPtcFrameworkFactory factory;
+	private JawinFrameworkFactory factory;
 	
 	/**
 	 * The constructor
@@ -59,7 +59,7 @@ public class Activator extends Plugin {
 		IExtension ext = extensions[0];
 		IConfigurationElement[] ce = ext.getConfigurationElements();
     	try {
-    		factory = (IPtcFrameworkFactory) ce[0].createExecutableExtension(ATT_CLASS);
+    		factory = (JawinFrameworkFactory) ce[0].createExecutableExtension(ATT_CLASS);
 		} catch (CoreException e) {
 			throw e;
 		}
@@ -89,7 +89,7 @@ public class Activator extends Plugin {
 		return plugin;
 	}
 
-	public IPtcFrameworkFactory getFactory() {
+	public JawinFrameworkFactory getFactory() {
 		return factory;
 	}
 

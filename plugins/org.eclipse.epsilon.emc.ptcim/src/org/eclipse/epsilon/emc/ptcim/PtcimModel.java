@@ -19,11 +19,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.epsilon.common.util.StringProperties;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcCollection;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcComBridge;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcModelManager;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcPropertyManager;
+import org.eclipse.epsilon.emc.ptcim.jawin.JawinComBridge;
+import org.eclipse.epsilon.emc.ptcim.jawin.JawinModelManager;
+import org.eclipse.epsilon.emc.ptcim.jawin.JawinObject;
+import org.eclipse.epsilon.emc.ptcim.jawin.JawinPropertyManager;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundException;
@@ -38,7 +37,7 @@ import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 /**
  * The Class PtcimModel provides the EMC access to PTC Intregity Modeler models.
  */
-public class PtcimModel extends CachedModel<IPtcObject> {
+public class PtcimModel extends CachedModel<JawinObject> {
 
 	/** The Constant PROPERTY_MODEL_REFERENCE refers to the name of the model in the PTC IM database. */
 	public static final String PROPERTY_MODEL_REFERENCE = "modelRef";
@@ -64,15 +63,15 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 
 	public static final String PROPERTY_ELEMENT_NAME_AND_TYPE = "elementNameAndType";
 	
-	protected IPtcComBridge<IPtcObject> bridge;
+	protected JawinComBridge bridge;
 	
 	/**  The Project, needed for type testing and instantiation. */ 
-	private IPtcObject theProject;
+	private JawinObject theProject;
 	
 	private boolean isInitialized = false;
 	
 	/**  The PTC IM Model handle. */
-	private IPtcObject model = null;
+	private JawinObject model = null;
 	
 	private String modelId;
 	private String server;
@@ -88,14 +87,14 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	private Object lastPropertyObject;
 	
 	/** The xetter cache. */
-	private Map<Object, IPtcPropertyManager> xetterCache;
+	private Map<Object, JawinPropertyManager> xetterCache;
 
 	/**
 	 * Instantiates a new artisan model. Gets the COM helpers from the extension
 	 */
 	public PtcimModel() {
 		
-		xetterCache = new HashMap<Object, IPtcPropertyManager>();
+		xetterCache = new HashMap<Object, JawinPropertyManager>();
 		isInitialized = true;
 	}
 
@@ -119,18 +118,18 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#allContentsFromModel()
 	 */
 	@Override
-	protected Collection<IPtcObject> allContentsFromModel() {
+	protected Collection<JawinObject> allContentsFromModel() {
 		assert model != null;
-		Collection<? extends IPtcObject> elements;
+		Collection<JawinObject> elements;
 		List<Object> args = new ArrayList<Object>();
 		args.add("");
 		try {
-			IPtcObject res = (IPtcObject) model.invoke("Items", args);
+			JawinObject res = (JawinObject) model.invoke("Items", args);
 			elements = res.wrapInColleciton(model, "");
 		} catch (EpsilonCOMException e) {
 			throw new IllegalStateException(e);
 		}
-		return (Collection<IPtcObject>) elements;
+		return (Collection<JawinObject>) elements;
 	}
 	
 	/**
@@ -188,7 +187,7 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		Object newInstance = null;
 		Iterator<Object> it = parameters.iterator();
 		Object parent = it.next();
-		IPtcObject comParent = (IPtcObject) parent;
+		JawinObject comParent = (JawinObject) parent;
 		List<Object> args = new ArrayList<Object>();
 		args.add(type);
 		if (parameters.size() == 1) {		// Add
@@ -222,7 +221,7 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 * @throws EolNotInstantiableModelElementTypeException the eol not instantiable model element type exception
 	 */
 	@Override
-	protected IPtcObject createInstanceInModel(String type)
+	protected JawinObject createInstanceInModel(String type)
 			throws EolModelElementTypeNotFoundException, EolNotInstantiableModelElementTypeException {
 		if (!isInstantiable(type)) {
 			throw new EolNotInstantiableModelElementTypeException(getName(), type);
@@ -236,7 +235,7 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		} catch (EpsilonCOMException e) {
 			throw new EolModelElementTypeNotFoundException(getName(), type);
 		}
-		return (IPtcObject) newInstance;
+		return (JawinObject) newInstance;
 	}
 	
 	/**
@@ -254,10 +253,10 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 */
 	@Override
 	protected boolean deleteElementInModel(Object instance) throws EolRuntimeException {
-		assert instance instanceof IPtcObject;
+		assert instance instanceof JawinObject;
 		boolean success = false;
 		try {
-			((IPtcObject) instance).invokeMethod("Delete");
+			((JawinObject) instance).invokeMethod("Delete");
 			success = true;
 		} catch (EpsilonCOMException e) {
 			throw new EolRuntimeException(e.getMessage());
@@ -292,7 +291,7 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 * @throws EolModelElementTypeNotFoundException the eol model element type not found exception
 	 */
 	@Override
-	public Collection<IPtcObject> getAllOfKindFromModel(String kind) throws EolModelElementTypeNotFoundException {
+	public Collection<JawinObject> getAllOfKindFromModel(String kind) throws EolModelElementTypeNotFoundException {
 		return getAllOfTypeFromModel(kind);
 	}
 	
@@ -300,39 +299,39 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllOfType(java.lang.String)
 	 */
 	@Override
-	public Collection<IPtcObject> getAllOfTypeFromModel(String type) throws EolModelElementTypeNotFoundException {
+	public Collection<JawinObject> getAllOfTypeFromModel(String type) throws EolModelElementTypeNotFoundException {
 		assert model != null;
 		if (!fromSelection) {
-			List<? extends IPtcObject> elements;
+			List<? extends JawinObject> elements;
 			List<Object> args = new ArrayList<Object>();
 			args.add(type);
-			IPtcObject res;
+			JawinObject res;
 			try {
-				res = (IPtcObject) model.invoke("Items", args);	//, byRefArgs);
+				res = (JawinObject) model.invoke("Items", args);	//, byRefArgs);
 			} catch (EpsilonCOMException e) {
 				throw new EolModelElementTypeNotFoundException(name, type);
 			}
 			elements = res.wrapInColleciton(model, type);	//new JawinCollection(res, model, type);
-			return (List<IPtcObject>) elements;
+			return (List<JawinObject>) elements;
 		}
 		else {
 			if ("Package".equals(type)) {	// Important: When you retrieve the type of a Package, it is returned as Category.
 				type = "Category";
 			}
-			IPtcObject root = (IPtcObject) getElementById(selectedElementId);
-			List<IPtcObject> result = getOwnedContents(root, type);
+			JawinObject root = (JawinObject) getElementById(selectedElementId);
+			List<JawinObject> result = getOwnedContents(root, type);
 			return result;
 		}
 	}
 	
-	private List<IPtcObject> getOwnedContents(IPtcObject root, String type) throws EolModelElementTypeNotFoundException {
+	private List<JawinObject> getOwnedContents(JawinObject root, String type) throws EolModelElementTypeNotFoundException {
 		String rootType = null;
 		try {
 			rootType = (String) root.getAttribute("Property", "Type");
 		} catch (EpsilonCOMException e2) {
 			throw new EolModelElementTypeNotFoundException(name, type);
 		}
-		List<IPtcObject> result = new ArrayList<IPtcObject>();
+		List<JawinObject> result = new ArrayList<JawinObject>();
 		if ("Category".equals(rootType)) {	// Root is a package
 			String asocName = "Package Item";
 			result.addAll(associationToListRecursive(root, type, asocName));
@@ -340,31 +339,31 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		else {
 			// TODO Other types may need specific associations to get the contents
 			String asocName = "Owned Contents";
-			List<? extends IPtcObject> ownedContents = associationToList(root, asocName);
+			List<JawinObject> ownedContents = associationToList(root, asocName);
 			result.addAll(filterByType(ownedContents, type));
 		}
 		return result;
 	}
 	
-	private List<IPtcObject> associationToListRecursive(IPtcObject root, String type, String asocName)
+	private List<JawinObject> associationToListRecursive(JawinObject root, String type, String asocName)
 			throws EolModelElementTypeNotFoundException {
 		
-		List<? extends IPtcObject> ownedContents = associationToList(root, asocName);
-		List<IPtcObject> result = filterByType(ownedContents, type);
-		for (IPtcObject e : ownedContents) {
+		List<JawinObject> ownedContents = associationToList(root, asocName);
+		List<JawinObject> result = filterByType(ownedContents, type);
+		for (JawinObject e : ownedContents) {
 			result.addAll(getOwnedContents(e, type));
 		}
 		return result;
 	}
 
-	private List<? extends IPtcObject> associationToList(IPtcObject root, String asocName)
+	private List<JawinObject> associationToList(JawinObject root, String asocName)
 			throws EolModelElementTypeNotFoundException {
 		
 		List<Object> args = new ArrayList<Object>();
 		args.add(asocName);
-		IPtcObject res = null;
+		JawinObject res = null;
 		try {
-			res = (IPtcObject) root.invoke("Items", args);
+			res = (JawinObject) root.invoke("Items", args);
 		} catch (EpsilonCOMException e1) {
 			e1.printStackTrace();
 		}
@@ -374,11 +373,11 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		return Collections.emptyList();
 	}
 
-	private List<IPtcObject>  filterByType(List<? extends IPtcObject> ptcCollection, String type) {
-		List<IPtcObject> result = new ArrayList<IPtcObject>();
-		Iterator<? extends IPtcObject> it = ptcCollection.iterator();
+	private List<JawinObject>  filterByType(List<JawinObject> ptcCollection, String type) {
+		List<JawinObject> result = new ArrayList<JawinObject>();
+		Iterator<JawinObject> it = ptcCollection.iterator();
 		while (it.hasNext()) {
-			IPtcObject e = it.next();
+			JawinObject e = it.next();
 			Object etype = null;
 			try {
 				etype = e.getAttribute("Property", "Type");
@@ -411,7 +410,7 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		return type;
 	}
 
-	public IPtcObject getCOMModel() {
+	public JawinObject getCOMModel() {
 		return model;
 	}
 
@@ -422,9 +421,9 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	public Object getElementById(String id) {
 		List<Object> args = new ArrayList<Object>();
 		args.add(id);
-		IPtcObject res = null;
+		JawinObject res = null;
 		try {
-			res = (IPtcObject) theProject.invoke("ItemById", args);
+			res = (JawinObject) theProject.invoke("ItemById", args);
 			if (res != null)
 				res.setId(id);
 		} catch (EpsilonCOMException e) {
@@ -439,15 +438,15 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 */
 	@Override
 	public String getElementId(Object instance) {
-		assert instance instanceof IPtcObject;
-		String id = ((IPtcObject) instance).getId();
+		assert instance instanceof JawinObject;
+		String id = ((JawinObject) instance).getId();
 		if (id == null)
 		{
 			List<Object> args = new ArrayList<Object>();
 			args.add("Id");
 			try {
-				id = (String) ((IPtcObject) instance).getAttribute("Property", args);
-				((IPtcObject) instance).setId(id);
+				id = (String) ((JawinObject) instance).getAttribute("Property", args);
+				((JawinObject) instance).setId(id);
 			} catch (EpsilonCOMException e) {
 				// FIXME Log me!
 				throw new IllegalStateException(e);
@@ -486,7 +485,7 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		}
 	}
 
-	protected IPtcPropertyManager getPropertyManager() {
+	protected JawinPropertyManager getPropertyManager() {
 		return Activator.getDefault().getFactory().getPropertyManager();
 	}
 
@@ -508,10 +507,10 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 */
 	@Override
 	public String getTypeNameOf(Object instance) {
-		assert instance instanceof IPtcObject;
+		assert instance instanceof JawinObject;
 		String typeName;
 		try {
-			typeName = (String) ((IPtcObject) instance).getAttribute("Property", "Type");
+			typeName = (String) ((JawinObject) instance).getAttribute("Property", "Type");
 		} catch (EpsilonCOMException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -562,7 +561,7 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 */
 	@Override
 	public boolean isOfType(Object instance, String metaClass) throws EolModelElementTypeNotFoundException {
-		assert instance instanceof IPtcObject;
+		assert instance instanceof JawinObject;
 		String type = getTypeNameOf(instance);
 		return metaClass.equals(type);
 	}
@@ -573,15 +572,15 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	@Override
 	public boolean knowsAboutProperty(Object instance, String property) {
 		Object p = null;
-		if (instance instanceof IPtcObject) {
+		if (instance instanceof JawinObject) {
 			Object pm = xetterCache.get(instance);
 			if (pm == null) {
 				pm = getPropertyManager();
 				((IPropertySetter) pm).setObject(instance);
-				xetterCache.put(instance, (IPtcPropertyManager) pm);
+				xetterCache.put(instance, (JawinPropertyManager) pm);
 			}
 			lastPropertyObject = instance;
-			return ((IPtcPropertyManager) pm).knowsProperty(property);
+			return ((JawinPropertyManager) pm).knowsProperty(property);
 		}
 		return false;
 	}
@@ -606,7 +605,7 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 		byRefArgs.add("Dictionary");
 		byRefArgs.add("Dictionary");
 		try {
-			IPtcObject res = (IPtcObject) theProject.invoke("Item", byRefArgs);
+			JawinObject res = (JawinObject) theProject.invoke("Item", byRefArgs);
 			model = res;
 		} catch (EpsilonCOMException e) {
 			try {
@@ -626,7 +625,7 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	protected void loadModel() throws EolModelLoadingException {
 		if (isInitialized()) {
 			Activator activator = Activator.getDefault();
-			IPtcModelManager<? extends IPtcObject, ? extends IPtcCollection> manager;
+			JawinModelManager manager;
 			try {
 				manager = activator.getFactory().getModelManager();
 			} catch (EpsilonCOMException e1) {
@@ -663,11 +662,11 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 */
 	@Override
 	public boolean owns(Object instance) {
-		if (instance instanceof IPtcObject) {
-			if (((IPtcObject) instance).getId() == null) {
+		if (instance instanceof JawinObject) {
+			if (((JawinObject) instance).getId() == null) {
 				throw new IllegalStateException("COMObjects can not be found without an Id");
 			}
-			Object other = getElementById(((IPtcObject) instance).getId());
+			Object other = getElementById(((JawinObject) instance).getId());
 			return other != null;
 		}
 		return false;
@@ -686,8 +685,8 @@ public class PtcimModel extends CachedModel<IPtcObject> {
 	 * @throws EpsilonCOMException
 	 */
 	private void setNewInstanceId(Object newInstance) throws EpsilonCOMException {
-		String id = (String) ((IPtcObject) newInstance).getAttribute("Property", "Id");
-		((IPtcObject) newInstance).setId(id);
+		String id = (String) ((JawinObject) newInstance).getAttribute("Property", "Id");
+		((JawinObject) newInstance).setId(id);
 	}
 
 	/* (non-Javadoc)

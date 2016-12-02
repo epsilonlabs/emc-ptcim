@@ -6,38 +6,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcPropertyManager;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.PtcProperty;
 
-public class JawinPropertyManager implements IPtcPropertyManager {
+public class JawinPropertyManager {
 	
-	public static final IPtcPropertyManager INSTANCE = new JawinPropertyManager();
+	public static final JawinPropertyManager INSTANCE = new JawinPropertyManager();
 	
 	private static final Object ASSOCIATION_ROLE = "Association";
 	
-	@Override
-	public IPtcPropertyManager getInstance() {
+	public JawinPropertyManager getInstance() {
 		return INSTANCE;
 	}
 	
-	private Map<IPtcObject, Map<String, PtcProperty>> cache;
+	private Map<JawinObject, Map<String, PtcProperty>> cache;
 	
 	public JawinPropertyManager() {
 		super();
-		this.cache = new HashMap<IPtcObject, Map<String,PtcProperty>>();
+		this.cache = new HashMap<JawinObject, Map<String,PtcProperty>>();
 	}
 	
 	public void dispose() {
 		cache.clear();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.jawin.COMPropertyManager#getProperty(org.eclipse.epsilon.emc.COM.COMObject, java.lang.String)
-	 */
-	@Override
-	public PtcProperty getPtcProperty(IPtcObject object, String property) {
+	public PtcProperty getPtcProperty(JawinObject object, String property) {
 		long start = System.nanoTime();
 		Map<String, PtcProperty> cachedProps = cache.get(object);
 		if (cachedProps == null) {
@@ -105,15 +98,11 @@ public class JawinPropertyManager implements IPtcPropertyManager {
 		return name.replaceAll("^\"|\"$", "");
 	}
 
-	@Override
 	public PtcProperty getPtcProperty(String property) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public boolean knowsProperty(String property) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

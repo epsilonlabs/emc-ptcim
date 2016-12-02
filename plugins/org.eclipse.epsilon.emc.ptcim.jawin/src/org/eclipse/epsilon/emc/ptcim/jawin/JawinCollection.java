@@ -16,8 +16,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcCollection;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.eol.execute.operations.AbstractOperation;
 import org.eclipse.epsilon.eol.execute.operations.declarative.IAbstractOperationContributor;
@@ -29,7 +27,7 @@ import org.jawin.COMException;
  * unexpected results. Collections that are a result of a filtered Items only
  * provide iteration. 
  */
-public class JawinCollection extends AbstractList<JawinObject> implements IPtcCollection<JawinObject>, IAbstractOperationContributor {
+public class JawinCollection extends AbstractList<JawinObject> implements IAbstractOperationContributor {
 	
 	/** The object that points to the collection. */
 	private final JawinObject comObject;
@@ -47,7 +45,7 @@ public class JawinCollection extends AbstractList<JawinObject> implements IPtcCo
 	 * @param owner the owner
 	 * @param association the association
 	 */
-	public JawinCollection(IPtcObject comCollection, IPtcObject owner, String association) {
+	public JawinCollection(JawinObject comCollection, JawinObject owner, String association) {
 		assert comCollection instanceof JawinObject;
 		assert owner instanceof JawinObject;
 		this.comObject = (JawinObject) comCollection;
@@ -132,17 +130,14 @@ public class JawinCollection extends AbstractList<JawinObject> implements IPtcCo
 		return it.next();
 	}
 	
-	@Override
 	public String getAssociation() {
 		return association;
 	}
 
-	@Override
 	public JawinObject getCOMObject() {
 		return comObject;
 	}
 
-	@Override
 	public JawinObject getOwner() {
 		return owner;
 	}
@@ -174,26 +169,16 @@ public class JawinCollection extends AbstractList<JawinObject> implements IPtcCo
 		return -1;
 	}
 
-
-	@Override
 	public boolean isFiltered() {
 		return false;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see java.util.AbstractCollection#iterator()
-	 */
 	@Override
 	public Iterator<JawinObject> iterator() {
 		Iterator<JawinObject> iterator = new JawinIterator(comObject);
 		return iterator;
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see java.util.AbstractList#remove(int)
-	 */
 	@Override
 	public JawinObject remove(int index) {
 		JawinObject obj = get(index);
@@ -201,10 +186,6 @@ public class JawinCollection extends AbstractList<JawinObject> implements IPtcCo
 		return obj;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see java.util.AbstractCollection#remove(java.lang.Object)
-	 */
 	@Override
 	public boolean remove(Object o) {
 		try {
@@ -234,9 +215,6 @@ public class JawinCollection extends AbstractList<JawinObject> implements IPtcCo
 		return modified;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.AbstractCollection#size()
-	 */
 	@Override
 	public int size() {
 		Object resCount;

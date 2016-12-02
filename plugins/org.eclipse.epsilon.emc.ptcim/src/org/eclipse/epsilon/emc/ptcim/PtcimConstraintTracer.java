@@ -15,8 +15,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcUserInterface;
+import org.eclipse.epsilon.emc.ptcim.jawin.JawinObject;
+import org.eclipse.epsilon.emc.ptcim.jawin.JawinUserInterface;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.eol.dt.launching.EclipseContextManager;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -38,7 +38,7 @@ public class PtcimConstraintTracer implements IConstraintTracer {
 	@Override
 	public void traceConstraint(UnsatisfiedConstraint constraint, ILaunchConfiguration configuration) {
 		Object instance = constraint.getInstance();
-		if (instance instanceof IPtcObject) {		// Ignore other objects
+		if (instance instanceof JawinObject) {		// Ignore other objects
 			NullProgressMonitor monitor = new NullProgressMonitor();
 			EolContext context = new EolContext();
 			try {
@@ -47,7 +47,7 @@ public class PtcimConstraintTracer implements IConstraintTracer {
 				e.printStackTrace();
 				return;
 			}
-			IPtcUserInterface<? extends IPtcObject> studio;
+			JawinUserInterface studio;
 			try {
 				studio = Activator.getDefault().getFactory().getUIManager();
 			} catch (EpsilonCOMException e1) {
@@ -75,26 +75,26 @@ public class PtcimConstraintTracer implements IConstraintTracer {
 	 * @param studio
 	 * @throws EpsilonCOMException 
 	 */
-	private void showInModeler(Object instance, EolContext context, IPtcUserInterface<? extends IPtcObject> studio) throws EpsilonCOMException {
+	private void showInModeler(Object instance, EolContext context, JawinUserInterface studio) throws EpsilonCOMException {
 		IModel model = context.getModelRepository().getOwningModel(instance);
 		assert model instanceof PtcimModel;
 		String modelId = ((PtcimModel) model).getModelId();
-		String itemId = ((IPtcObject) instance).getId();
-		IPtcObject item = (IPtcObject) ((PtcimModel) model).getElementById(itemId);
+		String itemId = ((JawinObject) instance).getId();
+		JawinObject item = (JawinObject) ((PtcimModel) model).getElementById(itemId);
 		studio.showMainWindow();
 		studio.openModel(modelId);
 		List<Object> args = new ArrayList<Object>();
 		args.clear();
 		args.add("Using Diagram");
-		IPtcObject diag;
-		diag = (IPtcObject) item.invoke("Item", args);
+		JawinObject diag;
+		diag = (JawinObject) item.invoke("Item", args);
 		if (diag != null) {
 			String diagId = (String) diag.getAttribute("Property", "Id");
 			//String diagId = diag.getId();
 			args.clear();
 			args.add("Representing Symbol");
-			IPtcObject objSymbol;
-			objSymbol = (IPtcObject) item.invoke("Item", args);
+			JawinObject objSymbol;
+			objSymbol = (JawinObject) item.invoke("Item", args);
 			// FIXME What if the objSymbol does not exist? Test for Null
 			//String symboldId = objSymbol.getId();
 			String symboldId = (String) objSymbol.getAttribute("Property", "Id");

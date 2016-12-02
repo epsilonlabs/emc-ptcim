@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.jawin.COMException;
 import org.jawin.COMPtr;
@@ -23,7 +22,7 @@ import org.jawin.GUID;
 import org.jawin.Variant;
 import org.jawin.win32.Ole32;
 
-public class JawinObject extends DispatchPtr implements IPtcObject {
+public class JawinObject extends DispatchPtr {
 
 	private String id;
 	
@@ -41,10 +40,6 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 		super(progid);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.COM.COMObject#add(java.lang.String)
-	 */
-	@Override
 	public Object add(String association) throws EpsilonCOMException {
 		List<Object> args = new ArrayList<Object>();
 		args.add(association);
@@ -52,11 +47,7 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 		return res;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.COM.COMObject#add(java.lang.String, org.eclipse.epsilon.emc.COM.COMObject)
-	 */
-	@Override
-	public Object add(String association, IPtcObject object) throws EpsilonCOMException {
+	public Object add(String association, JawinObject object) throws EpsilonCOMException {
 		List<Object> args = new ArrayList<Object>();
 		args.add(association);
 		args.add(object);
@@ -64,10 +55,6 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 		return res;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.COM.COMObject#add(java.lang.String, java.lang.String)
-	 */
-	@Override
 	public Object add(String association, String name) throws EpsilonCOMException {
 		List<Object> args = new ArrayList<Object>();
 		args.add(association);
@@ -76,17 +63,10 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 		return res;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.COM.COMObject#addByType(java.lang.String, java.lang.String)
-	 */
-	@Override
 	public Object addByType(String association, String type) {
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcObject#disconnect()
-	 */
 	public void disconnect() throws EpsilonCOMException {
 		try {
 			super.close();
@@ -115,10 +95,6 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.COM.COMObject#get(java.lang.String, java.util.List)
-	 */
-	@Override
 	public Object getAttribute(String name, List<Object> args) throws EpsilonCOMException {
 		Object res;	// = new JawinObject();
 		try {
@@ -136,10 +112,6 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 		return res;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.COM.COMObject#get(java.lang.String, java.lang.Object)
-	 */
-	@Override
 	public Object getAttribute(String name, Object arg) throws EpsilonCOMException {
 		Object res;	// = new JawinObject();
 		try {
@@ -157,10 +129,6 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 		return res;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.COM.COMObject#getId()
-	 */
-	@Override
 	public String getId() {
 		return id;
 	}
@@ -176,10 +144,6 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.COM.COMObject#invoke(java.lang.String, java.util.List)
-	 */
-	@Override
 	public Object invoke(String methodName, List<Object> args) throws EpsilonCOMException {
 		Object res = null;
 		try {
@@ -199,19 +163,11 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 		return res;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcObject#invoke(java.lang.String, java.util.List, java.util.List)
-	 */
-	@Override
 	public Object invoke(String methodName, List<Object> args, List<Object> byRefArgs) throws EpsilonCOMException {
 		int len = args.size() + byRefArgs.size();
 		return invoke(methodName, args, byRefArgs, len);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcObject#invoke(java.lang.String, java.util.List, java.util.List, int)
-	 */
-	@Override
 	public Object invoke(String methodName, List<Object> args, List<Object> byRefArgs, int argsExpected)
 			throws EpsilonCOMException {
 		Object res;
@@ -240,10 +196,6 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 		return res;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.COM.COMObject#invoke(java.lang.String)
-	 */
-	@Override
 	public Object invokeMethod(String methodName) throws EpsilonCOMException {
 		Object res;
 		try {
@@ -261,74 +213,6 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 		return res;
 	}
 
-//	// FIXME this seems to be a invoke with pointer args, not sure if we need a invoke by value
-//	/* (non-Javadoc)
-//	 * @see org.eclipse.epsilon.emc.COM.COMObject#invoke(java.lang.String, java.lang.String, java.util.List)
-//	 */
-//	// in which we wont need the Byref Holder
-//	@Override
-//	@Deprecated
-//	public Object invoke(String methodName, String type, List<Object> args) throws EpsilonCOMException {
-//		Object res;
-//		try {
-//			// FIXME is it DispatchPtr?
-//			// FIXME it seems args is always just one, at least for artisan
-//			List<Object> comArgs = new ArrayList<Object>();
-//			comArgs.add(type);
-//			for (Object arg : args) {
-//				Variant.ByrefHolder varIndex = new Variant.ByrefHolder(arg);
-//				comArgs.add(varIndex);
-//			}
-//			Object comres = invokeN(methodName, comArgs.toArray());
-//			if (comres instanceof DispatchPtr) {
-//				res = new JawinObject();
-//				((JawinObject) res).stealUnknown((DispatchPtr) comres);
-//			}
-//			else {
-//				//res = new JawinPrimitive(comres);
-//				res = comres;
-//			}
-//		} catch (COMException e) {
-//			throw new EpsilonCOMException(e);
-//		}
-//		return res;
-//	}
-
-//	/* (non-Javadoc)
-//	 * @see org.eclipse.epsilon.emc.COM.COMObject#invoke(java.lang.String, java.lang.String, java.util.List, int)
-//	 */
-//	@Override
-//	@Deprecated
-//	public Object invoke(String methodName, String type, List<Object> args, int index) throws EpsilonCOMException {
-//		Object res;
-//		try {
-//			// FIXME is it DispatchPtr?
-//			// FIXME it seems args is always just one, at least for artisan
-//			List<Object> comArgs = new ArrayList<Object>();
-//			comArgs.add(type);
-//			for (Object arg : args) {
-//				Variant.ByrefHolder varIndex = new Variant.ByrefHolder(arg);
-//				comArgs.add(varIndex);
-//			}
-//			Object comres = invokeN(methodName, comArgs.toArray(), index);
-//			if (comres instanceof DispatchPtr) {
-//				res = new JawinObject();
-//				((JawinObject) res).stealUnknown((DispatchPtr) comres);
-//			}
-//			else {
-//				//res = new JawinPrimitive(comres);
-//				res = comres;
-//			}
-//		} catch (COMException e) {
-//			throw new EpsilonCOMException(e);
-//		}
-//		return res;
-//	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.COM.COMObject#setId(java.lang.String)
-	 */
-	@Override
 	public void setId(String id) {
 		// We should only set it once
 		if (this.id != null) {
@@ -337,7 +221,6 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 		this.id = id;
 	}
 	
-
 	/* (non-Javadoc)
 	 * @see org.jawin.COMPtr#toString()
 	 */
@@ -351,22 +234,11 @@ public class JawinObject extends DispatchPtr implements IPtcObject {
 		}
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcObject#wrapInColleciton(org.eclipse.epsilon.emc.ptcim.ole.IPtcObject, java.lang.String)
-	 */
-	@Override
-	public List<? extends IPtcObject> wrapInColleciton(IPtcObject owner, String association) {
-		
+	public List<JawinObject> wrapInColleciton(JawinObject owner, String association) {
 		return new JawinCollection(this, owner, association);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcObject#wrapInFilteredColleciton(java.lang.String)
-	 */
-	@Override
-	public Collection<? extends IPtcObject> wrapInFilteredColleciton(String association) {
-		
+	public Collection<JawinObject> wrapInFilteredColleciton(String association) {
 		return new JawinFilteredCollection(this, association);
 	}
 	

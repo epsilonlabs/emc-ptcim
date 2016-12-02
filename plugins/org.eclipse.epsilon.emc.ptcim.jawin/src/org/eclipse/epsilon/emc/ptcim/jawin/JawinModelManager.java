@@ -12,14 +12,12 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 
 import java.util.ArrayList;
 
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcComBridge;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcModelManager;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 
 /**
  * The Class JawinModelManager.
  */
-public class JawinModelManager implements IPtcModelManager<JawinObject, JawinCollection> {
+public class JawinModelManager  {
 	
 	/**
 	 * This is the root object for Modeler. It is a collection object for all
@@ -29,14 +27,12 @@ public class JawinModelManager implements IPtcModelManager<JawinObject, JawinCol
 	private JawinObject projects;
 	boolean isConnected = false;
 
-	@Override
-	public void connect(IPtcComBridge<JawinObject> bridge) throws EpsilonCOMException {
+	public void connect(JawinComBridge bridge) throws EpsilonCOMException {
 		if (!isConnected)
 			projects = bridge.connectByProgId("OMTE.Projects");
 		isConnected = true;
 	}
 
-	@Override
 	public void disconnect() throws EpsilonCOMException {
 		if (isConnected) {
 			projects.disconnect();
@@ -44,7 +40,6 @@ public class JawinModelManager implements IPtcModelManager<JawinObject, JawinCol
 		}
 	}
 
-	@Override
 	public JawinCollection getActiveDagrams() throws EpsilonCOMException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Diagram");
@@ -52,7 +47,6 @@ public class JawinModelManager implements IPtcModelManager<JawinObject, JawinCol
 		return new JawinCollection(comCollection, projects, "ActiveDiagram");
 	}
 
-	@Override
 	public JawinCollection getActiveItems() throws EpsilonCOMException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Dictionary Item");
@@ -60,14 +54,12 @@ public class JawinModelManager implements IPtcModelManager<JawinObject, JawinCol
 		return new JawinCollection(comCollection, projects, "Active Dictionary Item");
 	}
 
-	@Override
 	public JawinObject getActiveProjet() throws EpsilonCOMException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Project");
 		return (JawinObject) projects.invoke("Item", args);
 	}
 
-	@Override
 	public JawinCollection getActiveSelectinContext() throws EpsilonCOMException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Selection Context");
@@ -75,7 +67,6 @@ public class JawinModelManager implements IPtcModelManager<JawinObject, JawinCol
 		return new JawinCollection(comCollection, projects, "Active Selection Context");
 	}
 
-	@Override
 	public JawinCollection getActiveSymbols() throws EpsilonCOMException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Symbol");
@@ -83,7 +74,6 @@ public class JawinModelManager implements IPtcModelManager<JawinObject, JawinCol
 		return new JawinCollection(comCollection, projects, "Active Symbol");
 	}
 
-	@Override
 	public JawinObject getProjectByReference(String id, String server, String repository, String version)
 			throws EpsilonCOMException {
 		String method = "";
@@ -100,7 +90,6 @@ public class JawinModelManager implements IPtcModelManager<JawinObject, JawinCol
 		return model;
 	}
 
-	@Override
 	public JawinObject getProjectByTitle(String title) throws EpsilonCOMException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Project");
@@ -108,7 +97,6 @@ public class JawinModelManager implements IPtcModelManager<JawinObject, JawinCol
 		return (JawinObject) projects.invoke("Item", args);
 	}
 
-	@Override
 	public JawinCollection getProjects() throws EpsilonCOMException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Project");

@@ -13,44 +13,29 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcComBridge;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcUserInterface;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 
 /**
  * The Class JawinUserInterface is a Jawin implementation of the interface.
  */
-public class JawinUserInterface implements IPtcUserInterface<JawinObject> {
+public class JawinUserInterface {
 	
-	IPtcObject studio;
+	JawinObject studio;
 	boolean isConnected = false;
 	
 	public JawinUserInterface() {
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcApp#connect(org.eclipse.epsilon.emc.ptcim.ole.IPtcComBridge)
-	 */
-	@Override
-	public void connect(IPtcComBridge<JawinObject> bridge) throws EpsilonCOMException {
+	public void connect(JawinComBridge bridge) throws EpsilonCOMException {
 		if (!isConnected)
 			studio = bridge.connectByProgId("Studio.Editor");
 		isConnected = true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcUserInterface#createModel(java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
 	public String createModel(String server, String repository, String name) throws EpsilonCOMException {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcApp#disconnect()
-	 */
-	@Override
 	public void disconnect() throws EpsilonCOMException {
 		if (isConnected) {
 			studio.disconnect();
@@ -58,10 +43,6 @@ public class JawinUserInterface implements IPtcUserInterface<JawinObject> {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcUserInterface#openDiagram(java.lang.String)
-	 */
-	@Override
 	public boolean openDiagram(String id) {
 		List<Object> args = new ArrayList<Object>();
 		args.add(id);
@@ -81,10 +62,6 @@ public class JawinUserInterface implements IPtcUserInterface<JawinObject> {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcUserInterface#openModel(java.lang.String)
-	 */
-	@Override
 	public boolean openModel(String name) {
 		List<Object> args = new ArrayList<Object>();
 		args.add(name);
@@ -104,10 +81,6 @@ public class JawinUserInterface implements IPtcUserInterface<JawinObject> {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcUserInterface#openModelLocation(java.lang.String, java.lang.String)
-	 */
-	@Override
 	public boolean openModelLocation(String name, String directory) {
 		List<Object> args = new ArrayList<Object>();
 		args.add(name);
@@ -128,10 +101,6 @@ public class JawinUserInterface implements IPtcUserInterface<JawinObject> {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcUserInterface#selectBrowserItem(java.lang.String, java.lang.String)
-	 */
-	@Override
 	public boolean selectBrowserItem(String itemId, String pane) {
 		List<Object> args = new ArrayList<Object>();
 		args.add(itemId);
@@ -152,10 +121,6 @@ public class JawinUserInterface implements IPtcUserInterface<JawinObject> {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcUserInterface#selectSymbol(java.lang.String, java.lang.String)
-	 */
-	@Override
 	public boolean selectSymbol(String diagramId, String itemId) {
 		List<Object> args = new ArrayList<Object>();
 		args.add(diagramId);
@@ -176,10 +141,6 @@ public class JawinUserInterface implements IPtcUserInterface<JawinObject> {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcUserInterface#setForegroundWindow()
-	 */
-	@Override
 	public void setForegroundWindow() {
 		try {
 			studio.invokeMethod("SetForegroundWindow");
@@ -190,10 +151,6 @@ public class JawinUserInterface implements IPtcUserInterface<JawinObject> {
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.emc.ptcim.ole.IPtcUserInterface#showMainWindow()
-	 */
-	@Override
 	public void showMainWindow() {
 		try {
 			studio.invokeMethod("ShowMainWindow");

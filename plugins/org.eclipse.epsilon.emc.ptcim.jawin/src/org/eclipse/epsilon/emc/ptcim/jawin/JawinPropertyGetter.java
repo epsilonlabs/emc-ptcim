@@ -13,7 +13,6 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcPropertyManager;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.PtcProperty;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -25,7 +24,7 @@ import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter;
 public class JawinPropertyGetter extends AbstractPropertyGetter {
 
 	/** The manager. */
-	private final IPtcPropertyManager manager = JawinPropertyManager.INSTANCE;
+	private final JawinPropertyManager manager = JawinPropertyManager.INSTANCE;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter#invoke(java.lang.Object, java.lang.String)

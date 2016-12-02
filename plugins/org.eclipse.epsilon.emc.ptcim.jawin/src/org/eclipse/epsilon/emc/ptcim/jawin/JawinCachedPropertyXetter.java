@@ -22,8 +22,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 import org.eclipse.epsilon.common.module.ModuleElement;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcObject;
-import org.eclipse.epsilon.emc.ptcim.ole.IPtcPropertyManager;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.PtcProperty;
 import org.eclipse.epsilon.eol.exceptions.EolIllegalPropertyAssignmentException;
@@ -36,7 +34,7 @@ import org.eclipse.epsilon.eol.execute.introspection.IPropertySetter;
 /**
  * The Class JawinCachedPropertyXetter.
  */
-public class JawinCachedPropertyXetter implements IPtcPropertyManager, IPropertyGetter, IPropertySetter {
+public class JawinCachedPropertyXetter extends JawinPropertyManager implements IPropertyGetter, IPropertySetter {
 
 	private static final Object ASSOCIATION_ROLE = "Association";
 
@@ -46,7 +44,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 
 	private ModuleElement ast;
 	private IEolContext context;
-	private IPtcObject object;
+	private JawinObject object;
 
 	private Map<String, PtcProperty> ptcCache = new HashMap<String, PtcProperty>();
 
@@ -56,7 +54,6 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 
 	private String lastSetProperty; // Assumes invoke(object) always comes after setProperty
 	
-	@Override
 	public void dispose() {
 		ptcCache.clear();
 	}
@@ -71,8 +68,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 		return context;
 	}
 
-	@Override
-	public IPtcPropertyManager getInstance() {
+	public JawinPropertyManager getInstance() {
 		return null;
 	}
 
@@ -86,12 +82,10 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 		return null;
 	}
 
-	@Override
-	public PtcProperty getPtcProperty(IPtcObject object, String property) {
+	public PtcProperty getPtcProperty(JawinObject object, String property) {
 		return null;
 	}
 
-	@Override
 	public PtcProperty getPtcProperty(String property) {
 		long start = System.nanoTime();
 		EnumSet<PtcPropertyEnum> cachedProp = ptcCache2.get(property);
@@ -101,7 +95,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 			args.add("All Property Descriptors");
 			String descriptors = null;
 			try {
-				descriptors = (String) ((IPtcObject) object).getAttribute("Property", args);
+				descriptors = (String) ((JawinObject) object).getAttribute("Property", args);
 			} catch (EpsilonCOMException e) {
 				// TODO We probably need better understanding of errors
 				return null;
@@ -169,11 +163,11 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 					if (props.contains(PtcPropertyEnum.IS_ASSOCIATION) && (value instanceof Collection)) {
 						try {
 							args.add(lastSetProperty);
-							((IPtcObject) object).invoke("Remove", args);
+							((JawinObject) object).invoke("Remove", args);
 							for (Object aValue : (Collection<Object>) value) {
 								// TODO Change that to an if statement and throw the correct
 								// exception
-								assert aValue instanceof IPtcObject;
+								assert aValue instanceof JawinObject;
 								args.clear();
 								args.add(lastSetProperty);
 								args.add(aValue);
@@ -182,7 +176,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 							if (!ptcCache2.containsKey(lastSetProperty)) {
 								args.clear();
 								args.add(lastSetProperty);
-								IPtcObject allItems = (IPtcObject) object.invoke("Items", args);
+								JawinObject allItems = (JawinObject) object.invoke("Items", args);
 								JawinCollection allItemsJawin = new JawinCollection(allItems, object, lastSetProperty);
 								valueCache.put(lastSetProperty, allItemsJawin);
 							}
@@ -198,7 +192,7 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 						args.add(value);
 						try {
 							System.err.println(Thread.currentThread().getName());
-							((IPtcObject) object).invoke("PropertySet", args);
+							((JawinObject) object).invoke("PropertySet", args);
 						} catch (EpsilonCOMException e) {
 							System.err.println(Thread.currentThread().getName());
 							throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
@@ -324,8 +318,8 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 
 	@Override
 	public void setObject(Object object) {
-		assert object instanceof IPtcObject;
-		this.object = (IPtcObject) object;
+		assert object instanceof JawinObject;
+		this.object = (JawinObject) object;
 	}
 
 	@Override
@@ -335,7 +329,6 @@ public class JawinCachedPropertyXetter implements IPtcPropertyManager, IProperty
 		lastSetProperty = property;
 	}
 
-	@Override
 	public boolean knowsProperty(String property) {
 		String normalisedProperty = normalise(property);
 		getPtcProperty(normalisedProperty);
