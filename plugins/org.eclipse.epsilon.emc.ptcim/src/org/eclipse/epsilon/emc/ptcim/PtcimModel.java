@@ -58,10 +58,14 @@ public class PtcimModel extends CachedModel<JawinObject> {
 	/** The Constant PROPERTY_ELEMENT_ID refers to the ID of the currently selected element. */
 	public static final String PROPERTY_ELEMENT_ID = "elementId";
 	
-	/**  IAutomationCaseObject interface id. */
+	/** IAutomationCaseObject interface id. */
 	public static final String DIID = "{c9ff8402-bb2e-11d0-8475-0080C82BFA0C}";
 
 	public static final String PROPERTY_ELEMENT_NAME_AND_TYPE = "elementNameAndType";
+	/** Optional cache is supported: have caching when the intention is to read the model and disable it when the user wants to write to it.
+	 *  This is to accommodate opposite references (keeping in cache the value of an association that has changed should also update all the associations that point to this value.*/
+	public static final String PROPERTY_CACHE_ENABLED = "cacheEnabled";
+	
 	
 	protected JawinComBridge bridge;
 	
@@ -79,6 +83,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 	private String version;
 	private boolean fromSelection;
 	private String selectedElementId;
+	private boolean cacheEnabled;
 
 	/**
 	 * Keeps a reference to the last object for which {@link #knowsAboutProperty(Object, String)}
@@ -471,6 +476,15 @@ public class PtcimModel extends CachedModel<JawinObject> {
 	public String getModelId() {
 		return modelId;
 	}
+	
+	/**
+	 * Checks if the user wants to use the PTC driver cache during execution.
+	 * @return true is the cache should be used, false otherwise
+	 */
+	public boolean isCacheEnabled() {
+		return cacheEnabled;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.Model#getPropertyGetter()
@@ -597,6 +611,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 		version = properties.getProperty(PROPERTY_VERSION_NUMBER);
 		fromSelection = properties.getBooleanProperty(PROPERTY_FROM_SELECTION, false);
 		selectedElementId = properties.getProperty(PROPERTY_ELEMENT_ID);
+		cacheEnabled = properties.getBooleanProperty(PROPERTY_CACHE_ENABLED, false);
 		load();
 	}
 	
