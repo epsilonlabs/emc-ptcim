@@ -46,17 +46,11 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 	private IEolContext context;
 	private JawinObject object;
 
-	private Map<String, PtcProperty> ptcCache = new HashMap<String, PtcProperty>();
-
 	private Map<String, EnumSet<PtcPropertyEnum>> ptcCache2 = new HashMap<String, EnumSet<PtcPropertyEnum>>();
 
 	private Map<String, Object> valueCache = new HashMap<String, Object>();
 
 	private String lastSetProperty; // Assumes invoke(object) always comes after setProperty
-	
-	public void dispose() {
-		ptcCache.clear();
-	}
 
 	@Override
 	public ModuleElement getAst() {
