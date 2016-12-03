@@ -103,22 +103,6 @@ public class PtcimModel extends CachedModel<JawinObject> {
 		isInitialized = true;
 	}
 
-	/**
-	 * If a transaction has been started on the model, this method will
-	 * abort the transaction. As a result all the changes in the model
-	 * that where part of the transaction would be discarded. See
-	 * {@link #beginTransaction()}.
-	 *
-	 * @throws EpsilonCOMException If a transaction has not been started
-	 */
-	private void abortTransaction() throws EpsilonCOMException {
-		List<Object> args = new ArrayList<Object>();
-		args.add("Transaction");
-		args.add(0);
-		args.add("Abort");
-		theProject.invoke("PropertySet", args);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#allContentsFromModel()
 	 */
@@ -137,37 +121,6 @@ public class PtcimModel extends CachedModel<JawinObject> {
 		return (Collection<JawinObject>) elements;
 	}
 	
-	/**
-	 * Begin a transaction in the model. All changes to the model
-	 * during a transaction can either be committed or discarded
-	 * by committing (see {@link #commitTransaction()} or aborting
-	 * (see {@link #abortTransaction()} the transaction respectively.
-	 * @throws EpsilonCOMException if the transaction can not be started
-	 */
-	private void beginTransaction() throws EpsilonCOMException {
-		List<Object> args = new ArrayList<Object>();
-		args.add("Transaction");
-		args.add(0);
-		args.add("Begin");
-		theProject.invoke("PropertySet", args);
-	}
-	
-	/**
-	 * If a transaction has been started on the model, this method will
-	 * commit the transaction. As a result all the changes in the model
-	 * that where part of the transaction would be applied. See
-	 * {@link #beginTransaction()}.
-	 *
-	 * @throws EpsilonCOMException If a transaction has not been started
-	 */
-	private void commitTransaction() throws EpsilonCOMException {
-		List<Object> args = new ArrayList<Object>();
-		args.add("Transaction");
-		args.add(0);
-		args.add("Commit");
-		theProject.invoke("PropertySet", args);
-	}
-
 	/**
 	 * Creates a new instances in a specific parent and association.
 	 * In Artisan, elements created through the API can not be moved from the parent 
@@ -274,7 +227,6 @@ public class PtcimModel extends CachedModel<JawinObject> {
 	 */
 	@Override
 	protected void disposeModel() {
-		getPropertyManager().dispose();
 		if (isInitialized()) {
 			if (!storeOnDisposal) {
 				// TODO: Discuss with Dimitris about store on disposal strategy
@@ -585,7 +537,6 @@ public class PtcimModel extends CachedModel<JawinObject> {
 	 */
 	@Override
 	public boolean knowsAboutProperty(Object instance, String property) {
-		Object p = null;
 		if (instance instanceof JawinObject) {
 			Object pm = xetterCache.get(instance);
 			if (pm == null) {

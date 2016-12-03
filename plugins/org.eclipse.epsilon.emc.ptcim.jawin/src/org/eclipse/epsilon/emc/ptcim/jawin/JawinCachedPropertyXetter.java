@@ -17,13 +17,10 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
-import org.eclipse.epsilon.emc.ptcim.ole.impl.PtcProperty;
 import org.eclipse.epsilon.eol.exceptions.EolIllegalPropertyAssignmentException;
 import org.eclipse.epsilon.eol.exceptions.EolReadOnlyPropertyException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -76,12 +73,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 		return null;
 	}
 
-	public PtcProperty getPtcProperty(JawinObject object, String property) {
-		return null;
-	}
-
-	public PtcProperty getPtcProperty(String property) {
-		long start = System.nanoTime();
+	public void getPtcProperty(String property) {
 		EnumSet<PtcPropertyEnum> cachedProp = ptcCache2.get(property);
 		if (cachedProp == null) {
 			// long substart = System.nanoTime();
@@ -92,7 +84,6 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 				descriptors = (String) ((JawinObject) object).getAttribute("Property", args);
 			} catch (EpsilonCOMException e) {
 				// TODO We probably need better understanding of errors
-				return null;
 			}
 			List<String> list = Arrays.asList(descriptors.split("\\n"));
 			for (String d : list) {
@@ -120,11 +111,6 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 				ptcCache2.put(name, ptcProp);
 			}
 		}
-		long total = System.nanoTime() - start;
-		StringBuilder sb = new StringBuilder("getPtcProperty,");
-		sb.append(total);
-		System.out.println(sb);
-		return null;
 	}
 
 	@Override
@@ -250,52 +236,6 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 			}
 		} else {
 			o = object.getAttribute("Property", property);
-		}
-		return o;
-	}
-
-	/**
-	 * Remove spaces from the Artisan name and compare case insensitive
-	 * 
-	 * @param name
-	 * @param property
-	 * @return
-	 */
-	private boolean nameMatches(String name, String property) {
-		String noBlanks = normalise(name);
-		return noBlanks.compareToIgnoreCase(property) == 0;
-	}
-
-	private Object queryPtcPropertyValue(String property, JawinObject jObject, PtcProperty p)
-			throws EolRuntimeException, EpsilonCOMException {
-
-		Object o;
-		if (p.isAssociation()) {
-			List<Object> args = new ArrayList<Object>();
-			args.add(property);
-			if (p.isMultiple()) {
-				JawinCollection elements;
-				try {
-					Object res = jObject.invoke("Items", args);
-					assert res instanceof JawinObject;
-					elements = new JawinCollection((JawinObject) res, jObject, property);
-				} catch (EpsilonCOMException e) {
-					throw new EolRuntimeException(e.getMessage());
-				}
-				o = elements;
-			} else {
-				try {
-					o = jObject.invoke("Item", args); // , byRefArgs);
-					if (o instanceof JawinObject) {
-						String strId = (String) ((JawinObject) o).getAttribute("Property", "Id");
-						((JawinObject) o).setId(strId);
-					}
-				} catch (EpsilonCOMException e) {
-					throw new EolRuntimeException(e.getMessage());
-				}
-			}
-		} else {
-			o = jObject.getAttribute("Property", property);
 		}
 		return o;
 	}

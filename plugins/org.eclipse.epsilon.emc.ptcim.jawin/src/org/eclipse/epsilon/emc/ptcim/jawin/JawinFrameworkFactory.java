@@ -11,8 +11,6 @@
 package org.eclipse.epsilon.emc.ptcim.jawin;
 
 import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
-import org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter;
-import org.eclipse.epsilon.eol.execute.introspection.IPropertySetter;
 
 /**
  * A factory for creating JawinFramework objects.
@@ -21,10 +19,7 @@ public class JawinFrameworkFactory {
 	
 	private JawinComBridge bridge = new JawinComBridge();
 	private JawinModelManager jawinModelManager = new JawinModelManager();
-	private JawinPropertyGetter jawinPropertyGetter = new JawinPropertyGetter();
-	private JawinPropertySetter jawinPropertySetter = new JawinPropertySetter();
 	private JawinUserInterface jawinUserInterface = new JawinUserInterface();
-	private JawinPropertyManager jawinPropertyManager = new JawinPropertyManager();
 	private JawinFileDialog jawinFileDialog = new JawinFileDialog();
 	
 	public JawinFileDialog getFileDialogManager() throws EpsilonCOMException {
@@ -35,14 +30,6 @@ public class JawinFrameworkFactory {
 	public JawinModelManager getModelManager() throws EpsilonCOMException {
 		jawinModelManager.connect(bridge);
 		return jawinModelManager;
-	}
-
-	public JawinPropertyGetter getPropertyGetter() {
-		return jawinPropertyGetter;
-	}
-
-	public JawinPropertySetter getPropertySetter() {
-		return jawinPropertySetter;
 	}
 
 	public JawinUserInterface getUIManager() throws EpsilonCOMException {

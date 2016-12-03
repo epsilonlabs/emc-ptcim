@@ -20,7 +20,6 @@ import org.jawin.COMPtr;
 import org.jawin.DispatchPtr;
 import org.jawin.GUID;
 import org.jawin.Variant;
-import org.jawin.win32.Ole32;
 
 public class JawinObject extends DispatchPtr {
 
