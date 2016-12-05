@@ -69,8 +69,8 @@ public class JawinFrameworkFactory {
 		}
 	}
 
-	public JawinPropertyManager getPropertyManager() {
-		return (JawinPropertyManager) new JawinCachedPropertyXetter();
+	public JawinPropertyManager getPropertyManager(boolean propertiesValuesCacheEnabled) {
+		return (JawinPropertyManager) new JawinCachedPropertyXetter(propertiesValuesCacheEnabled);
 	}
 
 	public void startup() throws EpsilonCOMException {

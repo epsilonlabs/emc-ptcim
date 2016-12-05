@@ -64,7 +64,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 	public static final String PROPERTY_ELEMENT_NAME_AND_TYPE = "elementNameAndType";
 	/** Optional cache is supported: have caching when the intention is to read the model and disable it when the user wants to write to it.
 	 *  This is to accommodate opposite references (keeping in cache the value of an association that has changed should also update all the associations that point to this value.*/
-	public static final String PROPERTY_CACHE_ENABLED = "cacheEnabled";
+	public static final String PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED = "propertiesValuesCacheEnabled";
 	
 	
 	protected JawinComBridge bridge;
@@ -83,7 +83,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 	private String version;
 	private boolean fromSelection;
 	private String selectedElementId;
-	private boolean cacheEnabled;
+	private boolean propertiesValuesCacheEnabled;
 
 	/**
 	 * Keeps a reference to the last object for which {@link #knowsAboutProperty(Object, String)}
@@ -91,14 +91,14 @@ public class PtcimModel extends CachedModel<JawinObject> {
 	 */
 	private Object lastPropertyObject;
 	
-	/** The xetter cache. */
+	/** The xetter cache.
+	 * One Property manager per element in the model */
 	private Map<Object, JawinPropertyManager> xetterCache;
 
 	/**
 	 * Instantiates a new artisan model. Gets the COM helpers from the extension
 	 */
 	public PtcimModel() {
-		
 		xetterCache = new HashMap<Object, JawinPropertyManager>();
 		isInitialized = true;
 	}
@@ -430,11 +430,11 @@ public class PtcimModel extends CachedModel<JawinObject> {
 	}
 	
 	/**
-	 * Checks if the user wants to use the PTC driver cache during execution.
+	 * Checks if the user wants to use the PTC driver to cache property values during execution.
 	 * @return true is the cache should be used, false otherwise
 	 */
-	public boolean isCacheEnabled() {
-		return cacheEnabled;
+	public boolean isPropertiesValuesCacheEnabled() {
+		return propertiesValuesCacheEnabled;
 	}
 
 
@@ -452,7 +452,8 @@ public class PtcimModel extends CachedModel<JawinObject> {
 	}
 
 	protected JawinPropertyManager getPropertyManager() {
-		return Activator.getDefault().getFactory().getPropertyManager();
+		// return new JawinCachedProXetter(isCachedPropertyCcess);
+		return Activator.getDefault().getFactory().getPropertyManager(this.isPropertiesValuesCacheEnabled());
 	}
 
 	/* (non-Javadoc)
@@ -562,7 +563,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 		version = properties.getProperty(PROPERTY_VERSION_NUMBER);
 		fromSelection = properties.getBooleanProperty(PROPERTY_FROM_SELECTION, false);
 		selectedElementId = properties.getProperty(PROPERTY_ELEMENT_ID);
-		cacheEnabled = properties.getBooleanProperty(PROPERTY_CACHE_ENABLED, false);
+		propertiesValuesCacheEnabled = properties.getBooleanProperty(PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED, false);
 		load();
 	}
 	

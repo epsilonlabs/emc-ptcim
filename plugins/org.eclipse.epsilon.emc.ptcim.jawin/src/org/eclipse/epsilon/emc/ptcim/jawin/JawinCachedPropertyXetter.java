@@ -33,7 +33,17 @@ import org.eclipse.epsilon.eol.execute.introspection.IPropertySetter;
  */
 public class JawinCachedPropertyXetter extends JawinPropertyManager implements IPropertyGetter, IPropertySetter {
 
+	private boolean propertiesValuesCacheEnabled;
+
+	// The xetter needs to know if the valueCache should be used.
+	public JawinCachedPropertyXetter(boolean propertiesValuesCacheEnabled) {
+		super();
+		this.propertiesValuesCacheEnabled = propertiesValuesCacheEnabled;
+	}
+
 	private static final Object ASSOCIATION_ROLE = "Association";
+	
+	private static final boolean USE_CACHE = false;
 
 	public enum PtcPropertyEnum {
 		IS_PUBLIC, IS_READ_ONLY, IS_MULTIPLE, IS_ASSOCIATION
@@ -43,9 +53,13 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 	private IEolContext context;
 	private JawinObject object;
 
-	private Map<String, EnumSet<PtcPropertyEnum>> ptcCache2 = new HashMap<String, EnumSet<PtcPropertyEnum>>();
+	// This is the cache the stores the names of the properties that each element has. For example the class element has a property called name, child objects, etc.
+	// This way we don't need to query through the COM if an element has the requested property. This is actually the cache the stores the "metamodel" of PTC IM models.
+	private Map<String, EnumSet<PtcPropertyEnum>> elementPropertiesNamesCache = new HashMap<String, EnumSet<PtcPropertyEnum>>();
 
-	private Map<String, Object> valueCache = new HashMap<String, Object>();
+	// In this cache we store the values of the properties that we have visited before. It is optional (is enabled/disabled through a checkbox in the 
+	// run config. for each model) as in script where writing is performed, it will lead to inconsistencies when accessing the values using opposite relationships.
+	private Map<String, Object> propertiesValuesCache = new HashMap<String, Object>();
 
 	private String lastSetProperty; // Assumes invoke(object) always comes after setProperty
 
@@ -74,7 +88,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 	}
 
 	public void getPtcProperty(String property) {
-		EnumSet<PtcPropertyEnum> cachedProp = ptcCache2.get(property);
+		EnumSet<PtcPropertyEnum> cachedProp = elementPropertiesNamesCache.get(property);
 		if (cachedProp == null) {
 			// long substart = System.nanoTime();
 			List<Object> args = new ArrayList<Object>();
@@ -108,7 +122,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 				if (multy.contains("+")) {
 					ptcProp.add(PtcPropertyEnum.IS_MULTIPLE);
 				}
-				ptcCache2.put(name, ptcProp);
+				elementPropertiesNamesCache.put(name, ptcProp);
 			}
 		}
 	}
@@ -117,11 +131,11 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 	public boolean hasProperty(Object object, String property) {
 		assert object.equals(this.object);
 		property = normalise(property);
-		if (ptcCache2.containsKey(property)) {
+		if (elementPropertiesNamesCache.containsKey(property)) {
 			return true;
 		}
 		getPtcProperty(property);
-		return ptcCache2.containsKey(property);
+		return elementPropertiesNamesCache.containsKey(property);
 	}
 
 	@Override
@@ -129,14 +143,12 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 		new Thread(new Runnable() {
 		    public void run() {
 				try {
-					EnumSet<PtcPropertyEnum> props = ptcCache2.get(lastSetProperty);
+					EnumSet<PtcPropertyEnum> props = elementPropertiesNamesCache.get(lastSetProperty);
 					if (props.contains(PtcPropertyEnum.IS_READ_ONLY)) {
 						throw new EolReadOnlyPropertyException();
 					}
-					
 					List<Object> args = new ArrayList<Object>();
 					args.add(lastSetProperty);
-			
 					// Caution: the ReturnType (for type Operation) is both an association and an attribute.
 					// So, when we store it, we store the first type once and then the second ovewrites (race condition).
 					// To solve it here we additionally check that if it IS_ASSOCIATION, the value is a collection.
@@ -153,14 +165,17 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 								args.add(aValue);
 								object.invoke("Add", args);
 							}
-							if (!ptcCache2.containsKey(lastSetProperty)) {
+							if (!elementPropertiesNamesCache.containsKey(lastSetProperty)) {
 								args.clear();
 								args.add(lastSetProperty);
 								JawinObject allItems = (JawinObject) object.invoke("Items", args);
 								JawinCollection allItemsJawin = new JawinCollection(allItems, object, lastSetProperty);
-								valueCache.put(lastSetProperty, allItemsJawin);
+								// The values cache is updated either when the getter is called or when the setter is called (this case). We don't  want to consume
+								// unnecessary memory in storing the cached values that we don't want to retrieve so we only save if we the user requested caching.
+								if (propertiesValuesCacheEnabled) {
+									propertiesValuesCache.put(lastSetProperty, allItemsJawin);
+								}
 							}
-			
 						} catch (EpsilonCOMException e) {
 							System.err.println("Error for " + lastSetProperty + " for value " + value);
 							e.printStackTrace();
@@ -177,7 +192,11 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 							System.err.println(Thread.currentThread().getName());
 							throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
 						}
-						valueCache.put(lastSetProperty, value);
+						// The values cache is updated either when the getter is called or when the setter is called (this case). We don't  want to consume
+						// unnecessary memory in storing the cached values that we don't want to retrieve so we only save if we the user requested caching.
+						if (propertiesValuesCacheEnabled) {
+							propertiesValuesCache.put(lastSetProperty, value);
+						}
 					}
 				} catch (EolRuntimeException e) {
 					e.printStackTrace();
@@ -188,28 +207,32 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 
 	@Override
 	public Object invoke(Object object, String property) throws EolRuntimeException {
-		long start = System.nanoTime();
 		Object o = null;
 		property = normalise(property);
-		o = valueCache.get(property);
-		if (o == null) {
-			assert ptcCache2.containsKey(property); // knowsProperty always invoked first, which populates the cache
+		o = propertiesValuesCache.get(property);
+		// If the value is not in the cache OR we don't want to get it from the cache (because user asked not to use the cache) then retrieve it using COM.
+		// The first condition (o == null) is enough because we don't update the propertiesValuesCache map if caching is disabled but I include
+		// this extra condition for completeness and better understanding of how the code works.
+		if (o == null || !propertiesValuesCacheEnabled) {
+			assert elementPropertiesNamesCache.containsKey(property); // knowsProperty always invoked first, which populates the cache
 			try {
 				o = queryPtcPropertyValue(property);
 			} catch (EpsilonCOMException e) {
 				throw new EolRuntimeException(e.getMessage());
 			}
-			valueCache.put(property, o);
+			// The values cache is updated either when the getter is called (this case) or when the setter is called. We don't  want to consume
+			// unnecessary memory in storing the cached values that we don't want to retrieve so we only save if we the user requested caching.
+			if (propertiesValuesCacheEnabled) {
+				propertiesValuesCache.put(property, o);
+			}
 		}
-		long total = System.nanoTime() - start;
-		System.out.println("JawinPropertyGetter," + total);
 		return o;
 	}
 
 	private Object queryPtcPropertyValue(String property) throws EolRuntimeException, EpsilonCOMException {
 		Object o;
 		property = normalise(property);
-		EnumSet<PtcPropertyEnum> ptcprop = ptcCache2.get(property);
+		EnumSet<PtcPropertyEnum> ptcprop = elementPropertiesNamesCache.get(property);
 		if (ptcprop.contains(PtcPropertyEnum.IS_ASSOCIATION)) {
 			List<Object> args = new ArrayList<Object>();
 			args.add(property);
@@ -266,7 +289,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 	public boolean knowsProperty(String property) {
 		String normalisedProperty = normalise(property);
 		getPtcProperty(normalisedProperty);
-		return ptcCache2.containsKey(normalisedProperty);
+		return elementPropertiesNamesCache.containsKey(normalisedProperty);
 	}
 	
 	// Normalisation: we assume that for example "Child Object" is treated the same as "child object", 
