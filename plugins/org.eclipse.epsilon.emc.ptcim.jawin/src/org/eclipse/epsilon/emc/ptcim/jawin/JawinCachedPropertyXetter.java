@@ -20,8 +20,8 @@ import java.util.Map;
 
 
 import org.eclipse.epsilon.common.module.ModuleElement;
-import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.eol.exceptions.EolIllegalPropertyAssignmentException;
+import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolReadOnlyPropertyException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
@@ -43,8 +43,6 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 
 	private static final Object ASSOCIATION_ROLE = "Association";
 	
-	private static final boolean USE_CACHE = false;
-
 	public enum PtcPropertyEnum {
 		IS_PUBLIC, IS_READ_ONLY, IS_MULTIPLE, IS_ASSOCIATION
 	}
@@ -96,7 +94,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 			String descriptors = null;
 			try {
 				descriptors = (String) ((JawinObject) object).getAttribute("Property", args);
-			} catch (EpsilonCOMException e) {
+			} catch (EolInternalException e) {
 				// TODO We probably need better understanding of errors
 			}
 			List<String> list = Arrays.asList(descriptors.split("\\n"));
@@ -176,7 +174,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 									propertiesValuesCache.put(lastSetProperty, allItemsJawin);
 								}
 							}
-						} catch (EpsilonCOMException e) {
+						} catch (EolInternalException e) {
 							System.err.println("Error for " + lastSetProperty + " for value " + value);
 							e.printStackTrace();
 							throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
@@ -188,7 +186,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 						try {
 							System.err.println(Thread.currentThread().getName());
 							((JawinObject) object).invoke("PropertySet", args);
-						} catch (EpsilonCOMException e) {
+						} catch (EolInternalException e) {
 							System.err.println(Thread.currentThread().getName());
 							throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
 						}
@@ -217,7 +215,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 			assert elementPropertiesNamesCache.containsKey(property); // knowsProperty always invoked first, which populates the cache
 			try {
 				o = queryPtcPropertyValue(property);
-			} catch (EpsilonCOMException e) {
+			} catch (EolInternalException e) {
 				throw new EolRuntimeException(e.getMessage());
 			}
 			// The values cache is updated either when the getter is called (this case) or when the setter is called. We don't  want to consume
@@ -229,7 +227,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 		return o;
 	}
 
-	private Object queryPtcPropertyValue(String property) throws EolRuntimeException, EpsilonCOMException {
+	private Object queryPtcPropertyValue(String property) throws EolRuntimeException, EolInternalException {
 		Object o;
 		property = normalise(property);
 		EnumSet<PtcPropertyEnum> ptcprop = elementPropertiesNamesCache.get(property);
@@ -242,7 +240,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 					Object res = object.invoke("Items", args);
 					assert res instanceof JawinObject;
 					elements = new JawinCollection((JawinObject) res, object, property);
-				} catch (EpsilonCOMException e) {
+				} catch (EolInternalException e) {
 					throw new EolRuntimeException(e.getMessage());
 				}
 				o = elements;
@@ -253,7 +251,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 						String strId = (String) ((JawinObject) o).getAttribute("Property", "Id");
 						((JawinObject) o).setId(strId);
 					}
-				} catch (EpsilonCOMException e) {
+				} catch (EolInternalException e) {
 					throw new EolRuntimeException(e.getMessage());
 				}
 			}

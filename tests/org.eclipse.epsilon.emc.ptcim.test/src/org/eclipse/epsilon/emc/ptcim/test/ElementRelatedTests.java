@@ -3,7 +3,7 @@ package org.eclipse.epsilon.emc.ptcim.test;
 import static org.junit.Assert.assertEquals;
 
 import org.eclipse.epsilon.emc.ptcim.jawin.JawinObject;
-import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
+import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.jawin.COMException;
 import org.jawin.DispatchPtr;
 import org.jawin.win32.Ole32;
@@ -28,7 +28,7 @@ public class ElementRelatedTests {
 		try {
 			Ole32.CoUninitialize();
 		} catch (COMException e) {
-			throw new EpsilonCOMException(e);
+			throw new EolInternalException(e);
 		}
 	}
 	

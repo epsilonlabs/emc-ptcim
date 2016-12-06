@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.epsilon.emc.ptcim.jawin;
 
-import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
+import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
 /**
  * A factory for creating JawinFramework objects.
@@ -22,49 +22,49 @@ public class JawinFrameworkFactory {
 	private JawinUserInterface jawinUserInterface = new JawinUserInterface();
 	private JawinFileDialog jawinFileDialog = new JawinFileDialog();
 	
-	public JawinFileDialog getFileDialogManager() throws EpsilonCOMException {
+	public JawinFileDialog getFileDialogManager() throws EolInternalException {
 		jawinFileDialog.connect(bridge);
 		return jawinFileDialog;
 	}
 
-	public JawinModelManager getModelManager() throws EpsilonCOMException {
+	public JawinModelManager getModelManager() throws EolInternalException {
 		jawinModelManager.connect(bridge);
 		return jawinModelManager;
 	}
 
-	public JawinUserInterface getUIManager() throws EpsilonCOMException {
+	public JawinUserInterface getUIManager() throws EolInternalException {
 		jawinUserInterface.connect(bridge);
 		return jawinUserInterface;
 	}
 
-	private void initialiseCOM() throws EpsilonCOMException {
+	private void initialiseCOM() throws EolInternalException {
 		bridge.initialiseCOM();
 
 	}
 
-	private void uninitialiseCOM() throws EpsilonCOMException {
+	private void uninitialiseCOM() throws EolInternalException {
 		bridge.uninitialiseCOM();
 	}
 	
 	public void shutdown() {
 		try {
 			jawinModelManager.disconnect();
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			e.printStackTrace();
 		}
 		try {
 			jawinUserInterface.disconnect();
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			e.printStackTrace();
 		}
 		try {
 			jawinFileDialog.disconnect();
-		} catch (EpsilonCOMException e1) {
+		} catch (EolInternalException e1) {
 			e1.printStackTrace();
 		}
 		try {
 			uninitialiseCOM();
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			e.printStackTrace();
 		}
 	}
@@ -73,7 +73,7 @@ public class JawinFrameworkFactory {
 		return (JawinPropertyManager) new JawinCachedPropertyXetter(propertiesValuesCacheEnabled);
 	}
 
-	public void startup() throws EpsilonCOMException {
+	public void startup() throws EolInternalException {
 		initialiseCOM();
 	}
 }

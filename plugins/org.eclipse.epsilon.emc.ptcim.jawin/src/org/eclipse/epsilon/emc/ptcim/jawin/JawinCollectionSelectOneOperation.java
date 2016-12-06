@@ -13,16 +13,11 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
-import org.eclipse.epsilon.eol.dom.BooleanLiteral;
 import org.eclipse.epsilon.eol.dom.EqualsOperatorExpression;
 import org.eclipse.epsilon.eol.dom.Expression;
-import org.eclipse.epsilon.eol.dom.IntegerLiteral;
 import org.eclipse.epsilon.eol.dom.NameExpression;
 import org.eclipse.epsilon.eol.dom.OperatorExpression;
 import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
-import org.eclipse.epsilon.eol.dom.RealLiteral;
-import org.eclipse.epsilon.eol.dom.StringLiteral;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
@@ -89,7 +84,7 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 		if ("name".equals(attributename.toLowerCase())) {		// Name is the default Id
 			try {
 				comresult = (JawinObject) target.getOwner().invoke("Item", args);
-			} catch (EpsilonCOMException e) {
+			} catch (EolInternalException e) {
 				throw new EolInternalException(e);
 			}
 		}
@@ -98,7 +93,7 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 			args.add(attributename);
 			try {
 				comresult = (JawinObject) target.getOwner().invoke("ItemEx", args);
-			} catch (EpsilonCOMException e) {
+			} catch (EolInternalException e) {
 				throw new EolInternalException(e);
 			}
 		}
@@ -106,7 +101,7 @@ public class JawinCollectionSelectOneOperation extends SelectOneOperation {
 			try {
 				String strId = (String) comresult.getAttribute("Property", "Id");
 				comresult.setId(strId);
-			} catch (EpsilonCOMException e) {
+			} catch (EolInternalException e) {
 				throw new EolInternalException(e);
 			}
 		}

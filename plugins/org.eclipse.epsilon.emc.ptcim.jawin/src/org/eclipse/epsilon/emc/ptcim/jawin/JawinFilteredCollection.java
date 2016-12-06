@@ -13,7 +13,7 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 import java.util.AbstractCollection;
 import java.util.Iterator;
 
-import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
+import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.jawin.COMException;
 
 
@@ -39,11 +39,11 @@ public class JawinFilteredCollection extends AbstractCollection<JawinObject> {
 		this.association = association;
 	}
 	
-	public void disconnect() throws EpsilonCOMException {
+	public void disconnect() throws EolInternalException {
 		try {
 			comObject.close();
 		} catch (COMException e) {
-			throw new EpsilonCOMException(e);
+			throw new EolInternalException(e);
 		}
 	}
 

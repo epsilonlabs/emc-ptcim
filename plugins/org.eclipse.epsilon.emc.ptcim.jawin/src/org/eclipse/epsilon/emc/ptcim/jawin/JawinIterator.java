@@ -13,8 +13,7 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
-
+import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
 /**
  * The Class JawinIterator.
@@ -44,7 +43,7 @@ public class JawinIterator implements Iterator<JawinObject> {
 		try {
 			// Make sure the iterator is at the beginning of the collection
 			source.invokeMethod("ResetQueryItems");
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			e.printStackTrace();
 		}
 	}
@@ -57,7 +56,7 @@ public class JawinIterator implements Iterator<JawinObject> {
 		Object more;
 		try {
 			more = source.invokeMethod("MoreItems");
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			// FIXME this should be logged
 			return false;
 		}
@@ -74,7 +73,7 @@ public class JawinIterator implements Iterator<JawinObject> {
 			next = (JawinObject) source.invokeMethod("NextItem");
 			String strId = (String) next.getAttribute("Property", "Id");
 			next.setId(strId);
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			throw new NoSuchElementException(e.getMessage());
 		}
 		return next;

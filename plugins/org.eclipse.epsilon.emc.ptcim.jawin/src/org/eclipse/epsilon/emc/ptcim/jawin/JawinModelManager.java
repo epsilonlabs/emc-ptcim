@@ -12,7 +12,7 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 
 import java.util.ArrayList;
 
-import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
+import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
 /**
  * The Class JawinModelManager.
@@ -27,47 +27,47 @@ public class JawinModelManager  {
 	private JawinObject projects;
 	boolean isConnected = false;
 
-	public void connect(JawinComBridge bridge) throws EpsilonCOMException {
+	public void connect(JawinComBridge bridge) throws EolInternalException {
 		if (!isConnected)
 			projects = bridge.connectByProgId("OMTE.Projects");
 		isConnected = true;
 	}
 
-	public void disconnect() throws EpsilonCOMException {
+	public void disconnect() throws EolInternalException {
 		if (isConnected) {
 			projects.disconnect();
 			isConnected = false;
 		}
 	}
 
-	public JawinCollection getActiveDagrams() throws EpsilonCOMException {
+	public JawinCollection getActiveDagrams() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Diagram");
 		JawinObject comCollection = (JawinObject) projects.invoke("Items", args);
 		return new JawinCollection(comCollection, projects, "ActiveDiagram");
 	}
 
-	public JawinCollection getActiveItems() throws EpsilonCOMException {
+	public JawinCollection getActiveItems() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Dictionary Item");
 		JawinObject comCollection = (JawinObject) projects.invoke("Items", args);
 		return new JawinCollection(comCollection, projects, "Active Dictionary Item");
 	}
 
-	public JawinObject getActiveProjet() throws EpsilonCOMException {
+	public JawinObject getActiveProjet() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Project");
 		return (JawinObject) projects.invoke("Item", args);
 	}
 
-	public JawinCollection getActiveSelectinContext() throws EpsilonCOMException {
+	public JawinCollection getActiveSelectinContext() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Selection Context");
 		JawinObject comCollection = (JawinObject) projects.invoke("Items", args);
 		return new JawinCollection(comCollection, projects, "Active Selection Context");
 	}
 
-	public JawinCollection getActiveSymbols() throws EpsilonCOMException {
+	public JawinCollection getActiveSymbols() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Symbol");
 		JawinObject comCollection = (JawinObject) projects.invoke("Items", args);
@@ -75,7 +75,7 @@ public class JawinModelManager  {
 	}
 
 	public JawinObject getProjectByReference(String id, String server, String repository, String version)
-			throws EpsilonCOMException {
+			throws EolInternalException {
 		String method = "";
 		JawinObject model;
 		method = "Reference";
@@ -90,14 +90,14 @@ public class JawinModelManager  {
 		return model;
 	}
 
-	public JawinObject getProjectByTitle(String title) throws EpsilonCOMException {
+	public JawinObject getProjectByTitle(String title) throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Project");
 		args.add(title); 
 		return (JawinObject) projects.invoke("Item", args);
 	}
 
-	public JawinCollection getProjects() throws EpsilonCOMException {
+	public JawinCollection getProjects() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Project");
 		JawinObject comCollection = (JawinObject) projects.invoke("Items", args);

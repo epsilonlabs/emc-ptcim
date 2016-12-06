@@ -26,7 +26,7 @@ import org.eclipse.epsilon.emc.ptcim.jawin.JawinFileDialog;
 import org.eclipse.epsilon.emc.ptcim.jawin.JawinFrameworkFactory;
 import org.eclipse.epsilon.emc.ptcim.jawin.JawinModelManager;
 import org.eclipse.epsilon.emc.ptcim.jawin.JawinObject;
-import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
+import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -94,12 +94,12 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		}
 		try {
 			factory.startup();;
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			throw new IllegalStateException(e);
 		}
 		try {
 			manager = factory.getModelManager();
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			throw new IllegalStateException(e);
 		}
 	}
@@ -112,7 +112,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		try {
 			manager.disconnect();
 			factory.shutdown();
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			e.printStackTrace();
 		}
 		return super.close();
@@ -143,7 +143,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 					JawinObject ap = null;
 					try {
 						ap = manager.getActiveProjet();
-					} catch (EpsilonCOMException e) {
+					} catch (EolInternalException e) {
 						showErrorMsg("Failed to get active project. Make sure the PTC IM Molder is opened and the"
 								+ " desired model loaded, and that an element is selected.");
 					}
@@ -151,7 +151,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 						JawinCollection selection = null;
 						try {
 							selection = manager.getActiveItems();
-						} catch (EpsilonCOMException e1) {
+						} catch (EolInternalException e1) {
 							showErrorMsg("Failed to connect to the PTC IM Modeler.");
 						}
 						if (selection != null) {
@@ -170,7 +170,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 									id = current.getAttribute("Property", "Id");
 									name = current.getAttribute("Property", "Name");
 									type = current.getAttribute("Property", "Type");
-								} catch (EpsilonCOMException e) {
+								} catch (EolInternalException e) {
 									showErrorMsg("Failed to get the current selected element ID.");
 								}
 								if ((id != null) && (name != null) && (type != null)) {
@@ -184,19 +184,19 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 								}
 								try {
 									current.disconnect();
-								} catch (EpsilonCOMException e) {
+								} catch (EolInternalException e) {
 									e.printStackTrace();
 								}
 							}
 							try {
 								selection.disconnect();
-							} catch (EpsilonCOMException e) {
+							} catch (EolInternalException e) {
 								e.printStackTrace();
 							}
 						}
 						try {
 							ap.disconnect();
-						} catch (EpsilonCOMException e) {
+						} catch (EolInternalException e) {
 							e.printStackTrace();
 						}
 					}
@@ -265,7 +265,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 				JawinFileDialog diag;
 				try {
 					diag = factory.getFileDialogManager();
-				} catch (EpsilonCOMException e1) {
+				} catch (EolInternalException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 					return;
@@ -273,7 +273,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 				String ref = null;
 				try {
 					ref = diag.openDialog();
-				} catch (EpsilonCOMException e) {
+				} catch (EolInternalException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					return;
@@ -386,7 +386,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		String ref = null;
 		try {
 			ref = (String) ap.getAttribute("Property", "Reference");
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			return "Failed to get the current project information. The information in"
 					+ " the form may not match the current project properties.";
 		}

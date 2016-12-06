@@ -23,7 +23,7 @@ import org.eclipse.epsilon.emc.ptcim.jawin.JawinComBridge;
 import org.eclipse.epsilon.emc.ptcim.jawin.JawinModelManager;
 import org.eclipse.epsilon.emc.ptcim.jawin.JawinObject;
 import org.eclipse.epsilon.emc.ptcim.jawin.JawinPropertyManager;
-import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
+import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
@@ -115,7 +115,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 		try {
 			JawinObject res = (JawinObject) model.invoke("Items", args);
 			elements = res.wrapInColleciton(model, "");
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			throw new IllegalStateException(e);
 		}
 		return (Collection<JawinObject>) elements;
@@ -152,7 +152,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 			try {
 				newInstance = comParent.invoke("Add", args);
 				setNewInstanceId(newInstance);
-			} catch (EpsilonCOMException e) {
+			} catch (EolInternalException e) {
 				throw new EolModelElementTypeNotFoundException(this.name, type);
 			}
 		}
@@ -162,7 +162,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 			try {
 				newInstance = comParent.invoke("AddByType", args);
 				setNewInstanceId(newInstance);
-			} catch (EpsilonCOMException e) {
+			} catch (EolInternalException e) {
 				throw new EolModelElementTypeNotFoundException(this.name, type);
 			}
 		}
@@ -190,7 +190,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 		try {
 			newInstance = model.invoke("Add", args);
 			setNewInstanceId(newInstance);
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			throw new EolModelElementTypeNotFoundException(getName(), type);
 		}
 		return (JawinObject) newInstance;
@@ -216,7 +216,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 		try {
 			((JawinObject) instance).invokeMethod("Delete");
 			success = true;
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			throw new EolRuntimeException(e.getMessage());
 		}
 		return success;
@@ -234,7 +234,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 		}
 		try {
 			theProject.disconnect();
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			e.printStackTrace();
 		}
 	}
@@ -265,7 +265,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 			JawinObject res;
 			try {
 				res = (JawinObject) model.invoke("Items", args);	//, byRefArgs);
-			} catch (EpsilonCOMException e) {
+			} catch (EolInternalException e) {
 				throw new EolModelElementTypeNotFoundException(name, type);
 			}
 			elements = res.wrapInColleciton(model, type);	//new JawinCollection(res, model, type);
@@ -285,7 +285,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 		String rootType = null;
 		try {
 			rootType = (String) root.getAttribute("Property", "Type");
-		} catch (EpsilonCOMException e2) {
+		} catch (EolInternalException e2) {
 			throw new EolModelElementTypeNotFoundException(name, type);
 		}
 		List<JawinObject> result = new ArrayList<JawinObject>();
@@ -321,7 +321,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 		JawinObject res = null;
 		try {
 			res = (JawinObject) root.invoke("Items", args);
-		} catch (EpsilonCOMException e1) {
+		} catch (EolInternalException e1) {
 			e1.printStackTrace();
 		}
 		if (res != null) {
@@ -338,7 +338,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 			Object etype = null;
 			try {
 				etype = e.getAttribute("Property", "Type");
-			} catch (EpsilonCOMException e1) {
+			} catch (EolInternalException e1) {
 				e1.printStackTrace();
 			}
 			if (type.equals(etype)) {
@@ -383,7 +383,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 			res = (JawinObject) theProject.invoke("ItemById", args);
 			if (res != null)
 				res.setId(id);
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			// FIXME Log me!
 			e.printStackTrace();
 		}
@@ -404,7 +404,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 			try {
 				id = (String) ((JawinObject) instance).getAttribute("Property", args);
 				((JawinObject) instance).setId(id);
-			} catch (EpsilonCOMException e) {
+			} catch (EolInternalException e) {
 				// FIXME Log me!
 				throw new IllegalStateException(e);
 			}
@@ -478,7 +478,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 		String typeName;
 		try {
 			typeName = (String) ((JawinObject) instance).getAttribute("Property", "Type");
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			throw new IllegalArgumentException(e);
 		}
 		return typeName;
@@ -494,7 +494,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 		String errDispPtr = "";
 		try {
 			errDispPtr = (String) theProject.invoke("GetClassProperties", args);
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			// FIXME Log me!
 			e.printStackTrace();
 		}
@@ -574,10 +574,10 @@ public class PtcimModel extends CachedModel<JawinObject> {
 		try {
 			JawinObject res = (JawinObject) theProject.invoke("Item", byRefArgs);
 			model = res;
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			try {
 				bridge.uninitialiseCOM();
-			} catch (EpsilonCOMException e1) {
+			} catch (EolInternalException e1) {
 				// FIXME Log me!
 				e1.printStackTrace();
 			}
@@ -595,7 +595,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 			JawinModelManager manager;
 			try {
 				manager = activator.getFactory().getModelManager();
-			} catch (EpsilonCOMException e1) {
+			} catch (EolInternalException e1) {
 				throw new EolModelLoadingException(e1, this);
 			}
 			if  (readOnLoad) {
@@ -606,7 +606,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 					else {
 						theProject = manager.getProjectByReference(modelId, server, repository, version);
 					}
-				} catch (EpsilonCOMException e) {
+				} catch (EolInternalException e) {
 					throw new EolModelLoadingException(e, this);
 				}
 			}
@@ -617,7 +617,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 			loadDictionary();
 			try {
 				manager.disconnect();
-			} catch (EpsilonCOMException e) {
+			} catch (EolInternalException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -651,7 +651,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 	 * @param newInstance
 	 * @throws EpsilonCOMException
 	 */
-	private void setNewInstanceId(Object newInstance) throws EpsilonCOMException {
+	private void setNewInstanceId(Object newInstance) throws EolInternalException {
 		String id = (String) ((JawinObject) newInstance).getAttribute("Property", "Id");
 		((JawinObject) newInstance).setId(id);
 	}

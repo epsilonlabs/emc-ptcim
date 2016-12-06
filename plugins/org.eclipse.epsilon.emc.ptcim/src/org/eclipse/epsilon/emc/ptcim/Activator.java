@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.epsilon.emc.ptcim.jawin.JawinFrameworkFactory;
-import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
+import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -65,7 +65,7 @@ public class Activator extends Plugin {
 		}
 		try {
 			factory.startup();
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			throw new IllegalStateException(e);
 		}
 	}

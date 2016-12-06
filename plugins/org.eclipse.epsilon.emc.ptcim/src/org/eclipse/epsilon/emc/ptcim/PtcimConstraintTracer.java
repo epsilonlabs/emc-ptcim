@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.epsilon.emc.ptcim.jawin.JawinObject;
 import org.eclipse.epsilon.emc.ptcim.jawin.JawinUserInterface;
-import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.eol.dt.launching.EclipseContextManager;
+import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.EolContext;
 import org.eclipse.epsilon.eol.models.IModel;
@@ -50,13 +50,13 @@ public class PtcimConstraintTracer implements IConstraintTracer {
 			JawinUserInterface studio;
 			try {
 				studio = Activator.getDefault().getFactory().getUIManager();
-			} catch (EpsilonCOMException e1) {
+			} catch (EolInternalException e1) {
 				e1.printStackTrace();
 				return;
 			}
 			try {
 				showInModeler(instance, context, studio);
-			} catch (EpsilonCOMException e) {
+			} catch (EolInternalException e) {
 				e.printStackTrace();
 				return;
 			}
@@ -75,7 +75,7 @@ public class PtcimConstraintTracer implements IConstraintTracer {
 	 * @param studio
 	 * @throws EpsilonCOMException 
 	 */
-	private void showInModeler(Object instance, EolContext context, JawinUserInterface studio) throws EpsilonCOMException {
+	private void showInModeler(Object instance, EolContext context, JawinUserInterface studio) throws EolInternalException {
 		IModel model = context.getModelRepository().getOwningModel(instance);
 		assert model instanceof PtcimModel;
 		String modelId = ((PtcimModel) model).getModelId();

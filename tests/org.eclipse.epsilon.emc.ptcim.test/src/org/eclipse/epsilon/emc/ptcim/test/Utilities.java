@@ -20,7 +20,6 @@ public class Utilities {
 	
 	protected static DispatchPtr load(DispatchPtr modelRef) throws COMException {
 		DispatchPtr model = new DispatchPtr();
-		Variant.ByrefHolder varIndex = new Variant.ByrefHolder("Dictionary");
 		DispatchPtr dirDispPtr = (DispatchPtr) modelRef.invokeN("Item", new Object[] {
 				"Dictionary", "Dictionary" });
 		model.stealUnknown(dirDispPtr);

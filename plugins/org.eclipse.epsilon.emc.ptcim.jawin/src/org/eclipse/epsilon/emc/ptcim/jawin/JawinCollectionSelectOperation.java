@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
 import org.eclipse.epsilon.eol.dom.EqualsOperatorExpression;
 import org.eclipse.epsilon.eol.dom.Expression;
 import org.eclipse.epsilon.eol.dom.NameExpression;
@@ -94,7 +93,7 @@ public class JawinCollectionSelectOperation extends SelectOperation {
 			JawinObject comresult = null;
 			try {
 				comresult = (JawinObject) target.getOwner().invoke("Items", args);
-			} catch (EpsilonCOMException e) {
+			} catch (EolInternalException e) {
 				throw new EolInternalException(e);
 			}
 			Collection<JawinObject> result = comresult.wrapInFilteredColleciton(target.getAssociation());

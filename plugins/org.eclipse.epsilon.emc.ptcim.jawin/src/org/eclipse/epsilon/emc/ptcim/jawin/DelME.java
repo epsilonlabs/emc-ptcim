@@ -3,7 +3,6 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.jawin.COMException;
 import org.jawin.DispatchPtr;

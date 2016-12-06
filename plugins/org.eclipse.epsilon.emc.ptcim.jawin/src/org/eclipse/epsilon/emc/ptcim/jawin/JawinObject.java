@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
+import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.jawin.COMException;
 import org.jawin.COMPtr;
 import org.jawin.DispatchPtr;
@@ -39,14 +39,14 @@ public class JawinObject extends DispatchPtr {
 		super(progid);
 	}
 
-	public Object add(String association) throws EpsilonCOMException {
+	public Object add(String association) throws EolInternalException {
 		List<Object> args = new ArrayList<Object>();
 		args.add(association);
 		Object res = invoke("Add", args);
 		return res;
 	}
 	
-	public Object add(String association, JawinObject object) throws EpsilonCOMException {
+	public Object add(String association, JawinObject object) throws EolInternalException {
 		List<Object> args = new ArrayList<Object>();
 		args.add(association);
 		args.add(object);
@@ -54,7 +54,7 @@ public class JawinObject extends DispatchPtr {
 		return res;
 	}
 	
-	public Object add(String association, String name) throws EpsilonCOMException {
+	public Object add(String association, String name) throws EolInternalException {
 		List<Object> args = new ArrayList<Object>();
 		args.add(association);
 		args.add(name);
@@ -66,11 +66,11 @@ public class JawinObject extends DispatchPtr {
 		return null;
 	}
 	
-	public void disconnect() throws EpsilonCOMException {
+	public void disconnect() throws EolInternalException {
 		try {
 			super.close();
 		} catch (COMException e) {
-			throw new EpsilonCOMException(e);
+			throw new EolInternalException(e);
 		}
 	}
 	
@@ -94,7 +94,7 @@ public class JawinObject extends DispatchPtr {
 		return true;
 	}
 
-	public Object getAttribute(String name, List<Object> args) throws EpsilonCOMException {
+	public Object getAttribute(String name, List<Object> args) throws EolInternalException {
 		Object res;	// = new JawinObject();
 		try {
 			Object comres = getN(name, args.toArray());
@@ -106,12 +106,12 @@ public class JawinObject extends DispatchPtr {
 				res = comres; 
 			}
 		} catch (COMException e) {
-			throw new EpsilonCOMException(e);
+			throw new EolInternalException(e);
 		}
 		return res;
 	}
 
-	public Object getAttribute(String name, Object arg) throws EpsilonCOMException {
+	public Object getAttribute(String name, Object arg) throws EolInternalException {
 		Object res;	// = new JawinObject();
 		try {
 			Object comres = super.get(name, arg);
@@ -123,7 +123,7 @@ public class JawinObject extends DispatchPtr {
 				res = comres;
 			}
 		} catch (COMException e) {
-			throw new EpsilonCOMException(e);
+			throw new EolInternalException(e);
 		}
 		return res;
 	}
@@ -143,7 +143,7 @@ public class JawinObject extends DispatchPtr {
 		return result;
 	}
 
-	public Object invoke(String methodName, List<Object> args) throws EpsilonCOMException {
+	public Object invoke(String methodName, List<Object> args) throws EolInternalException {
 		Object res = null;
 		try {
 			Object comres = invokeN(methodName, args.toArray());
@@ -157,18 +157,18 @@ public class JawinObject extends DispatchPtr {
 				res = comres;
 			}
 		} catch (COMException e) {
-			throw new EpsilonCOMException(e);
+			throw new EolInternalException(e);
 		}
 		return res;
 	}
 
-	public Object invoke(String methodName, List<Object> args, List<Object> byRefArgs) throws EpsilonCOMException {
+	public Object invoke(String methodName, List<Object> args, List<Object> byRefArgs) throws EolInternalException {
 		int len = args.size() + byRefArgs.size();
 		return invoke(methodName, args, byRefArgs, len);
 	}
 
 	public Object invoke(String methodName, List<Object> args, List<Object> byRefArgs, int argsExpected)
-			throws EpsilonCOMException {
+			throws EolInternalException {
 		Object res;
 		try {
 			// FIXME is it DispatchPtr?
@@ -190,12 +190,12 @@ public class JawinObject extends DispatchPtr {
 				res = comres;
 			}
 		} catch (COMException e) {
-			throw new EpsilonCOMException(e);
+			throw new EolInternalException(e);
 		}
 		return res;
 	}
 
-	public Object invokeMethod(String methodName) throws EpsilonCOMException {
+	public Object invokeMethod(String methodName) throws EolInternalException {
 		Object res;
 		try {
 			Object comres = invokeN(methodName, new Object[]{});
@@ -207,7 +207,7 @@ public class JawinObject extends DispatchPtr {
 				res = comres;
 			}
 		} catch (COMException e) {
-			throw new EpsilonCOMException(e);
+			throw new EolInternalException(e);
 		}
 		return res;
 	}

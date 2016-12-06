@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
+import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.execute.operations.AbstractOperation;
 import org.eclipse.epsilon.eol.execute.operations.declarative.IAbstractOperationContributor;
 import org.jawin.COMException;
@@ -56,24 +56,9 @@ public class JawinCollection extends AbstractList<JawinObject> implements IAbstr
 	@Override
 	public boolean add(JawinObject e) {
 		assert e.getId() != null;
-		try {
-			List<Object> args = new ArrayList<Object>();
-			args.add(association);
-			args.add(e);
-			Object ret = owner.invoke("Add", args);
-		} catch (EpsilonCOMException ex) {
-			// TODO Can we check if message has 'Failed to add item' and do a
-			// objItem.Property("ExtendedErrorInfo") to get more info?
-			// Assuming owner and association are correct an exception means the item can not be added
-			// But it would be nice to differentiate between, e.g. item already exists and wrong type.
-			// FIXME Log the error?
-			if (ex.getMessage().contains("Failed to add item")) {
-				return false;
-			}
-			else {
-				throw new IllegalArgumentException(ex);
-			}
-		}
+		List<Object> args = new ArrayList<Object>();
+		args.add(association);
+		args.add(e);
 		return true;
 	}
 	/**
@@ -89,16 +74,16 @@ public class JawinCollection extends AbstractList<JawinObject> implements IAbstr
 			List<Object> args = new ArrayList<Object>();
 			args.add(association);
 			owner.invoke("Remove", args);
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			throw new IllegalStateException(e);
 		}
 	}
 
-	public void disconnect() throws EpsilonCOMException {
+	public void disconnect() throws EolInternalException {
 		try {
 			comObject.close();
 		} catch (COMException e) {
-			throw new EpsilonCOMException(e);
+			throw new EolInternalException(e);
 		}
 	}
 
@@ -193,7 +178,7 @@ public class JawinCollection extends AbstractList<JawinObject> implements IAbstr
 			args.add(association);
 			args.add(o);
 			owner.invoke("Remove", args);
-		} catch (EpsilonCOMException ex) {
+		} catch (EolInternalException ex) {
 			throw new IllegalStateException(ex);
 		}
 		return true;
@@ -222,7 +207,7 @@ public class JawinCollection extends AbstractList<JawinObject> implements IAbstr
 			List<Object> args = new ArrayList<Object>();
 			args.add(association);
 			resCount = owner.invoke("ItemCount", args);
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			// If mesage is "Not implemented", try counting with iterator?
 			if (e.getMessage().contains("Not implemented")) {
 				// We might be able to use the iterator to get the size;

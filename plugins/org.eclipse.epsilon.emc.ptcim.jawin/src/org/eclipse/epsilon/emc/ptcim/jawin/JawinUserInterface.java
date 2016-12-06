@@ -13,7 +13,7 @@ package org.eclipse.epsilon.emc.ptcim.jawin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
+import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
 /**
  * The Class JawinUserInterface is a Jawin implementation of the interface.
@@ -26,17 +26,17 @@ public class JawinUserInterface {
 	public JawinUserInterface() {
 	}
 	
-	public void connect(JawinComBridge bridge) throws EpsilonCOMException {
+	public void connect(JawinComBridge bridge) throws EolInternalException {
 		if (!isConnected)
 			studio = bridge.connectByProgId("Studio.Editor");
 		isConnected = true;
 	}
 
-	public String createModel(String server, String repository, String name) throws EpsilonCOMException {
+	public String createModel(String server, String repository, String name) throws EolInternalException {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 
-	public void disconnect() throws EpsilonCOMException {
+	public void disconnect() throws EolInternalException {
 		if (isConnected) {
 			studio.disconnect();
 			isConnected = false;
@@ -49,7 +49,7 @@ public class JawinUserInterface {
 		Object res = null;
 		try {
 			res = studio.invoke("OpenDiagram", args);
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -68,7 +68,7 @@ public class JawinUserInterface {
 		Object res = null;
 		try {
 			res = studio.invoke("OpenModel", args);
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -88,7 +88,7 @@ public class JawinUserInterface {
 		Object res = null;
 		try {
 			res = studio.invoke("OpenModel2", args);
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -108,7 +108,7 @@ public class JawinUserInterface {
 		Object res = null;
 		try {
 			res = studio.invoke("SelectBrowserItem", args);
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -128,7 +128,7 @@ public class JawinUserInterface {
 		Object res = null;
 		try {
 			res = studio.invoke("SelectSymbol2", args);
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -144,7 +144,7 @@ public class JawinUserInterface {
 	public void setForegroundWindow() {
 		try {
 			studio.invokeMethod("SetForegroundWindow");
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -154,7 +154,7 @@ public class JawinUserInterface {
 	public void showMainWindow() {
 		try {
 			studio.invokeMethod("ShowMainWindow");
-		} catch (EpsilonCOMException e) {
+		} catch (EolInternalException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

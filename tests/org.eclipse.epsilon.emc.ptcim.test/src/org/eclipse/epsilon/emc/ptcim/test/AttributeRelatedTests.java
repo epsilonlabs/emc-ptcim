@@ -1,22 +1,13 @@
 package org.eclipse.epsilon.emc.ptcim.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import javax.rmi.CORBA.Util;
-
-import org.eclipse.epsilon.emc.ptcim.jawin.DelME;
 import org.eclipse.epsilon.emc.ptcim.jawin.JawinObject;
-import org.eclipse.epsilon.emc.ptcim.ole.impl.EpsilonCOMException;
+import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.jawin.COMException;
 import org.jawin.DispatchPtr;
-import org.jawin.Variant;
 import org.jawin.win32.Ole32;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,7 +28,7 @@ public class AttributeRelatedTests {
 		try {
 			Ole32.CoUninitialize();
 		} catch (COMException e) {
-			throw new EpsilonCOMException(e);
+			throw new EolInternalException(e);
 		}
 	}
 		
