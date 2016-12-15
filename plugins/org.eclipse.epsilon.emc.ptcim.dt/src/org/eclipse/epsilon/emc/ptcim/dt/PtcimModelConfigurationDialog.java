@@ -81,17 +81,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	private GridData twoCol;
 
 	public PtcimModelConfigurationDialog() {
-		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint ep = reg.getExtensionPoint(PTCIM_OLE_EP_ID);
-		IExtension[] extensions = ep.getExtensions();
-		// There should only be one contributor
-		IExtension ext = extensions[0];
-		IConfigurationElement[] ce = ext.getConfigurationElements();
-    	try {
-    		factory = (JawinFrameworkFactory) ce[0].createExecutableExtension(ATT_CLASS);
-		} catch (CoreException e) {
-			throw new IllegalStateException(e);
-		}
+		factory = new JawinFrameworkFactory();
 		try {
 			factory.startup();;
 		} catch (EolInternalException e) {

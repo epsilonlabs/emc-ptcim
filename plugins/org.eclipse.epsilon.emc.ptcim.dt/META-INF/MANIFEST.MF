@@ -6,9 +6,8 @@ Bundle-Version: 0.2.0.qualifier
 Bundle-Activator: org.eclipse.epsilon.emc.ptcim.dt.Activator
 Require-Bundle: org.eclipse.epsilon.common.dt,
  org.eclipse.epsilon.emc.ptcim,
- org.eclipse.epsilon.emc.ptcim.ole
+ org.eclipse.epsilon.emc.ptcim.jawin
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.epsilon.emc.ptcim.dt
 Bundle-Vendor: Epsilon Framework
-Import-Package: org.eclipse.epsilon.emc.ptcim.jawin
