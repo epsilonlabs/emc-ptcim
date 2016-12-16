@@ -33,12 +33,9 @@ import org.eclipse.epsilon.eol.execute.introspection.IPropertySetter;
  */
 public class JawinCachedPropertyXetter extends JawinPropertyManager implements IPropertyGetter, IPropertySetter {
 
-	private boolean propertiesValuesCacheEnabled;
-
 	// The xetter needs to know if the valueCache should be used.
-	public JawinCachedPropertyXetter(boolean propertiesValuesCacheEnabled) {
+	public JawinCachedPropertyXetter() {
 		super();
-		this.propertiesValuesCacheEnabled = propertiesValuesCacheEnabled;
 	}
 
 	private static final Object ASSOCIATION_ROLE = "Association";
@@ -54,10 +51,6 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 	// This is the cache the stores the names of the properties that each element has. For example the class element has a property called name, child objects, etc.
 	// This way we don't need to query through the COM if an element has the requested property. This is actually the cache the stores the "metamodel" of PTC IM models.
 	private Map<String, EnumSet<PtcPropertyEnum>> elementPropertiesNamesCache = new HashMap<String, EnumSet<PtcPropertyEnum>>();
-
-	// In this cache we store the values of the properties that we have visited before. It is optional (is enabled/disabled through a checkbox in the 
-	// run config. for each model) as in script where writing is performed, it will lead to inconsistencies when accessing the values using opposite relationships.
-	private Map<String, Object> propertiesValuesCache = new HashMap<String, Object>();
 
 	private String lastSetProperty; // Assumes invoke(object) always comes after setProperty
 
@@ -168,11 +161,6 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 								args.add(lastSetProperty);
 								JawinObject allItems = (JawinObject) object.invoke("Items", args);
 								JawinCollection allItemsJawin = new JawinCollection(allItems, object, lastSetProperty);
-								// The values cache is updated either when the getter is called or when the setter is called (this case). We don't  want to consume
-								// unnecessary memory in storing the cached values that we don't want to retrieve so we only save if we the user requested caching.
-								if (propertiesValuesCacheEnabled) {
-									propertiesValuesCache.put(lastSetProperty, allItemsJawin);
-								}
 							}
 						} catch (EolInternalException e) {
 							System.err.println("Error for " + lastSetProperty + " for value " + value);
@@ -190,11 +178,6 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 							System.err.println(Thread.currentThread().getName());
 							throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
 						}
-						// The values cache is updated either when the getter is called or when the setter is called (this case). We don't  want to consume
-						// unnecessary memory in storing the cached values that we don't want to retrieve so we only save if we the user requested caching.
-						if (propertiesValuesCacheEnabled) {
-							propertiesValuesCache.put(lastSetProperty, value);
-						}
 					}
 				} catch (EolRuntimeException e) {
 					e.printStackTrace();
@@ -207,21 +190,12 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 	public Object invoke(Object object, String property) throws EolRuntimeException {
 		Object o = null;
 		property = normalise(property);
-		o = propertiesValuesCache.get(property);
-		// If the value is not in the cache OR we don't want to get it from the cache (because user asked not to use the cache) then retrieve it using COM.
-		// The first condition (o == null) is enough because we don't update the propertiesValuesCache map if caching is disabled but I include
-		// this extra condition for completeness and better understanding of how the code works.
-		if (o == null || !propertiesValuesCacheEnabled) {
+		if (o == null) {
 			assert elementPropertiesNamesCache.containsKey(property); // knowsProperty always invoked first, which populates the cache
 			try {
 				o = queryPtcPropertyValue(property);
 			} catch (EolInternalException e) {
 				throw new EolRuntimeException(e.getMessage());
-			}
-			// The values cache is updated either when the getter is called (this case) or when the setter is called. We don't  want to consume
-			// unnecessary memory in storing the cached values that we don't want to retrieve so we only save if we the user requested caching.
-			if (propertiesValuesCacheEnabled) {
-				propertiesValuesCache.put(property, o);
 			}
 		}
 		return o;

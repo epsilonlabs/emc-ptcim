@@ -13,12 +13,6 @@ package org.eclipse.epsilon.emc.ptcim.dt;
 
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.epsilon.common.dt.launching.dialogs.AbstractCachedModelConfigurationDialog;
 import org.eclipse.epsilon.emc.ptcim.PtcimModel;
 import org.eclipse.epsilon.emc.ptcim.jawin.JawinCollection;
@@ -67,9 +61,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	private Label versionLabel;
 	private Text versionText;
 	private Button fromSelectionCheckbox;
-	private Button propertiesValuesCacheEnabledCheckbox;
 	private Label fromSelectionLabel;
-	private Label propertiesValuesCacheEnabledLabel;
 	private Label selectedElementIdLabel;
 	private Button selectedElementFindIdButton;
 	private Text selectedElementIdText;
@@ -294,14 +286,6 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		versionText = new Text(groupContent, SWT.BORDER);
 		versionText.setLayoutData(twoCol);
 		
-		propertiesValuesCacheEnabledLabel = new Label(groupContent, SWT.NONE);
-		propertiesValuesCacheEnabledLabel.setText("Enable properties' values cache: ");
-
-		propertiesValuesCacheEnabledCheckbox = new Button(groupContent, SWT.CHECK);
-		propertiesValuesCacheEnabledCheckbox.setLayoutData(twoCol);
-		propertiesValuesCacheEnabledCheckbox.setToolTipText("If checked, Epsilon scripts will create and populate a cache with the values retrieved for each property. This might create incosistencies in the results of scipts where writing to model is also performed.");
-		propertiesValuesCacheEnabledCheckbox.setSelection(false);
-		
 		fromSelectionLabel = new Label(groupContent, SWT.NONE);
 		fromSelectionLabel.setText("Select element as root: ");
 
@@ -367,8 +351,6 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		enableElementId(fromSelection);
 		selectedElementIdText.setText(properties.getProperty(PtcimModel.PROPERTY_ELEMENT_ID));
 		selectedElementNameAndTypeTextLabel.setText(properties.getProperty(PtcimModel.PROPERTY_ELEMENT_NAME_AND_TYPE));
-		boolean propertiesValuesCacheEnabledSelection = properties.getBooleanProperty(PtcimModel.PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED, false);
-		propertiesValuesCacheEnabledCheckbox.setSelection(propertiesValuesCacheEnabledSelection);
 	}
 
 	private String setProjectPropertiesText(JawinObject ap) {
@@ -407,7 +389,5 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		properties.put(PtcimModel.PROPERTY_FROM_SELECTION, fromSelection);
 		properties.put(PtcimModel.PROPERTY_ELEMENT_ID, selectedElementIdText.getText());
 		properties.put(PtcimModel.PROPERTY_ELEMENT_NAME_AND_TYPE, selectedElementNameAndTypeTextLabel.getText());
-		String propertiesValuesCacheEnabledSelection = Boolean.toString(propertiesValuesCacheEnabledCheckbox.getSelection());
-		properties.put(PtcimModel.PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED, propertiesValuesCacheEnabledSelection);
 	}
 }

@@ -428,14 +428,6 @@ public class PtcimModel extends CachedModel<JawinObject> {
 	public String getModelId() {
 		return modelId;
 	}
-	
-	/**
-	 * Checks if the user wants to use the PTC driver to cache property values during execution.
-	 * @return true is the cache should be used, false otherwise
-	 */
-	public boolean isPropertiesValuesCacheEnabled() {
-		return propertiesValuesCacheEnabled;
-	}
 
 
 	/* (non-Javadoc)
@@ -453,7 +445,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 
 	protected JawinPropertyManager getPropertyManager() {
 		// return new JawinCachedProXetter(isCachedPropertyCcess);
-		return Activator.getDefault().getFactory().getPropertyManager(this.isPropertiesValuesCacheEnabled());
+		return Activator.getDefault().getFactory().getPropertyManager();
 	}
 
 	/* (non-Javadoc)

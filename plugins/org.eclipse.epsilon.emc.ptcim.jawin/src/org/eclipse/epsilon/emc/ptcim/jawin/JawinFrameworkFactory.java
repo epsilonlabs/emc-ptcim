@@ -69,8 +69,8 @@ public class JawinFrameworkFactory {
 		}
 	}
 
-	public JawinPropertyManager getPropertyManager(boolean propertiesValuesCacheEnabled) {
-		return (JawinPropertyManager) new JawinCachedPropertyXetter(propertiesValuesCacheEnabled);
+	public JawinPropertyManager getPropertyManager() {
+		return (JawinPropertyManager) new JawinCachedPropertyXetter();
 	}
 
 	public void startup() throws EolInternalException {
