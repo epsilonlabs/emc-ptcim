@@ -15,8 +15,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimObject;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimUserInterface;
 import org.eclipse.epsilon.eol.dt.launching.EclipseContextManager;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;

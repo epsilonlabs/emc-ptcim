@@ -8,7 +8,7 @@
  * Contributors:
  *     Hoacio Hoyos Rodriguez - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.emc.ptcim.jawin;
+package org.eclipse.epsilon.emc.ptcim;
 
 import java.util.ArrayList;
 import java.util.Collection;

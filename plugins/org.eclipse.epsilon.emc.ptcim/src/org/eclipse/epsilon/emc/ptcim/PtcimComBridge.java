@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.emc.ptcim.jawin;
+package org.eclipse.epsilon.emc.ptcim;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.jawin.COMException;

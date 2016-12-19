@@ -2,7 +2,7 @@ package org.eclipse.epsilon.emc.ptcim.test;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimObject;
+import org.eclipse.epsilon.emc.ptcim.PtcimObject;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.jawin.COMException;
 import org.jawin.DispatchPtr;

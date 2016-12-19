@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.emc.ptcim.jawin;
+package org.eclipse.epsilon.emc.ptcim;
 
 public class PtcimPropertyManager {
 	

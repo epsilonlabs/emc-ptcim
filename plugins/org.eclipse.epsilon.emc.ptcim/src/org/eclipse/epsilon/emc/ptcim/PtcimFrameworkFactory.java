@@ -10,11 +10,6 @@
  *******************************************************************************/
 package org.eclipse.epsilon.emc.ptcim;
 
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimComBridge;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimFileDialog;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimModelManager;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimPropertyManager;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimUserInterface;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
 /**

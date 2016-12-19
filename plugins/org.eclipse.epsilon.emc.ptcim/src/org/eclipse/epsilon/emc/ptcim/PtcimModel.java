@@ -19,10 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.epsilon.common.util.StringProperties;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimComBridge;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimModelManager;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimObject;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimPropertyManager;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundException;

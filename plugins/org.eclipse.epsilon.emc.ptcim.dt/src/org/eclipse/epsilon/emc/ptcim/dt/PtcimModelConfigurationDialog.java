@@ -14,12 +14,12 @@ package org.eclipse.epsilon.emc.ptcim.dt;
 import java.util.Iterator;
 
 import org.eclipse.epsilon.common.dt.launching.dialogs.AbstractCachedModelConfigurationDialog;
+import org.eclipse.epsilon.emc.ptcim.PtcimCollection;
+import org.eclipse.epsilon.emc.ptcim.PtcimFileDialog;
 import org.eclipse.epsilon.emc.ptcim.PtcimFrameworkFactory;
 import org.eclipse.epsilon.emc.ptcim.PtcimModel;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimCollection;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimFileDialog;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimModelManager;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimObject;
+import org.eclipse.epsilon.emc.ptcim.PtcimModelManager;
+import org.eclipse.epsilon.emc.ptcim.PtcimObject;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;

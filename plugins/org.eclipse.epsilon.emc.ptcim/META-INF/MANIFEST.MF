@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.core,
  org.eclipse.epsilon.eol.dt,
  org.eclipse.epsilon.evl.dt,
- org.eclipse.epsilon.evl.engine
+ org.eclipse.epsilon.evl.engine,
+ org.jawin_2.0-alpha1;bundle-version="2.0.0"
 Bundle-Activator: org.eclipse.epsilon.emc.ptcim.Activator
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.epsilon.emc.ptcim.jawin

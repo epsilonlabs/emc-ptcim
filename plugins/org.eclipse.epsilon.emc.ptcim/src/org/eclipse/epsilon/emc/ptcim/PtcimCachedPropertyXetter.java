@@ -20,9 +20,6 @@ import java.util.Map;
 
 
 import org.eclipse.epsilon.common.module.ModuleElement;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimCollection;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimObject;
-import org.eclipse.epsilon.emc.ptcim.jawin.PtcimPropertyManager;
 import org.eclipse.epsilon.eol.exceptions.EolIllegalPropertyAssignmentException;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolReadOnlyPropertyException;
