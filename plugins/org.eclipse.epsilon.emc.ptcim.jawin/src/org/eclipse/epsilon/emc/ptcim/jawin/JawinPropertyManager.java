@@ -8,7 +8,7 @@ public class JawinPropertyManager {
 		return INSTANCE;
 	}
 	
-	public boolean knowsProperty(String property) {
+	public boolean knowsProperty(Object object, String property) {
 		return false;
 	}
 }

@@ -538,7 +538,7 @@ public class PtcimModel extends CachedModel<JawinObject> {
 				xetterCache.put(instance, (JawinPropertyManager) pm);
 			}
 			lastPropertyObject = instance;
-			return ((JawinPropertyManager) pm).knowsProperty(property);
+			return ((JawinPropertyManager) pm).knowsProperty(lastPropertyObject, property);
 		}
 		return false;
 	}

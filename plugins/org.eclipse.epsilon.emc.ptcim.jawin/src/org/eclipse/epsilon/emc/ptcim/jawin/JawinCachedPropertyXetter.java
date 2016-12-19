@@ -48,10 +48,6 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 	private IEolContext context;
 	private JawinObject object;
 
-	// This is the cache the stores the names of the properties that each element has. For example the class element has a property called name, child objects, etc.
-	// This way we don't need to query through the COM if an element has the requested property. This is actually the cache the stores the "metamodel" of PTC IM models.
-	private Map<String, EnumSet<PtcPropertyEnum>> elementPropertiesNamesCache = new HashMap<String, EnumSet<PtcPropertyEnum>>();
-
 	private String lastSetProperty; // Assumes invoke(object) always comes after setProperty
 
 	@Override
@@ -78,55 +74,66 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 		return null;
 	}
 
-	public void getPtcProperty(String property) {
-		EnumSet<PtcPropertyEnum> cachedProp = elementPropertiesNamesCache.get(property);
-		if (cachedProp == null) {
-			// long substart = System.nanoTime();
-			List<Object> args = new ArrayList<Object>();
-			args.add("All Property Descriptors");
-			String descriptors = null;
-			try {
-				descriptors = (String) ((JawinObject) object).getAttribute("Property", args);
-			} catch (EolInternalException e) {
-				// TODO We probably need better understanding of errors
-			}
-			List<String> list = Arrays.asList(descriptors.split("\\n"));
-			for (String d : list) {
-				String[] info = d.split(",");
-				String name = info[0].substring(1, info[0].length() - 1);
-				name = normalise(name);
-				// if (nameMatches(name, property)) {
-				final EnumSet<PtcPropertyEnum> ptcProp = EnumSet.noneOf(PtcPropertyEnum.class);
-				String role = info[1].substring(1, info[1].length() - 1);
+	public PtcProperty getPtcProperty(JawinObject object, String property) {
+		List<Object> args = new ArrayList<Object>();
+		args.add("All Property Descriptors");
+		String descriptors = null;
+		PtcProperty prop = null;
+		try {
+			descriptors = (String) object.getAttribute("Property", args);
+		} catch (EolInternalException e) {
+			// TODO We probably need better understanding of errors
+			return null;
+		}
+		List<String> list = Arrays.asList(descriptors.split("\\n"));
+		for (String d : list) {
+			String[] info = d.split(",");
+			String name = unQuote(info[0]);
+			if (nameMatches(name, property)) {
+				String role = unQuote(info[1]);
+				boolean isAssociation = false;
 				if (role.equals(ASSOCIATION_ROLE)) {
-					ptcProp.add(PtcPropertyEnum.IS_ASSOCIATION);
+					isAssociation = true;
 				}
-				String access = info[2];
-				if (access.length() == 4) { // private access is 5 letters:
-											// "xxP"
-					ptcProp.add(PtcPropertyEnum.IS_PUBLIC);
+				boolean isPublic = true;
+				String access = unQuote(info[2]);
+				if (access.length() > 2) {		// private access is 3 letters: xxP
+					isPublic = false;
 				}
-				if (access.contains("O")) { // RO or ROP
-					ptcProp.add(PtcPropertyEnum.IS_READ_ONLY);
+				boolean readOnly = false;
+				if (access.contains("O")) {		// RO or ROP
+					readOnly = true;
 				}
-				String multy = info[3];
+				boolean isMultiple = false;
+				String multy = unQuote(info[3]);
 				if (multy.contains("+")) {
-					ptcProp.add(PtcPropertyEnum.IS_MULTIPLE);
+					isMultiple = true;
 				}
-				elementPropertiesNamesCache.put(name, ptcProp);
+				prop = new PtcProperty(name, isPublic, readOnly, isMultiple, isAssociation);
+				break;
 			}
 		}
+ 		return prop;
+ 	}
+	
+	private boolean nameMatches(String name, String property) {
+	 	String noBlanks = name.replaceAll("\\s","");
+	 	return noBlanks.compareToIgnoreCase(property) == 0;
 	}
+		 
+ 	private String unQuote(String name) {
+ 		return name.replaceAll("^\"|\"$", "");
+ 	}
 
 	@Override
 	public boolean hasProperty(Object object, String property) {
 		assert object.equals(this.object);
 		property = normalise(property);
-		if (elementPropertiesNamesCache.containsKey(property)) {
+		if (getPtcProperty((JawinObject) object, property) != null) {
 			return true;
+		} else {
+			return false;
 		}
-		getPtcProperty(property);
-		return elementPropertiesNamesCache.containsKey(property);
 	}
 
 	@Override
@@ -134,8 +141,8 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 		new Thread(new Runnable() {
 		    public void run() {
 				try {
-					EnumSet<PtcPropertyEnum> props = elementPropertiesNamesCache.get(lastSetProperty);
-					if (props.contains(PtcPropertyEnum.IS_READ_ONLY)) {
+					PtcProperty props = getPtcProperty((JawinObject) object, lastSetProperty);
+					if (props.isReadOnly()) {
 						throw new EolReadOnlyPropertyException();
 					}
 					List<Object> args = new ArrayList<Object>();
@@ -143,7 +150,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 					// Caution: the ReturnType (for type Operation) is both an association and an attribute.
 					// So, when we store it, we store the first type once and then the second ovewrites (race condition).
 					// To solve it here we additionally check that if it IS_ASSOCIATION, the value is a collection.
-					if (props.contains(PtcPropertyEnum.IS_ASSOCIATION) && (value instanceof Collection)) {
+					if (props.isAssociation() && (value instanceof Collection)) {
 						try {
 							args.add(lastSetProperty);
 							((JawinObject) object).invoke("Remove", args);
@@ -156,7 +163,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 								args.add(aValue);
 								object.invoke("Add", args);
 							}
-							if (!elementPropertiesNamesCache.containsKey(lastSetProperty)) {
+							if (props != null) {
 								args.clear();
 								args.add(lastSetProperty);
 								JawinObject allItems = (JawinObject) object.invoke("Items", args);
@@ -191,7 +198,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 		Object o = null;
 		property = normalise(property);
 		if (o == null) {
-			assert elementPropertiesNamesCache.containsKey(property); // knowsProperty always invoked first, which populates the cache
+			//assert elementPropertiesNamesCache.containsKey(property); // knowsProperty always invoked first, which populates the cache
 			try {
 				o = queryPtcPropertyValue(property);
 			} catch (EolInternalException e) {
@@ -204,11 +211,11 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 	private Object queryPtcPropertyValue(String property) throws EolRuntimeException, EolInternalException {
 		Object o;
 		property = normalise(property);
-		EnumSet<PtcPropertyEnum> ptcprop = elementPropertiesNamesCache.get(property);
-		if (ptcprop.contains(PtcPropertyEnum.IS_ASSOCIATION)) {
+		PtcProperty ptcprop = getPtcProperty(object, property);
+		if (ptcprop.isAssociation()) {
 			List<Object> args = new ArrayList<Object>();
 			args.add(property);
-			if (ptcprop.contains(PtcPropertyEnum.IS_MULTIPLE)) {
+			if (ptcprop.isMultiple()) {
 				JawinCollection elements;
 				try {
 					Object res = object.invoke("Items", args);
@@ -253,15 +260,18 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 
 	@Override
 	public void setProperty(String property) {
-		getPtcProperty(property);
+		getPtcProperty((JawinObject) getObject(), property);
 		property = normalise(property);
 		lastSetProperty = property;
 	}
 
-	public boolean knowsProperty(String property) {
+	public boolean knowsProperty(Object object, String property) {
 		String normalisedProperty = normalise(property);
-		getPtcProperty(normalisedProperty);
-		return elementPropertiesNamesCache.containsKey(normalisedProperty);
+		if (getPtcProperty((JawinObject) object, normalisedProperty) != null) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	// Normalisation: we assume that for example "Child Object" is treated the same as "child object", 
