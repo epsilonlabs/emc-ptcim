@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.4"?>
-<plugin>
-   <extension-point id="org.eclipse.epsilon.emc.ptcim.ole" name="EMC PTC Integrity Modeler OLE" schema="schema/org.eclipse.epsilon.emc.ptcim.ole.exsd"/>
-
-</plugin>

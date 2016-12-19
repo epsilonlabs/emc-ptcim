@@ -138,6 +138,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 
 	@Override
 	public void invoke(final Object value) throws EolRuntimeException {
+		
 		new Thread(new Runnable() {
 		    public void run() {
 				try {
