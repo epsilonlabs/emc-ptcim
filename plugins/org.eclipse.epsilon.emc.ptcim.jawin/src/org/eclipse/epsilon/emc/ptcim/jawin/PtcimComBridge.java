@@ -5,20 +5,20 @@ import org.jawin.COMException;
 import org.jawin.GUID;
 import org.jawin.win32.Ole32;
 
-public class JawinComBridge {
+public class PtcimComBridge {
 	
-	public JawinObject connectByClsId(String clsId) throws EolInternalException {
+	public PtcimObject connectByClsId(String clsId) throws EolInternalException {
 		GUID ciid = new GUID(clsId);
 		try {
-			return new JawinObject(ciid);
+			return new PtcimObject(ciid);
 		} catch (COMException e) {
 			throw new EolInternalException(e);
 		}
 	}
 
-	public JawinObject connectByProgId(String progId) throws EolInternalException {
+	public PtcimObject connectByProgId(String progId) throws EolInternalException {
 		try {
-			return new JawinObject(progId);
+			return new PtcimObject(progId);
 		} catch (COMException e) {
 			throw new EolInternalException(e);
 		}

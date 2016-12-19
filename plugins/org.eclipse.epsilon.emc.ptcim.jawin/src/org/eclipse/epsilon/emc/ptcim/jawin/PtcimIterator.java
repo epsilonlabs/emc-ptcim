@@ -20,15 +20,15 @@ import org.eclipse.epsilon.eol.exceptions.EolInternalException;
  *
  * @param <E> the element type
  */
-public class JawinIterator implements Iterator<JawinObject> {
+public class PtcimIterator implements Iterator<PtcimObject> {
 	
 	/**
 	 * The IPtcObject that points to the collection.
 	 */
-	private final JawinObject source;
+	private final PtcimObject source;
 	
 	/** The next object returned from {@link #next()}. */
-	private JawinObject next;
+	private PtcimObject next;
 	
 	/**
 	 * Instantiates a new jawin iterator.
@@ -37,7 +37,7 @@ public class JawinIterator implements Iterator<JawinObject> {
 	 * @param owner the owner
 	 * @param association the association
 	 */
-	public JawinIterator(JawinObject source) {
+	public PtcimIterator(PtcimObject source) {
 		super();
 		this.source = source;
 		try {
@@ -68,9 +68,9 @@ public class JawinIterator implements Iterator<JawinObject> {
 	 * @see java.util.Iterator#next()
 	 */
 	@Override
-	public JawinObject next() {
+	public PtcimObject next() {
 		try {
-			next = (JawinObject) source.invokeMethod("NextItem");
+			next = (PtcimObject) source.invokeMethod("NextItem");
 			String strId = (String) next.getAttribute("Property", "Id");
 			next.setId(strId);
 		} catch (EolInternalException e) {

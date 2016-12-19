@@ -20,10 +20,10 @@ import org.jawin.COMException;
 /**
  * The Class JawinFilteredCollection.
  */
-public class JawinFilteredCollection extends AbstractCollection<JawinObject> {
+public class PtcimFilteredCollection extends AbstractCollection<PtcimObject> {
 	
 	/** The object that points to the collection. */
-	private final JawinObject comObject;
+	private final PtcimObject comObject;
 	
 	private final String association;
 	
@@ -33,9 +33,9 @@ public class JawinFilteredCollection extends AbstractCollection<JawinObject> {
 	 * @param comObject the com object
 	 * @param association the association
 	 */
-	public JawinFilteredCollection(JawinObject comObject, String association) {
-		assert comObject instanceof JawinObject;
-		this.comObject = (JawinObject) comObject;
+	public PtcimFilteredCollection(PtcimObject comObject, String association) {
+		assert comObject instanceof PtcimObject;
+		this.comObject = (PtcimObject) comObject;
 		this.association = association;
 	}
 	
@@ -56,11 +56,11 @@ public class JawinFilteredCollection extends AbstractCollection<JawinObject> {
 	 *
 	 * @return the owner
 	 */
-	public JawinObject getOwner() {
+	public PtcimObject getOwner() {
 		return null;
 	}
 
-	public JawinObject getCOMObject() {
+	public PtcimObject getCOMObject() {
 		return this.comObject;
 	}
 
@@ -72,8 +72,8 @@ public class JawinFilteredCollection extends AbstractCollection<JawinObject> {
 	 * @see java.util.AbstractCollection#iterator()
 	 */
 	@Override
-	public Iterator<JawinObject> iterator() {
-		Iterator<JawinObject> iterator = new JawinIterator(comObject);
+	public Iterator<PtcimObject> iterator() {
+		Iterator<PtcimObject> iterator = new PtcimIterator(comObject);
 		return iterator;
 	}
 
@@ -86,7 +86,7 @@ public class JawinFilteredCollection extends AbstractCollection<JawinObject> {
 	 * implementation used the iterator;
 	 */
 	public int size() {
-		Iterator<JawinObject> it = iterator();
+		Iterator<PtcimObject> it = iterator();
 		int size = 0;
 		while (it.hasNext()) {
 			it.next();

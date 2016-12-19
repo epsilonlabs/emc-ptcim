@@ -14,12 +14,12 @@ package org.eclipse.epsilon.emc.ptcim.dt;
 import java.util.Iterator;
 
 import org.eclipse.epsilon.common.dt.launching.dialogs.AbstractCachedModelConfigurationDialog;
+import org.eclipse.epsilon.emc.ptcim.PtcimFrameworkFactory;
 import org.eclipse.epsilon.emc.ptcim.PtcimModel;
-import org.eclipse.epsilon.emc.ptcim.jawin.JawinCollection;
-import org.eclipse.epsilon.emc.ptcim.jawin.JawinFileDialog;
-import org.eclipse.epsilon.emc.ptcim.jawin.JawinFrameworkFactory;
-import org.eclipse.epsilon.emc.ptcim.jawin.JawinModelManager;
-import org.eclipse.epsilon.emc.ptcim.jawin.JawinObject;
+import org.eclipse.epsilon.emc.ptcim.jawin.PtcimCollection;
+import org.eclipse.epsilon.emc.ptcim.jawin.PtcimFileDialog;
+import org.eclipse.epsilon.emc.ptcim.jawin.PtcimModelManager;
+import org.eclipse.epsilon.emc.ptcim.jawin.PtcimObject;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -42,7 +42,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	
 	public static final String ATT_CLASS = "class";
 
-	private JawinFrameworkFactory factory;
+	private PtcimFrameworkFactory factory;
 	
 	protected Label fileTextLabel;
 	protected Text fileText;
@@ -68,12 +68,12 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	private Label selectedElementNameAndTypeLabel;
 	private Label selectedElementNameAndTypeTextLabel;
 	
-	JawinModelManager manager = null;
+	PtcimModelManager manager = null;
 
 	private GridData twoCol;
 
 	public PtcimModelConfigurationDialog() {
-		factory = new JawinFrameworkFactory();
+		factory = new PtcimFrameworkFactory();
 		try {
 			factory.startup();;
 		} catch (EolInternalException e) {
@@ -122,7 +122,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 			public void handleEvent(Event event) {
 				selectedElementIdText.setText("");
 				if (manager != null) {
-					JawinObject ap = null;
+					PtcimObject ap = null;
 					try {
 						ap = manager.getActiveProjet();
 					} catch (EolInternalException e) {
@@ -130,21 +130,21 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 								+ " desired model loaded, and that an element is selected.");
 					}
 					if (ap != null) {
-						JawinCollection selection = null;
+						PtcimCollection selection = null;
 						try {
 							selection = manager.getActiveItems();
 						} catch (EolInternalException e1) {
 							showErrorMsg("Failed to connect to the PTC IM Modeler.");
 						}
 						if (selection != null) {
-							Iterator<JawinObject> it = selection.iterator();
+							Iterator<PtcimObject> it = selection.iterator();
 							boolean seletionExists = true;
 							if (!it.hasNext()) {
 								showErrorMsg("There is no element selected.");
 								seletionExists = false;
 							}
 							if (seletionExists) {
-								JawinObject current = it.next();
+								PtcimObject current = it.next();
 								Object id = null;
 								Object name = null;
 								Object type = null;
@@ -244,7 +244,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 			
 			@Override
 			public void handleEvent(Event event) {
-				JawinFileDialog diag;
+				PtcimFileDialog diag;
 				try {
 					diag = factory.getFileDialogManager();
 				} catch (EolInternalException e1) {
@@ -353,7 +353,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		selectedElementNameAndTypeTextLabel.setText(properties.getProperty(PtcimModel.PROPERTY_ELEMENT_NAME_AND_TYPE));
 	}
 
-	private String setProjectPropertiesText(JawinObject ap) {
+	private String setProjectPropertiesText(PtcimObject ap) {
 		// Get current project information
 		String ref = null;
 		try {

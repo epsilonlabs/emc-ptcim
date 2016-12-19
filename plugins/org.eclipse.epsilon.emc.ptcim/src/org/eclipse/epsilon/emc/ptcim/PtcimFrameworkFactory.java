@@ -8,31 +8,36 @@
  * Contributors:
  *     Horacio Hoyos - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.emc.ptcim.jawin;
+package org.eclipse.epsilon.emc.ptcim;
 
+import org.eclipse.epsilon.emc.ptcim.jawin.PtcimComBridge;
+import org.eclipse.epsilon.emc.ptcim.jawin.PtcimFileDialog;
+import org.eclipse.epsilon.emc.ptcim.jawin.PtcimModelManager;
+import org.eclipse.epsilon.emc.ptcim.jawin.PtcimPropertyManager;
+import org.eclipse.epsilon.emc.ptcim.jawin.PtcimUserInterface;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
 /**
  * A factory for creating JawinFramework objects.
  */
-public class JawinFrameworkFactory {
+public class PtcimFrameworkFactory {
 	
-	private JawinComBridge bridge = new JawinComBridge();
-	private JawinModelManager jawinModelManager = new JawinModelManager();
-	private JawinUserInterface jawinUserInterface = new JawinUserInterface();
-	private JawinFileDialog jawinFileDialog = new JawinFileDialog();
+	private PtcimComBridge bridge = new PtcimComBridge();
+	private PtcimModelManager jawinModelManager = new PtcimModelManager();
+	private PtcimUserInterface jawinUserInterface = new PtcimUserInterface();
+	private PtcimFileDialog jawinFileDialog = new PtcimFileDialog();
 	
-	public JawinFileDialog getFileDialogManager() throws EolInternalException {
+	public PtcimFileDialog getFileDialogManager() throws EolInternalException {
 		jawinFileDialog.connect(bridge);
 		return jawinFileDialog;
 	}
 
-	public JawinModelManager getModelManager() throws EolInternalException {
+	public PtcimModelManager getModelManager() throws EolInternalException {
 		jawinModelManager.connect(bridge);
 		return jawinModelManager;
 	}
 
-	public JawinUserInterface getUIManager() throws EolInternalException {
+	public PtcimUserInterface getUIManager() throws EolInternalException {
 		jawinUserInterface.connect(bridge);
 		return jawinUserInterface;
 	}
@@ -69,8 +74,8 @@ public class JawinFrameworkFactory {
 		}
 	}
 
-	public JawinPropertyManager getPropertyManager() {
-		return (JawinPropertyManager) new JawinCachedPropertyXetter();
+	public PtcimPropertyManager getPropertyManager() {
+		return (PtcimPropertyManager) new PtcimCachedPropertyXetter();
 	}
 
 	public void startup() throws EolInternalException {

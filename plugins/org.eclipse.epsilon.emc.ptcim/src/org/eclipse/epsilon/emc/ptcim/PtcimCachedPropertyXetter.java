@@ -8,7 +8,7 @@
  * Contributors:
  *     Hoacio Hoyos Rodriguez - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.emc.ptcim.jawin;
+package org.eclipse.epsilon.emc.ptcim;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +20,9 @@ import java.util.Map;
 
 
 import org.eclipse.epsilon.common.module.ModuleElement;
+import org.eclipse.epsilon.emc.ptcim.jawin.PtcimCollection;
+import org.eclipse.epsilon.emc.ptcim.jawin.PtcimObject;
+import org.eclipse.epsilon.emc.ptcim.jawin.PtcimPropertyManager;
 import org.eclipse.epsilon.eol.exceptions.EolIllegalPropertyAssignmentException;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolReadOnlyPropertyException;
@@ -31,10 +34,10 @@ import org.eclipse.epsilon.eol.execute.introspection.IPropertySetter;
 /**
  * The Class JawinCachedPropertyXetter.
  */
-public class JawinCachedPropertyXetter extends JawinPropertyManager implements IPropertyGetter, IPropertySetter {
+public class PtcimCachedPropertyXetter extends PtcimPropertyManager implements IPropertyGetter, IPropertySetter {
 
 	// The xetter needs to know if the valueCache should be used.
-	public JawinCachedPropertyXetter() {
+	public PtcimCachedPropertyXetter() {
 		super();
 	}
 
@@ -46,7 +49,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 
 	private ModuleElement ast;
 	private IEolContext context;
-	private JawinObject object;
+	private PtcimObject object;
 
 	private String lastSetProperty; // Assumes invoke(object) always comes after setProperty
 
@@ -60,7 +63,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 		return context;
 	}
 
-	public JawinPropertyManager getInstance() {
+	public PtcimPropertyManager getInstance() {
 		return null;
 	}
 
@@ -74,7 +77,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 		return null;
 	}
 
-	public PtcProperty getPtcProperty(JawinObject object, String property) {
+	public PtcProperty getPtcProperty(PtcimObject object, String property) {
 		List<Object> args = new ArrayList<Object>();
 		args.add("All Property Descriptors");
 		String descriptors = null;
@@ -129,7 +132,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 	public boolean hasProperty(Object object, String property) {
 		assert object.equals(this.object);
 		property = normalise(property);
-		if (getPtcProperty((JawinObject) object, property) != null) {
+		if (getPtcProperty((PtcimObject) object, property) != null) {
 			return true;
 		} else {
 			return false;
@@ -142,7 +145,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 		new Thread(new Runnable() {
 		    public void run() {
 				try {
-					PtcProperty props = getPtcProperty((JawinObject) object, lastSetProperty);
+					PtcProperty props = getPtcProperty((PtcimObject) object, lastSetProperty);
 					if (props.isReadOnly()) {
 						throw new EolReadOnlyPropertyException();
 					}
@@ -154,11 +157,11 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 					if (props.isAssociation() && (value instanceof Collection)) {
 						try {
 							args.add(lastSetProperty);
-							((JawinObject) object).invoke("Remove", args);
+							((PtcimObject) object).invoke("Remove", args);
 							for (Object aValue : (Collection<Object>) value) {
 								// TODO Change that to an if statement and throw the correct
 								// exception
-								assert aValue instanceof JawinObject;
+								assert aValue instanceof PtcimObject;
 								args.clear();
 								args.add(lastSetProperty);
 								args.add(aValue);
@@ -167,8 +170,8 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 							if (props != null) {
 								args.clear();
 								args.add(lastSetProperty);
-								JawinObject allItems = (JawinObject) object.invoke("Items", args);
-								JawinCollection allItemsJawin = new JawinCollection(allItems, object, lastSetProperty);
+								PtcimObject allItems = (PtcimObject) object.invoke("Items", args);
+								PtcimCollection allItemsJawin = new PtcimCollection(allItems, object, lastSetProperty);
 							}
 						} catch (EolInternalException e) {
 							System.err.println("Error for " + lastSetProperty + " for value " + value);
@@ -181,7 +184,7 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 						args.add(value);
 						try {
 							System.err.println(Thread.currentThread().getName());
-							((JawinObject) object).invoke("PropertySet", args);
+							((PtcimObject) object).invoke("PropertySet", args);
 						} catch (EolInternalException e) {
 							System.err.println(Thread.currentThread().getName());
 							throw new EolIllegalPropertyAssignmentException(getProperty(), getAst());
@@ -217,11 +220,11 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 			List<Object> args = new ArrayList<Object>();
 			args.add(property);
 			if (ptcprop.isMultiple()) {
-				JawinCollection elements;
+				PtcimCollection elements;
 				try {
 					Object res = object.invoke("Items", args);
-					assert res instanceof JawinObject;
-					elements = new JawinCollection((JawinObject) res, object, property);
+					assert res instanceof PtcimObject;
+					elements = new PtcimCollection((PtcimObject) res, object, property);
 				} catch (EolInternalException e) {
 					throw new EolRuntimeException(e.getMessage());
 				}
@@ -229,9 +232,9 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 			} else {
 				try {
 					o = object.invoke("Item", args);
-					if (o instanceof JawinObject) {
-						String strId = (String) ((JawinObject) o).getAttribute("Property", "Id");
-						((JawinObject) o).setId(strId);
+					if (o instanceof PtcimObject) {
+						String strId = (String) ((PtcimObject) o).getAttribute("Property", "Id");
+						((PtcimObject) o).setId(strId);
 					}
 				} catch (EolInternalException e) {
 					throw new EolRuntimeException(e.getMessage());
@@ -255,20 +258,20 @@ public class JawinCachedPropertyXetter extends JawinPropertyManager implements I
 
 	@Override
 	public void setObject(Object object) {
-		assert object instanceof JawinObject;
-		this.object = (JawinObject) object;
+		assert object instanceof PtcimObject;
+		this.object = (PtcimObject) object;
 	}
 
 	@Override
 	public void setProperty(String property) {
-		getPtcProperty((JawinObject) getObject(), property);
+		getPtcProperty((PtcimObject) getObject(), property);
 		property = normalise(property);
 		lastSetProperty = property;
 	}
 
 	public boolean knowsProperty(Object object, String property) {
 		String normalisedProperty = normalise(property);
-		if (getPtcProperty((JawinObject) object, normalisedProperty) != null) {
+		if (getPtcProperty((PtcimObject) object, normalisedProperty) != null) {
 			return true;
 		} else {
 			return false;

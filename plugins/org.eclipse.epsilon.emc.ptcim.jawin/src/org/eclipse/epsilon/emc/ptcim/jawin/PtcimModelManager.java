@@ -17,17 +17,17 @@ import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 /**
  * The Class JawinModelManager.
  */
-public class JawinModelManager  {
+public class PtcimModelManager  {
 	
 	/**
 	 * This is the root object for Modeler. It is a collection object for all
 	 * the Project objects you can read, that is, the Models available in the
 	 * repositories that are bookmarked in your Model Explorer. 
 	 */
-	private JawinObject projects;
+	private PtcimObject projects;
 	boolean isConnected = false;
 
-	public void connect(JawinComBridge bridge) throws EolInternalException {
+	public void connect(PtcimComBridge bridge) throws EolInternalException {
 		if (!isConnected)
 			projects = bridge.connectByProgId("OMTE.Projects");
 		isConnected = true;
@@ -40,44 +40,44 @@ public class JawinModelManager  {
 		}
 	}
 
-	public JawinCollection getActiveDagrams() throws EolInternalException {
+	public PtcimCollection getActiveDagrams() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Diagram");
-		JawinObject comCollection = (JawinObject) projects.invoke("Items", args);
-		return new JawinCollection(comCollection, projects, "ActiveDiagram");
+		PtcimObject comCollection = (PtcimObject) projects.invoke("Items", args);
+		return new PtcimCollection(comCollection, projects, "ActiveDiagram");
 	}
 
-	public JawinCollection getActiveItems() throws EolInternalException {
+	public PtcimCollection getActiveItems() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Dictionary Item");
-		JawinObject comCollection = (JawinObject) projects.invoke("Items", args);
-		return new JawinCollection(comCollection, projects, "Active Dictionary Item");
+		PtcimObject comCollection = (PtcimObject) projects.invoke("Items", args);
+		return new PtcimCollection(comCollection, projects, "Active Dictionary Item");
 	}
 
-	public JawinObject getActiveProjet() throws EolInternalException {
+	public PtcimObject getActiveProjet() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Project");
-		return (JawinObject) projects.invoke("Item", args);
+		return (PtcimObject) projects.invoke("Item", args);
 	}
 
-	public JawinCollection getActiveSelectinContext() throws EolInternalException {
+	public PtcimCollection getActiveSelectinContext() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Selection Context");
-		JawinObject comCollection = (JawinObject) projects.invoke("Items", args);
-		return new JawinCollection(comCollection, projects, "Active Selection Context");
+		PtcimObject comCollection = (PtcimObject) projects.invoke("Items", args);
+		return new PtcimCollection(comCollection, projects, "Active Selection Context");
 	}
 
-	public JawinCollection getActiveSymbols() throws EolInternalException {
+	public PtcimCollection getActiveSymbols() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Symbol");
-		JawinObject comCollection = (JawinObject) projects.invoke("Items", args);
-		return new JawinCollection(comCollection, projects, "Active Symbol");
+		PtcimObject comCollection = (PtcimObject) projects.invoke("Items", args);
+		return new PtcimCollection(comCollection, projects, "Active Symbol");
 	}
 
-	public JawinObject getProjectByReference(String id, String server, String repository, String version)
+	public PtcimObject getProjectByReference(String id, String server, String repository, String version)
 			throws EolInternalException {
 		String method = "";
-		JawinObject model;
+		PtcimObject model;
 		method = "Reference";
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add(method);
@@ -86,21 +86,21 @@ public class JawinModelManager  {
 			modelPath += "\\" + version;
 		}
 		args.add(modelPath); 
-		model = (JawinObject) projects.invoke("Item", args);
+		model = (PtcimObject) projects.invoke("Item", args);
 		return model;
 	}
 
-	public JawinObject getProjectByTitle(String title) throws EolInternalException {
+	public PtcimObject getProjectByTitle(String title) throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Project");
 		args.add(title); 
-		return (JawinObject) projects.invoke("Item", args);
+		return (PtcimObject) projects.invoke("Item", args);
 	}
 
-	public JawinCollection getProjects() throws EolInternalException {
+	public PtcimCollection getProjects() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Project");
-		JawinObject comCollection = (JawinObject) projects.invoke("Items", args);
-		return new JawinCollection(comCollection, projects, "Project");
+		PtcimObject comCollection = (PtcimObject) projects.invoke("Items", args);
+		return new PtcimCollection(comCollection, projects, "Project");
 	}
 }

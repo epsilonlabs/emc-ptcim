@@ -27,13 +27,13 @@ import org.jawin.COMException;
  * unexpected results. Collections that are a result of a filtered Items only
  * provide iteration. 
  */
-public class JawinCollection extends AbstractList<JawinObject> implements IAbstractOperationContributor {
+public class PtcimCollection extends AbstractList<PtcimObject> implements IAbstractOperationContributor {
 	
 	/** The object that points to the collection. */
-	private final JawinObject comObject;
+	private final PtcimObject comObject;
 	
 	/** The owner. */
-	private final JawinObject owner;
+	private final PtcimObject owner;
 	
 	/** The association. */
 	private final String association;
@@ -45,16 +45,16 @@ public class JawinCollection extends AbstractList<JawinObject> implements IAbstr
 	 * @param owner the owner
 	 * @param association the association
 	 */
-	public JawinCollection(JawinObject comCollection, JawinObject owner, String association) {
-		assert comCollection instanceof JawinObject;
-		assert owner instanceof JawinObject;
-		this.comObject = (JawinObject) comCollection;
-		this.owner = (JawinObject) owner;
+	public PtcimCollection(PtcimObject comCollection, PtcimObject owner, String association) {
+		assert comCollection instanceof PtcimObject;
+		assert owner instanceof PtcimObject;
+		this.comObject = (PtcimObject) comCollection;
+		this.owner = (PtcimObject) owner;
 		this.association = association;
 	}
 
 	@Override
-	public boolean add(JawinObject e) {
+	public boolean add(PtcimObject e) {
 		assert e.getId() != null;
 		List<Object> args = new ArrayList<Object>();
 		args.add(association);
@@ -95,11 +95,11 @@ public class JawinCollection extends AbstractList<JawinObject> implements IAbstr
 	 * @return the jawin object
 	 */
 	@Override
-	public JawinObject get(int index) {
+	public PtcimObject get(int index) {
 		if (index >= size()) {
 			throw new IndexOutOfBoundsException();
 		}
-		Iterator<JawinObject> it = iterator();
+		Iterator<PtcimObject> it = iterator();
 		if (index == 0) {
 			if (it.hasNext()) {
 				return it.next();
@@ -119,11 +119,11 @@ public class JawinCollection extends AbstractList<JawinObject> implements IAbstr
 		return association;
 	}
 
-	public JawinObject getCOMObject() {
+	public PtcimObject getCOMObject() {
 		return comObject;
 	}
 
-	public JawinObject getOwner() {
+	public PtcimObject getOwner() {
 		return owner;
 	}
 	
@@ -139,7 +139,7 @@ public class JawinCollection extends AbstractList<JawinObject> implements IAbstr
      */
 	@Override
 	public int indexOf(Object o) {
-		Iterator<JawinObject> e = iterator();
+		Iterator<PtcimObject> e = iterator();
 		if (o==null) {
 		    return -1;
 		} 
@@ -159,14 +159,14 @@ public class JawinCollection extends AbstractList<JawinObject> implements IAbstr
 	}
 
 	@Override
-	public Iterator<JawinObject> iterator() {
-		Iterator<JawinObject> iterator = new JawinIterator(comObject);
+	public Iterator<PtcimObject> iterator() {
+		Iterator<PtcimObject> iterator = new PtcimIterator(comObject);
 		return iterator;
 	}
 	
 	@Override
-	public JawinObject remove(int index) {
-		JawinObject obj = get(index);
+	public PtcimObject remove(int index) {
+		PtcimObject obj = get(index);
 		remove(obj);
 		return obj;
 	}
@@ -212,7 +212,7 @@ public class JawinCollection extends AbstractList<JawinObject> implements IAbstr
 			if (e.getMessage().contains("Not implemented")) {
 				// We might be able to use the iterator to get the size;
 				int i = 0;
-				Iterator<JawinObject> it = iterator();
+				Iterator<PtcimObject> it = iterator();
 				while(it.hasNext()) {
 					it.next();
 					i++;
@@ -227,10 +227,10 @@ public class JawinCollection extends AbstractList<JawinObject> implements IAbstr
 	@Override
 	public AbstractOperation getAbstractOperation(String name) {
 		if ("select".equals(name)) {
-			return new JawinCollectionSelectOperation();
+			return new PtcimCollectionSelectOperation();
 		}
 		else if( "selectOne".equals(name)) {
-			return new JawinCollectionSelectOneOperation();
+			return new PtcimCollectionSelectOneOperation();
 		}
 		else
 			return null;

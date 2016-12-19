@@ -18,15 +18,15 @@ import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 /**
  * The Class JawinUserInterface is a Jawin implementation of the interface.
  */
-public class JawinUserInterface {
+public class PtcimUserInterface {
 	
-	JawinObject studio;
+	PtcimObject studio;
 	boolean isConnected = false;
 	
-	public JawinUserInterface() {
+	public PtcimUserInterface() {
 	}
 	
-	public void connect(JawinComBridge bridge) throws EolInternalException {
+	public void connect(PtcimComBridge bridge) throws EolInternalException {
 		if (!isConnected)
 			studio = bridge.connectByProgId("Studio.Editor");
 		isConnected = true;

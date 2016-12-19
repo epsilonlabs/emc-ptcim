@@ -2,7 +2,7 @@ package org.eclipse.epsilon.emc.ptcim.test;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.epsilon.emc.ptcim.jawin.JawinObject;
+import org.eclipse.epsilon.emc.ptcim.jawin.PtcimObject;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.jawin.COMException;
 import org.jawin.DispatchPtr;
@@ -13,14 +13,14 @@ import org.junit.Test;
 
 public class AttributeRelatedTests {
 	
-	private JawinObject model;
+	private PtcimObject model;
 	private DispatchPtr theProject;
 	
 	@Before
 	public void setUp() throws Exception {
 		theProject = Utilities.getProject("Traffic Lights");
 		DispatchPtr modelptr = Utilities.load(theProject);
-		model = new JawinObject(modelptr);
+		model = new PtcimObject(modelptr);
 	}
 
 	@After

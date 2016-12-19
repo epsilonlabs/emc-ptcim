@@ -6,16 +6,16 @@ import java.util.List;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.jawin.COMException;
 
-public class JawinFileDialog {
+public class PtcimFileDialog {
 	
 	/**
 	 * The ArtisanModelFileDialog COM object
 	 */
-	private JawinObject dialog;
+	private PtcimObject dialog;
 	
 	boolean isConnected = false;
 
-	public void connect(JawinComBridge bridge) throws EolInternalException {
+	public void connect(PtcimComBridge bridge) throws EolInternalException {
 		if (!isConnected)
 			dialog = bridge.connectByProgId("COMGUIUtil.ArtisanModelFileDialog");
 		isConnected = true;

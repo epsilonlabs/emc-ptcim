@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.epsilon.emc.ptcim.jawin.JawinFrameworkFactory;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.osgi.framework.BundleContext;
 
@@ -37,7 +36,7 @@ public class Activator extends Plugin {
 	// The shared instance
 	private static Activator plugin;
 
-	private JawinFrameworkFactory factory;
+	private PtcimFrameworkFactory factory;
 	
 	/**
 	 * The constructor
@@ -52,7 +51,7 @@ public class Activator extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		factory = new JawinFrameworkFactory();
+		factory = new PtcimFrameworkFactory();
 		try {
 			factory.startup();
 		} catch (EolInternalException e) {
@@ -79,7 +78,7 @@ public class Activator extends Plugin {
 		return plugin;
 	}
 
-	public JawinFrameworkFactory getFactory() {
+	public PtcimFrameworkFactory getFactory() {
 		return factory;
 	}
 

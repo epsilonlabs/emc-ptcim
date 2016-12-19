@@ -21,21 +21,21 @@ import org.jawin.DispatchPtr;
 import org.jawin.GUID;
 import org.jawin.Variant;
 
-public class JawinObject extends DispatchPtr {
+public class PtcimObject extends DispatchPtr {
 
 	private String id;
 	
-	public JawinObject() { }
+	public PtcimObject() { }
 	
-	public JawinObject(COMPtr comObject) throws COMException {
+	public PtcimObject(COMPtr comObject) throws COMException {
 		super(comObject);
 	}
 
-	public JawinObject(GUID clsid) throws COMException {
+	public PtcimObject(GUID clsid) throws COMException {
 		super(clsid);
 	}
 
-	public JawinObject(String progid) throws COMException {
+	public PtcimObject(String progid) throws COMException {
 		super(progid);
 	}
 
@@ -46,7 +46,7 @@ public class JawinObject extends DispatchPtr {
 		return res;
 	}
 	
-	public Object add(String association, JawinObject object) throws EolInternalException {
+	public Object add(String association, PtcimObject object) throws EolInternalException {
 		List<Object> args = new ArrayList<Object>();
 		args.add(association);
 		args.add(object);
@@ -85,7 +85,7 @@ public class JawinObject extends DispatchPtr {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		JawinObject other = (JawinObject) obj;
+		PtcimObject other = (PtcimObject) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -99,8 +99,8 @@ public class JawinObject extends DispatchPtr {
 		try {
 			Object comres = getN(name, args.toArray());
 			if (comres instanceof DispatchPtr) {
-				res = new JawinObject();
-				((JawinObject) res).stealUnknown((DispatchPtr) comres);
+				res = new PtcimObject();
+				((PtcimObject) res).stealUnknown((DispatchPtr) comres);
 			}
 			else {
 				res = comres; 
@@ -116,8 +116,8 @@ public class JawinObject extends DispatchPtr {
 		try {
 			Object comres = super.get(name, arg);
 			if (comres instanceof DispatchPtr) {
-				res = new JawinObject();
-				((JawinObject) res).stealUnknown((DispatchPtr) comres);
+				res = new PtcimObject();
+				((PtcimObject) res).stealUnknown((DispatchPtr) comres);
 			}
 			else {
 				res = comres;
@@ -149,8 +149,8 @@ public class JawinObject extends DispatchPtr {
 			Object comres = invokeN(methodName, args.toArray());
 			if (comres instanceof DispatchPtr) {
 				if (((DispatchPtr) comres).getUnknown() != 0) {
-					res = new JawinObject();
-					((JawinObject) res).stealUnknown((DispatchPtr) comres);
+					res = new PtcimObject();
+					((PtcimObject) res).stealUnknown((DispatchPtr) comres);
 				}
 			}
 			else {
@@ -183,8 +183,8 @@ public class JawinObject extends DispatchPtr {
 			}
 			Object comres = invokeN(methodName, comArgs.toArray(), argsExpected);
 			if (comres instanceof DispatchPtr) {
-				res = new JawinObject();
-				((JawinObject) res).stealUnknown((DispatchPtr) comres);
+				res = new PtcimObject();
+				((PtcimObject) res).stealUnknown((DispatchPtr) comres);
 			}
 			else {
 				res = comres;
@@ -200,8 +200,8 @@ public class JawinObject extends DispatchPtr {
 		try {
 			Object comres = invokeN(methodName, new Object[]{});
 			if (comres instanceof DispatchPtr) {
-				res = new JawinObject();
-				((JawinObject) res).stealUnknown((DispatchPtr) comres);
+				res = new PtcimObject();
+				((PtcimObject) res).stealUnknown((DispatchPtr) comres);
 			}
 			else {
 				res = comres;
@@ -233,12 +233,12 @@ public class JawinObject extends DispatchPtr {
 		}
 	}
 	
-	public List<JawinObject> wrapInColleciton(JawinObject owner, String association) {
-		return new JawinCollection(this, owner, association);
+	public List<PtcimObject> wrapInColleciton(PtcimObject owner, String association) {
+		return new PtcimCollection(this, owner, association);
 	}
 	
-	public Collection<JawinObject> wrapInFilteredColleciton(String association) {
-		return new JawinFilteredCollection(this, association);
+	public Collection<PtcimObject> wrapInFilteredColleciton(String association) {
+		return new PtcimFilteredCollection(this, association);
 	}
 	
 }
