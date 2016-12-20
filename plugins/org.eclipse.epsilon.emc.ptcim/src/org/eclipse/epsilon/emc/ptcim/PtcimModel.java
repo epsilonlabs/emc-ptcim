@@ -56,10 +56,6 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	public static final String DIID = "{c9ff8402-bb2e-11d0-8475-0080C82BFA0C}";
 
 	public static final String PROPERTY_ELEMENT_NAME_AND_TYPE = "elementNameAndType";
-	/** Optional cache is supported: have caching when the intention is to read the model and disable it when the user wants to write to it.
-	 *  This is to accommodate opposite references (keeping in cache the value of an association that has changed should also update all the associations that point to this value.*/
-	public static final String PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED = "propertiesValuesCacheEnabled";
-	
 	
 	protected PtcimComBridge bridge;
 	

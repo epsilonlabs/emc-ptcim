@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.epsilon.emc.ptcim.feature"
       label="EMC PTC Integrity Modeller"
-      version="0.2.0.qualifier"
+      version="1.0.0.qualifier"
       provider-name="Epsilon Framework">
 
    <description url="http://www.example.com/description">
@@ -106,20 +106,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="org.eclipse.epsilon.emc.ptcim.dt"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.epsilon.emc.ptcim.jawin"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.epsilon.emc.ptcim.ole"
          download-size="0"
          install-size="0"
          version="0.0.0"
