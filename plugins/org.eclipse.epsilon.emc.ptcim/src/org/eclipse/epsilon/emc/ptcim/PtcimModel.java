@@ -13,10 +13,8 @@ package org.eclipse.epsilon.emc.ptcim;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
@@ -88,23 +86,11 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	private String version;
 	private boolean fromSelection;
 	private String selectedElementId;
-	private boolean propertiesValuesCacheEnabled;
-
-	/**
-	 * Keeps a reference to the last object for which {@link #knowsAboutProperty(Object, String)}
-	 * was invoked.
-	 */
-	private Object lastPropertyObject;
-	
-	/** The xetter cache.
-	 * One Property manager per element in the model */
-	private Map<Object, PtcimPropertyManager> xetterCache;
 
 	/**
 	 * Instantiates a new artisan model. Gets the COM helpers from the extension
 	 */
 	public PtcimModel() {
-		xetterCache = new HashMap<Object, PtcimPropertyManager>();
 		isInitialized = true;
 	}
 
@@ -532,7 +518,6 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		version = properties.getProperty(PROPERTY_VERSION_NUMBER);
 		fromSelection = properties.getBooleanProperty(PROPERTY_FROM_SELECTION, false);
 		selectedElementId = properties.getProperty(PROPERTY_ELEMENT_ID);
-		propertiesValuesCacheEnabled = properties.getBooleanProperty(PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED, false);
 		load();
 	}
 	
@@ -624,7 +609,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		String id = (String) ((PtcimObject) newInstance).getAttribute("Property", "Id");
 		((PtcimObject) newInstance).setId(id);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#store()
 	 */
