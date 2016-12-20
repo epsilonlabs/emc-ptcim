@@ -70,7 +70,7 @@ public class PtcimFrameworkFactory {
 	}
 
 	public PtcimPropertyManager getPropertyManager() {
-		return (PtcimPropertyManager) new PtcimCachedPropertyXetter();
+		return (PtcimPropertyManager) new PtcimPropertyManager();
 	}
 
 	public void startup() throws EolInternalException {

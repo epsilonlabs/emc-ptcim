@@ -73,6 +73,15 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	/**  The PTC IM Model handle. */
 	private PtcimObject model = null;
 	
+	/** The property manager class includes utility methods for both the getter and the setter. */
+	private PtcimPropertyManager manager = new PtcimPropertyManager();
+	
+	/** The getter. One getter per model. */
+	private PtcimPropertyGetter getter = new PtcimPropertyGetter(manager);
+	
+	/** The setter. One setter per model. */
+	private PtcimPropertySetter setter = new PtcimPropertySetter(manager);
+
 	private String modelId;
 	private String server;
 	private String repository;
@@ -431,12 +440,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	 */
 	@Override
 	public IPropertyGetter getPropertyGetter() {
-		if (xetterCache.containsKey(lastPropertyObject)) {
-			return (IPropertyGetter) xetterCache.get(lastPropertyObject);
-		}
-		else {
-			return null;
-		}
+		return getter;
 	}
 
 	protected PtcimPropertyManager getPropertyManager() {
@@ -449,12 +453,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	 */
 	@Override
 	public IPropertySetter getPropertySetter() {
-		if (xetterCache.containsKey(lastPropertyObject)) {
-			return (IPropertySetter) xetterCache.get(lastPropertyObject);
-		}
-		else {
-			return null;
-		}
+		return setter;
 	}
 
 	/* (non-Javadoc)
@@ -519,24 +518,6 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		assert instance instanceof PtcimObject;
 		String type = getTypeNameOf(instance);
 		return metaClass.equals(type);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.eol.models.Model#knowsAboutProperty(java.lang.Object, java.lang.String)
-	 */
-	@Override
-	public boolean knowsAboutProperty(Object instance, String property) {
-		if (instance instanceof PtcimObject) {
-			Object pm = xetterCache.get(instance);
-			if (pm == null) {
-				pm = getPropertyManager();
-				((IPropertySetter) pm).setObject(instance);
-				xetterCache.put(instance, (PtcimPropertyManager) pm);
-			}
-			lastPropertyObject = instance;
-			return ((PtcimPropertyManager) pm).knowsProperty(lastPropertyObject, property);
-		}
-		return false;
 	}
 
 	/* (non-Javadoc)
