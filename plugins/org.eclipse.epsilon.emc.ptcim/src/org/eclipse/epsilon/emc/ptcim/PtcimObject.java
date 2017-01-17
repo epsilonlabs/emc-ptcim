@@ -74,6 +74,17 @@ public class PtcimObject extends DispatchPtr {
 		}
 	}
 	
+	public String getType() {
+		String strType = null;
+		try {
+			strType = (String) this.getAttribute("Property", "Type");
+		} catch (EolInternalException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return strType;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
