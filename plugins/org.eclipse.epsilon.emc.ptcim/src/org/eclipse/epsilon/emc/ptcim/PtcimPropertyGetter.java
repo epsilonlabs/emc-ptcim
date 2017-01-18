@@ -3,7 +3,7 @@
  import java.util.ArrayList;		
  import java.util.List;		
  		
- import org.eclipse.epsilon.emc.ptcim.PtcProperty;	
+ import org.eclipse.epsilon.emc.ptcim.PtcimProperty;	
  import org.eclipse.epsilon.eol.exceptions.EolInternalException;
  import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;		
  import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter;		
@@ -28,7 +28,7 @@
  		PtcimObject jObject = (PtcimObject) object;		
  		Object o = null;		
  		try {		
- 			PtcProperty p = manager.getPtcProperty(jObject, property);		
+ 			PtcimProperty p = manager.getPtcProperty(jObject, property);		
  			if (p == null) {		
  				throw new EolRuntimeException("No such property");		
  			}		
@@ -76,7 +76,7 @@
  	public boolean hasProperty(Object object, String property) {		
  		assert object instanceof PtcimObject;		
  		PtcimObject jObject = (PtcimObject) object;		
- 		PtcProperty p = manager.getPtcProperty(jObject, property);		
+ 		PtcimProperty p = manager.getPtcProperty(jObject, property);		
  		return p != null;		
  	}		
  }

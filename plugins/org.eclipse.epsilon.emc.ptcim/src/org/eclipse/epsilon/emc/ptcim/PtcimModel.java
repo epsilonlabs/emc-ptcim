@@ -49,6 +49,9 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	 * as the source for element retreival from the model. */
 	public static final String PROPERTY_FROM_SELECTION = "fromSelection";
 	
+	/** Optional cache of property attributes (e.g., isPublic(), isAssociation(), ...) is supported: */
+	public static final String PROPERTY_PROPERTIES_ATTRIBUTES_CACHE_ENABLED = "propertiesAttributesCacheEnabled";
+	
 	/** The Constant PROPERTY_ELEMENT_ID refers to the ID of the currently selected element. */
 	public static final String PROPERTY_ELEMENT_ID = "elementId";
 	
@@ -68,13 +71,13 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	private PtcimObject model = null;
 	
 	/** The property manager class includes utility methods for both the getter and the setter. */
-	private PtcimPropertyManager manager = new PtcimPropertyManager();
+	private PtcimPropertyManager manager; //Activator.getDefault().getFactory().getPropertyManager(isPropertiesAttributesCacheEnabled());
 	
 	/** The getter. One getter per model. */
-	private PtcimPropertyGetter getter = new PtcimPropertyGetter(manager);
+	private PtcimPropertyGetter getter = null; //new PtcimPropertyGetter(manager);
 	
 	/** The setter. One setter per model. */
-	private PtcimPropertySetter setter = new PtcimPropertySetter(manager);
+	private PtcimPropertySetter setter = null; //new PtcimPropertySetter(manager);
 
 	private String modelId;
 	private String server;
@@ -82,6 +85,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	private String version;
 	private boolean fromSelection;
 	private String selectedElementId;
+	private boolean propertiesAttributesCacheEnabled;
 
 	/**
 	 * Instantiates a new artisan model. Gets the COM helpers from the extension
@@ -408,6 +412,16 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	}
 	
 	/**
+	 	 * Checks if the user wants to use the PTC driver to cache property values during execution.
+	  	 * @return true is the cache should be used, false otherwise
+	  	 */
+	
+	public boolean isPropertiesAttributesCacheEnabled() {
+		System.out.println(propertiesAttributesCacheEnabled);
+		return propertiesAttributesCacheEnabled;
+	}
+	
+	/**
 	 * Get the Id of the model used for the PTC IM repository.
 	 *
 	 * @return the model id
@@ -427,7 +441,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 
 	protected PtcimPropertyManager getPropertyManager() {
 		// return new JawinCachedProXetter(isCachedPropertyCcess);
-		return Activator.getDefault().getFactory().getPropertyManager();
+		return Activator.getDefault().getFactory().getPropertyManager(isPropertiesAttributesCacheEnabled());
 	}
 
 	/* (non-Javadoc)
@@ -514,6 +528,11 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		version = properties.getProperty(PROPERTY_VERSION_NUMBER);
 		fromSelection = properties.getBooleanProperty(PROPERTY_FROM_SELECTION, false);
 		selectedElementId = properties.getProperty(PROPERTY_ELEMENT_ID);
+		propertiesAttributesCacheEnabled = properties.getBooleanProperty(PROPERTY_PROPERTIES_ATTRIBUTES_CACHE_ENABLED, false);
+		System.out.println("propertiesAttributesCacheEnabled " + propertiesAttributesCacheEnabled);
+		manager = Activator.getDefault().getFactory().getPropertyManager(isPropertiesAttributesCacheEnabled());
+		getter = new PtcimPropertyGetter(manager);
+		setter = new PtcimPropertySetter(manager);
 		load();
 	}
 	

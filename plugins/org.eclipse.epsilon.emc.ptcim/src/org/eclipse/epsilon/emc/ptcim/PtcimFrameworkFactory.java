@@ -69,8 +69,12 @@ public class PtcimFrameworkFactory {
 		}
 	}
 
-	public PtcimPropertyManager getPropertyManager() {
-		return (PtcimPropertyManager) new PtcimPropertyManager();
+	public PtcimPropertyManager getPropertyManager(boolean cache) {
+		if (cache) {
+			return (PtcimCachedPropertyManager) new PtcimCachedPropertyManager();
+		} else {
+			return (PtcimPropertyManager) new PtcimPropertyManager();
+		}
 	}
 
 	public void startup() throws EolInternalException {

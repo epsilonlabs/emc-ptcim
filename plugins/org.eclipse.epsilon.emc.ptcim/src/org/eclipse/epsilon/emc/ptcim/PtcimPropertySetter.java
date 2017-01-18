@@ -18,7 +18,7 @@ public class PtcimPropertySetter extends AbstractPropertySetter {
 	private PtcimPropertyManager manager;
 	
 	/** The COM property. */		
-	private PtcProperty comProperty;		
+	private PtcimProperty comProperty;		
 	
 	public PtcimPropertySetter(PtcimPropertyManager manager) {
 		this.manager = manager;

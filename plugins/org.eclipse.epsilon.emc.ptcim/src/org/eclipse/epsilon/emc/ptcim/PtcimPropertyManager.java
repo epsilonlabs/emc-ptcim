@@ -17,11 +17,12 @@ public class PtcimPropertyManager {
 		return INSTANCE;
 	}
 	
-	public PtcProperty getPtcProperty(PtcimObject object, String property) {
+	public PtcimProperty getPtcProperty(PtcimObject object, String property) {
+		System.out.println("Cache not enabled");
 		List<Object> args = new ArrayList<Object>();
 		args.add("All Property Descriptors");
 		String descriptors = null;
-		PtcProperty prop = null;
+		PtcimProperty prop = null;
 		try {
 			descriptors = (String) object.getAttribute("Property", args);
 		} catch (EolInternalException e) {
@@ -52,7 +53,7 @@ public class PtcimPropertyManager {
 				if (multy.contains("+")) {
 					isMultiple = true;
 				}
-				prop = new PtcProperty(name, isPublic, readOnly, isMultiple, isAssociation);
+				prop = new PtcimProperty(name, isPublic, readOnly, isMultiple, isAssociation);
 				break;
 			}
 		}
