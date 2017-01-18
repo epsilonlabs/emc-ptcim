@@ -69,6 +69,8 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	private Label selectedElementNameAndTypeTextLabel;
 	private Button propertiesAttributesCacheEnabledCheckbox;
 	private Label propertiesAttributesCacheEnabledLabel;
+	private Button propertiesValuesCacheEnabledCheckbox;
+	private Label propertiesValuesCacheEnabledLabel;
 	
 	PtcimModelManager manager = null;
 
@@ -296,6 +298,14 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		propertiesAttributesCacheEnabledCheckbox.setToolTipText("If checked, Epsilon scripts will create and populate a cache with the attributes retrieved for each property.");
 		propertiesAttributesCacheEnabledCheckbox.setSelection(false);
 		
+		propertiesValuesCacheEnabledLabel = new Label(groupContent, SWT.NONE);
+		propertiesValuesCacheEnabledLabel.setText("Enable properties' values cache: ");
+		
+		propertiesValuesCacheEnabledCheckbox = new Button(groupContent, SWT.CHECK);
+		propertiesValuesCacheEnabledCheckbox.setLayoutData(twoCol);
+		propertiesValuesCacheEnabledCheckbox.setToolTipText("If checked, Epsilon scripts will create and populate a cache with the values retrieved for each property.");
+		propertiesValuesCacheEnabledCheckbox.setSelection(false);
+		
 		fromSelectionLabel = new Label(groupContent, SWT.NONE);
 		fromSelectionLabel.setText("Select element as root: ");
 
@@ -329,7 +339,6 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	private void enableElementId(boolean enabled) {
 		selectedElementIdText.setEnabled(enabled);
 		selectedElementFindIdButton.setEnabled(enabled);
-		
 	}
 	
 	/* (non-Javadoc)
@@ -363,6 +372,8 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		selectedElementNameAndTypeTextLabel.setText(properties.getProperty(PtcimModel.PROPERTY_ELEMENT_NAME_AND_TYPE));
 		boolean propertiesAttributesCacheEnabledSelection = properties.getBooleanProperty(PtcimModel.PROPERTY_PROPERTIES_ATTRIBUTES_CACHE_ENABLED, false);
 		propertiesAttributesCacheEnabledCheckbox.setSelection(propertiesAttributesCacheEnabledSelection);
+		boolean propertiesValuesCacheEnabledSelection = properties.getBooleanProperty(PtcimModel.PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED, false);
+		propertiesValuesCacheEnabledCheckbox.setSelection(propertiesValuesCacheEnabledSelection);
 	}
 
 	private String setProjectPropertiesText(PtcimObject ap) {
@@ -401,8 +412,8 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		properties.put(PtcimModel.PROPERTY_FROM_SELECTION, fromSelection);
 		properties.put(PtcimModel.PROPERTY_ELEMENT_ID, selectedElementIdText.getText());
 		properties.put(PtcimModel.PROPERTY_ELEMENT_NAME_AND_TYPE, selectedElementNameAndTypeTextLabel.getText());
+		String propertiesAttributesCacheEnabledSelection = Boolean.toString(propertiesAttributesCacheEnabledCheckbox.getSelection());
+		properties.put(PtcimModel.PROPERTY_PROPERTIES_ATTRIBUTES_CACHE_ENABLED, propertiesAttributesCacheEnabledSelection);
 		String propertiesValuesCacheEnabledSelection = Boolean.toString(propertiesAttributesCacheEnabledCheckbox.getSelection());
-		properties.put(PtcimModel.PROPERTY_PROPERTIES_ATTRIBUTES_CACHE_ENABLED, propertiesValuesCacheEnabledSelection);
-		System.out.println("propertiesValuesCacheEnabledSelection" + propertiesValuesCacheEnabledSelection);
-	}
+		properties.put(PtcimModel.PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED, propertiesValuesCacheEnabledSelection);	}
 }

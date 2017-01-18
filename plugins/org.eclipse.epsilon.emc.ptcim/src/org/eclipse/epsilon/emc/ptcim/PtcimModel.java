@@ -52,6 +52,9 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	/** Optional cache of property attributes (e.g., isPublic(), isAssociation(), ...) is supported: */
 	public static final String PROPERTY_PROPERTIES_ATTRIBUTES_CACHE_ENABLED = "propertiesAttributesCacheEnabled";
 	
+	/** Optional cache of property values is supported: */
+	public static final String PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED = "propertiesValuesCacheEnabled";
+	
 	/** The Constant PROPERTY_ELEMENT_ID refers to the ID of the currently selected element. */
 	public static final String PROPERTY_ELEMENT_ID = "elementId";
 	
@@ -86,6 +89,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	private boolean fromSelection;
 	private String selectedElementId;
 	private boolean propertiesAttributesCacheEnabled;
+	private boolean propertiesValuesCacheEnabled;
 
 	/**
 	 * Instantiates a new artisan model. Gets the COM helpers from the extension
@@ -412,13 +416,22 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	}
 	
 	/**
-	 	 * Checks if the user wants to use the PTC driver to cache property values during execution.
-	  	 * @return true is the cache should be used, false otherwise
-	  	 */
-	
+	 * Checks if the user wants to use the PTC driver to cache property values during execution.
+	 * @return true is the cache should be used, false otherwise
+	 */
 	public boolean isPropertiesAttributesCacheEnabled() {
 		System.out.println(propertiesAttributesCacheEnabled);
 		return propertiesAttributesCacheEnabled;
+	}
+	
+	/**
+ 	 * Checks if the user wants to use the PTC driver to cache property values during execution.
+  	 * @return true is the cache should be used, false otherwise
+  	 */
+
+	public boolean isPropertiesValuesCacheEnabled() {
+		System.out.println(propertiesValuesCacheEnabled);
+		return propertiesValuesCacheEnabled;
 	}
 	
 	/**
@@ -529,7 +542,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		fromSelection = properties.getBooleanProperty(PROPERTY_FROM_SELECTION, false);
 		selectedElementId = properties.getProperty(PROPERTY_ELEMENT_ID);
 		propertiesAttributesCacheEnabled = properties.getBooleanProperty(PROPERTY_PROPERTIES_ATTRIBUTES_CACHE_ENABLED, false);
-		System.out.println("propertiesAttributesCacheEnabled " + propertiesAttributesCacheEnabled);
+		propertiesValuesCacheEnabled = properties.getBooleanProperty(PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED, false);
 		manager = Activator.getDefault().getFactory().getPropertyManager(isPropertiesAttributesCacheEnabled());
 		getter = new PtcimPropertyGetter(manager);
 		setter = new PtcimPropertySetter(manager);
