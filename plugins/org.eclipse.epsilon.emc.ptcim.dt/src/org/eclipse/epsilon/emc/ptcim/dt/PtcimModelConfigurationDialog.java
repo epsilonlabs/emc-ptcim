@@ -12,6 +12,7 @@
 package org.eclipse.epsilon.emc.ptcim.dt;
 
 import java.util.Iterator;
+import java.util.WeakHashMap;
 
 import org.eclipse.epsilon.common.dt.launching.dialogs.AbstractCachedModelConfigurationDialog;
 import org.eclipse.epsilon.emc.ptcim.PtcimCollection;
@@ -20,6 +21,7 @@ import org.eclipse.epsilon.emc.ptcim.PtcimFrameworkFactory;
 import org.eclipse.epsilon.emc.ptcim.PtcimModel;
 import org.eclipse.epsilon.emc.ptcim.PtcimModelManager;
 import org.eclipse.epsilon.emc.ptcim.PtcimObject;
+import org.eclipse.epsilon.emc.ptcim.PtcimProperty;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -414,6 +416,6 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		properties.put(PtcimModel.PROPERTY_ELEMENT_NAME_AND_TYPE, selectedElementNameAndTypeTextLabel.getText());
 		String propertiesAttributesCacheEnabledSelection = Boolean.toString(propertiesAttributesCacheEnabledCheckbox.getSelection());
 		properties.put(PtcimModel.PROPERTY_PROPERTIES_ATTRIBUTES_CACHE_ENABLED, propertiesAttributesCacheEnabledSelection);
-		String propertiesValuesCacheEnabledSelection = Boolean.toString(propertiesAttributesCacheEnabledCheckbox.getSelection());
+		String propertiesValuesCacheEnabledSelection = Boolean.toString(propertiesValuesCacheEnabledCheckbox.getSelection());
 		properties.put(PtcimModel.PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED, propertiesValuesCacheEnabledSelection);	}
 }
