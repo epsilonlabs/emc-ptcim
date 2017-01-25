@@ -14,11 +14,11 @@ public class PtcimPropertyManager {
 	private static final Object ASSOCIATION_ROLE = "Association";
 	
 	public PtcimPropertyManager getInstance() {
+		System.out.println("This runs with a normal property manager.");
 		return INSTANCE;
 	}
 	
 	public PtcimProperty getPtcProperty(PtcimObject object, String property) {
-		System.out.println("Cache not enabled");
 		List<Object> args = new ArrayList<Object>();
 		args.add("All Property Descriptors");
 		String descriptors = null;
@@ -73,5 +73,13 @@ public class PtcimPropertyManager {
  	// "childObject" or "childobject" so we remove the spaces and transform the input to lowercase. 
  	public static String normalise(String theString) {
  		return theString.replaceAll("\\s", "").toLowerCase();
+ 	}
+	
+ 	public String buildCachedTypePropertyIdentifier(PtcimObject object, String property) {
+ 		return ((PtcimObject) object).getType() + "." + property;
+ 	}
+ 	
+ 	public String buildCachedElementPropertyIdentifier(PtcimObject object, String property) {
+ 		return ((PtcimObject) object).getId() + "." + property;
  	}
 }

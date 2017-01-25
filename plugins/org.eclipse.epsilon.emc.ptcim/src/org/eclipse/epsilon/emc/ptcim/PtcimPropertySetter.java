@@ -17,10 +17,21 @@ public class PtcimPropertySetter extends AbstractPropertySetter {
 	/** The property  manager. */		
 	private PtcimPropertyManager manager;
 	
+	public PtcimPropertyManager getManager() {
+		return manager;
+	}
+
+	public void setManager(PtcimPropertyManager manager) {
+		this.manager = manager;
+	}
+
 	/** The COM property. */		
 	private PtcimProperty comProperty;		
 	
+	public PtcimPropertySetter() {}
+	
 	public PtcimPropertySetter(PtcimPropertyManager manager) {
+		System.out.println("Just created a normal setter...");
 		this.manager = manager;
 	}
 		

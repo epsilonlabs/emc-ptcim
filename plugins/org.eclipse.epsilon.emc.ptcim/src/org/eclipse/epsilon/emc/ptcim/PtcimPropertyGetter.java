@@ -14,9 +14,20 @@
  public class PtcimPropertyGetter extends AbstractPropertyGetter {		
  		
  	/** The manager. */		
- 	private final PtcimPropertyManager manager;
+ 	private PtcimPropertyManager manager;
+ 	
+ 	public PtcimPropertyManager getManager() {
+		return manager;
+	}
+
+	public void setManager(PtcimPropertyManager manager) {
+		this.manager = manager;
+	}
+
+	public PtcimPropertyGetter() {}
  	
  	public PtcimPropertyGetter(PtcimPropertyManager manager) {
+ 		System.out.println("Just created a normal getter...");
 		this.manager = manager;
 	}
  			

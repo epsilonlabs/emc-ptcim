@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.WeakHashMap;
 
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
@@ -23,6 +24,8 @@ import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundExce
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
 import org.eclipse.epsilon.eol.exceptions.models.EolNotInstantiableModelElementTypeException;
+import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter;
+import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertySetter;
 import org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter;
 import org.eclipse.epsilon.eol.execute.introspection.IPropertySetter;
 import org.eclipse.epsilon.eol.models.CachedModel;
@@ -77,10 +80,15 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	private PtcimPropertyManager manager; //Activator.getDefault().getFactory().getPropertyManager(isPropertiesAttributesCacheEnabled());
 	
 	/** The getter. One getter per model. */
-	private PtcimPropertyGetter getter = null; //new PtcimPropertyGetter(manager);
+	private AbstractPropertyGetter getter = null; //new PtcimPropertyGetter(manager);
 	
 	/** The setter. One setter per model. */
-	private PtcimPropertySetter setter = null; //new PtcimPropertySetter(manager);
+	private AbstractPropertySetter setter = null; //new PtcimPropertySetter(manager);
+	
+	/**This map is the cache for the values of each property. The properties are identified by concatenating the id of the element 
+	 * with the symbol "." followed by the name of the property (e.g., edao08qwdkdas92.name) 
+	 */
+	public WeakHashMap<String, Object> propertiesValuesCache = new WeakHashMap<String, Object>();
 
 	private String modelId;
 	private String server;
@@ -420,7 +428,6 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	 * @return true is the cache should be used, false otherwise
 	 */
 	public boolean isPropertiesAttributesCacheEnabled() {
-		System.out.println(propertiesAttributesCacheEnabled);
 		return propertiesAttributesCacheEnabled;
 	}
 	
@@ -428,9 +435,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
  	 * Checks if the user wants to use the PTC driver to cache property values during execution.
   	 * @return true is the cache should be used, false otherwise
   	 */
-
 	public boolean isPropertiesValuesCacheEnabled() {
-		System.out.println(propertiesValuesCacheEnabled);
 		return propertiesValuesCacheEnabled;
 	}
 	
@@ -544,8 +549,13 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		propertiesAttributesCacheEnabled = properties.getBooleanProperty(PROPERTY_PROPERTIES_ATTRIBUTES_CACHE_ENABLED, false);
 		propertiesValuesCacheEnabled = properties.getBooleanProperty(PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED, false);
 		manager = Activator.getDefault().getFactory().getPropertyManager(isPropertiesAttributesCacheEnabled());
-		getter = new PtcimPropertyGetter(manager);
-		setter = new PtcimPropertySetter(manager);
+		if (isPropertiesValuesCacheEnabled()) {
+			getter = new PtcimCachedPropertyGetter(manager, this);
+			setter = new PtcimCachedPropertySetter(manager, this);
+		} else {
+			getter = new PtcimPropertyGetter(manager);
+			setter = new PtcimPropertySetter(manager);
+		}
 		load();
 	}
 	

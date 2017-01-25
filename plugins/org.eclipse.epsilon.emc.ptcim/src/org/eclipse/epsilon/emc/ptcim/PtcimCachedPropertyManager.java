@@ -14,18 +14,18 @@ public static final PtcimCachedPropertyManager INSTANCE = new PtcimCachedPropert
 	private static final Object ASSOCIATION_ROLE = "Association";
 	
 	public PtcimCachedPropertyManager getInstance() {
+		System.out.println("This runs with a cached property manager.");
 		return INSTANCE;
 	}
 	
 	public WeakHashMap<String, PtcimProperty> elementPropertiesNamesCache = new WeakHashMap<String, PtcimProperty>();
 	
 	public PtcimProperty getPtcProperty(PtcimObject object, String property) {
-		System.out.println("Cache enabled");
 		List<Object> args = new ArrayList<Object>();
 		args.add("All Property Descriptors");
 		String descriptors = null;
 		PtcimProperty prop = null;
-		String typeDotPropertyNameId = buildCachedObjectPropertyIdentifier(object, property);
+		String typeDotPropertyNameId = buildCachedTypePropertyIdentifier(object, property);
 		prop = elementPropertiesNamesCache.get(typeDotPropertyNameId);
 		if (prop == null) {
 			try {
@@ -59,11 +59,11 @@ public static final PtcimCachedPropertyManager INSTANCE = new PtcimCachedPropert
 						isMultiple = true;
 					}
 					prop = new PtcimProperty(name, isPublic, readOnly, isMultiple, isAssociation);
-					elementPropertiesNamesCache.put(buildCachedObjectPropertyIdentifier(object, property), prop);
+					elementPropertiesNamesCache.put(buildCachedTypePropertyIdentifier(object, property), prop);
 					break;
 				}
 			}
-		}
+		} 
  		return prop;
  	}
 	
@@ -81,8 +81,5 @@ public static final PtcimCachedPropertyManager INSTANCE = new PtcimCachedPropert
  	public static String normalise(String theString) {
  		return theString.replaceAll("\\s", "").toLowerCase();
  	}
- 	
- 	private String buildCachedObjectPropertyIdentifier(PtcimObject object, String property) {
- 		return ((PtcimObject) object).getType() + "." + property;
- 	}
+ 
 }
