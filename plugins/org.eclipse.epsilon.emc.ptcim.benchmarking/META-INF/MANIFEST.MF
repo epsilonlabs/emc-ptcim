@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Benchmarking
+Bundle-SymbolicName: org.eclipse.epsilon.emc.ptcim.benchmarking
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: com.google.common.base,
+ org.eclipse.epsilon.emc.ptcim,
+ org.eclipse.epsilon.eol,
+ org.eclipse.epsilon.eol.execute.context,
+ org.eclipse.epsilon.eol.models,
+ org.eclipse.epsilon.evl
+Require-Bundle: org.eclipse.epsilon.erl.engine;bundle-version="1.5.0"
+Main-Class: org.eclipse.epsilon.emc.ptcim.benchmarking.EvlStandalone

@@ -1,0 +1,5 @@
+var allClasses = Class.all();
+("Number of classes: " + allClasses.size()).println();
+for (c in allClasses) {
+	c.name.println();
+}

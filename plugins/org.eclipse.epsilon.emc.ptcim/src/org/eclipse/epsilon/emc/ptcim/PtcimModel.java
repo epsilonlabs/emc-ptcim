@@ -89,8 +89,14 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	 * with the symbol "." followed by the name of the property (e.g., edao08qwdkdas92.name) 
 	 */
 	public WeakHashMap<String, Object> propertiesValuesCache = new WeakHashMap<String, Object>();
+	
+	public PtcimFrameworkFactory factory = new PtcimFrameworkFactory();
 
 	private String modelId;
+	public void setModelId(String modelId) {
+		this.modelId = modelId;
+	}
+
 	private String server;
 	private String repository;
 	private String version;
@@ -98,6 +104,46 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	private String selectedElementId;
 	private boolean propertiesAttributesCacheEnabled;
 	private boolean propertiesValuesCacheEnabled;
+	
+	public boolean isFromSelection() {
+		return fromSelection;
+	}
+
+	public void setFromSelection(boolean fromSelection) {
+		this.fromSelection = fromSelection;
+	}
+
+	public void setPropertiesAttributesCacheEnabled(boolean propertiesAttributesCacheEnabled) {
+		this.propertiesAttributesCacheEnabled = propertiesAttributesCacheEnabled;
+	}
+
+	public void setPropertiesValuesCacheEnabled(boolean propertiesValuesCacheEnabled) {
+		this.propertiesValuesCacheEnabled = propertiesValuesCacheEnabled;
+	}
+
+	public String getServer() {
+		return server;
+	}
+
+	public void setServer(String server) {
+		this.server = server;
+	}
+
+	public String getRepository() {
+		return repository;
+	}
+
+	public void setRepository(String repository) {
+		this.repository = repository;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
 
 	/**
 	 * Instantiates a new artisan model. Gets the COM helpers from the extension
@@ -459,7 +505,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 
 	protected PtcimPropertyManager getPropertyManager() {
 		// return new JawinCachedProXetter(isCachedPropertyCcess);
-		return Activator.getDefault().getFactory().getPropertyManager(isPropertiesAttributesCacheEnabled());
+		return factory.getPropertyManager(isPropertiesAttributesCacheEnabled());
 	}
 
 	/* (non-Javadoc)
@@ -548,7 +594,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		selectedElementId = properties.getProperty(PROPERTY_ELEMENT_ID);
 		propertiesAttributesCacheEnabled = properties.getBooleanProperty(PROPERTY_PROPERTIES_ATTRIBUTES_CACHE_ENABLED, false);
 		propertiesValuesCacheEnabled = properties.getBooleanProperty(PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED, false);
-		manager = Activator.getDefault().getFactory().getPropertyManager(isPropertiesAttributesCacheEnabled());
+		manager = factory.getPropertyManager(isPropertiesAttributesCacheEnabled());
 		if (isPropertiesValuesCacheEnabled()) {
 			getter = new PtcimCachedPropertyGetter(manager, this);
 			setter = new PtcimCachedPropertySetter(manager, this);
@@ -586,16 +632,18 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 			Activator activator = Activator.getDefault();
 			PtcimModelManager manager;
 			try {
-				manager = activator.getFactory().getModelManager();
+				manager = factory.getModelManager();
 			} catch (EolInternalException e1) {
 				throw new EolModelLoadingException(e1, this);
 			}
 			if  (readOnLoad) {
 				try {
 					if (server.length() == 0) {
+						System.out.println("Here is with server place...");
 						theProject = manager.getProjectByTitle(modelId);
 					}
 					else {
+						System.out.println("Here is no server place...");
 						theProject = manager.getProjectByReference(modelId, server, repository, version);
 					}
 				} catch (EolInternalException e) {
