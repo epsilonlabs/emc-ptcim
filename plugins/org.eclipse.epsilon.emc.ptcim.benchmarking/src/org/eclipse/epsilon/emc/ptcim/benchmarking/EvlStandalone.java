@@ -37,43 +37,42 @@ public class EvlStandalone {
 		String repository = info[4];
 		String reference = info[5];
 		String version = info[6];
-		System.out.println("Server: " + server + " Repository: " + repository + " Name: " + reference + " Version: " + version);
-		Thread.sleep(10000);
+		//System.out.println("Server: " + server + " Repository: " + repository + " Name: " + reference + " Version: " + version);
+		//Thread.sleep(10000);
 		
-		properties.put("modelRef", modelId);
+		properties.put("modelRef", reference);
 		properties.put("server", server);
 		properties.put("repository", repository);
 		properties.put("version", version);
 		properties.put("fromSelection", false);
-		properties.put("propertiesAttributesCacheEnabled", true);
-		properties.put("propertiesValuesCacheEnabled", true);
+		properties.put("propertiesAttributesCacheEnabled", propertiesAttributesCacheEnabled);
+		properties.put("propertiesValuesCacheEnabled", propertiesValuesCacheEnabled);
 		properties.put("elementId", "");
+		properties.put("readOnLoad", true);
 		
-	
 		IRelativePathResolver resolver = null;
 		
 		File evlFile = new File("C:\\Users\\astal\\Documents\\Eclipse32ModellingWorkspaceSECTAIR\\org.eclipse.epsilon.emc.ptcim.benchmarking\\files\\evlFile.eol");
 		
 		EolModule m = new EolModule();
 		PtcimModel p = new PtcimModel();
-		/*
-		p.setServer(server);
-		p.setRepository(repository);
-		p.setVersion(version);
-		p.setPropertiesAttributesCacheEnabled(propertiesAttributesCacheEnabled);
-		p.setPropertiesValuesCacheEnabled(propertiesValuesCacheEnabled);
-		p.setFromSelection(false);
-		p.setModelId(modelId);
-		System.out.println(p.getServer());
-		p.load(); */
-		//p.load(properties,resolver);
+		
+		//p.setServer(server);
+		//p.setServer(server);
+		//p.setRepository(repository);
+		//p.setVersion(version);
+		//p.setPropertiesAttributesCacheEnabled(propertiesAttributesCacheEnabled);
+		//p.setPropertiesValuesCacheEnabled(propertiesValuesCacheEnabled);
+		//p.setFromSelection(false);
+		//p.setModelId(modelId);
+		//p.load(); 
+		p.load(properties,resolver);
 		
 		m.getContext().getModelRepository().addModel(p);
 		
 		m.parse(evlFile);
-		System.out.println(m.getParseProblems());
 		long startTime = System.currentTimeMillis();
-		//m.execute();
+		m.execute();
 		Thread.sleep(3000);
 		long stopTime = System.currentTimeMillis();
 		long timeElapsed = stopTime - startTime;

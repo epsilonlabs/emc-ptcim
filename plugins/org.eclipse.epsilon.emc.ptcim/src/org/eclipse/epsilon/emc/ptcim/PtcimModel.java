@@ -93,10 +93,6 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	public PtcimFrameworkFactory factory = new PtcimFrameworkFactory();
 
 	private String modelId;
-	public void setModelId(String modelId) {
-		this.modelId = modelId;
-	}
-
 	private String server;
 	private String repository;
 	private String version;
@@ -105,6 +101,10 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	private boolean propertiesAttributesCacheEnabled;
 	private boolean propertiesValuesCacheEnabled;
 	
+	public void setModelId(String modelId) {
+		this.modelId = modelId;
+	}
+
 	public boolean isFromSelection() {
 		return fromSelection;
 	}
@@ -602,6 +602,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 			getter = new PtcimPropertyGetter(manager);
 			setter = new PtcimPropertySetter(manager);
 		}
+		System.out.println("I am here..");
 		load();
 	}
 	
@@ -628,7 +629,10 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	 */
 	@Override
 	protected void loadModel() throws EolModelLoadingException {
+		System.out.println("Load model");
+		System.out.println("Is init: " +  readOnLoad);
 		if (isInitialized()) {
+			
 			Activator activator = Activator.getDefault();
 			PtcimModelManager manager;
 			try {
@@ -639,11 +643,9 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 			if  (readOnLoad) {
 				try {
 					if (server.length() == 0) {
-						System.out.println("Here is with server place...");
 						theProject = manager.getProjectByTitle(modelId);
 					}
 					else {
-						System.out.println("Here is no server place...");
 						theProject = manager.getProjectByReference(modelId, server, repository, version);
 					}
 				} catch (EolInternalException e) {
