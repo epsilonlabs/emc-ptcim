@@ -602,7 +602,6 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 			getter = new PtcimPropertyGetter(manager);
 			setter = new PtcimPropertySetter(manager);
 		}
-		System.out.println("I am here..");
 		load();
 	}
 	
@@ -629,8 +628,6 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	 */
 	@Override
 	protected void loadModel() throws EolModelLoadingException {
-		System.out.println("Load model");
-		System.out.println("Is init: " +  readOnLoad);
 		if (isInitialized()) {
 			
 			Activator activator = Activator.getDefault();

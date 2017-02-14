@@ -27,7 +27,7 @@
 	public PtcimPropertyGetter() {}
  	
  	public PtcimPropertyGetter(PtcimPropertyManager manager) {
- 		System.out.println("Just created a normal getter...");
+ 		//System.out.println("Just created a normal getter...");
 		this.manager = manager;
 	}
  			

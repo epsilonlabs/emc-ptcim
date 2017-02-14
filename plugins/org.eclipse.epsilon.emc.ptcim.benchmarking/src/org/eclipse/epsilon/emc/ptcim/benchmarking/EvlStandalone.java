@@ -20,25 +20,31 @@ public class EvlStandalone {
 	
 	public static void main(String[] args) throws Exception {
 		
-		//String modelId = args[0];
-		//String resourceStr = args[1];
-		//String outputFile = args[2];
-
+		
+		String modelId = args[0];
+		String resourceStr = args[1];
+		String outputFile = args[2];
+		boolean propertiesAttributesCacheEnabled = Boolean.parseBoolean(args[3]);
+		boolean propertiesValuesCacheEnabled = Boolean.parseBoolean(args[4]);
+		
+		
+		/*
 		String outputFile = "C:\\Users\\astal\\Documents\\test.txt";
-		String resourceStr = "\\\\Enabler\\KB_WORK\\Examples\\Cabin\\14";
-		String modelId = "51d7a85a-64dd-4c18-8652-ed88d032b8c9";
-
+		String resourceStr = "\\\\Enabler\\KB_WORK\\Examples\\Traffic Lights\\0";
+		String modelId = "43442142-fbf2-11d2-a53d-00104bb05af8";
+		boolean propertiesAttributesCacheEnabled = true;
+		bolean propertiesValuesCacheEnabled = true;
+		*/
+		
 		EvlStandalone evlStndln = new EvlStandalone();
 		StringProperties properties = new StringProperties();		
-		boolean propertiesAttributesCacheEnabled = true;
-		boolean propertiesValuesCacheEnabled = true;
+		
 		String[] info = evlStndln.modelReferenceToFields(resourceStr);
 		String server = info[3];
 		String repository = info[4];
 		String reference = info[5];
 		String version = info[6];
 		//System.out.println("Server: " + server + " Repository: " + repository + " Name: " + reference + " Version: " + version);
-		//Thread.sleep(10000);
 		
 		properties.put("modelRef", reference);
 		properties.put("server", server);
@@ -52,9 +58,9 @@ public class EvlStandalone {
 		
 		IRelativePathResolver resolver = null;
 		
-		File evlFile = new File("C:\\Users\\astal\\Documents\\Eclipse32ModellingWorkspaceSECTAIR\\org.eclipse.epsilon.emc.ptcim.benchmarking\\files\\evlFile.eol");
+		File evlFile = new File("C:\\Git\\Emc-ptcim\\plugins\\org.eclipse.epsilon.emc.ptcim.benchmarking\\files\\evlConstraints.evl");
 		
-		EolModule m = new EolModule();
+		EvlModule m = new EvlModule();
 		PtcimModel p = new PtcimModel();
 		
 		//p.setServer(server);
@@ -71,15 +77,25 @@ public class EvlStandalone {
 		m.getContext().getModelRepository().addModel(p);
 		
 		m.parse(evlFile);
+		System.out.println(m.getParseProblems());
 		long startTime = System.currentTimeMillis();
 		m.execute();
-		Thread.sleep(3000);
 		long stopTime = System.currentTimeMillis();
 		long timeElapsed = stopTime - startTime;
+		String approach = "";
+		if (propertiesAttributesCacheEnabled && propertiesValuesCacheEnabled) {
+			approach = "EpsilonCacheAll";
+		} else if (propertiesAttributesCacheEnabled && !propertiesValuesCacheEnabled) {
+			approach = "EpsilonCacheAttributesOnly";
+		} else if (!propertiesAttributesCacheEnabled && propertiesValuesCacheEnabled) {
+			approach = "EpsilonCacheValuesOnly";
+		} else {
+			approach = "EpsilonNoCache";
+		}
 		System.out.println("Time passed: " + (timeElapsed));
 		try {
 		    FileWriter fw = new FileWriter(outputFile,true);
-		    fw.write(modelId + "," + timeElapsed + "," + "Epsilon" + "\n");
+		    fw.write(modelId + "," + timeElapsed + "," + approach + "\n");
 		    fw.close();
 		}
 		catch(IOException ioe)

@@ -8,7 +8,7 @@ public class PtcimCachedPropertySetter extends PtcimPropertySetter {
 	public PtcimCachedPropertySetter(PtcimPropertyManager manager, PtcimModel model) {
 		super.setManager(manager);
 		this.model = model;
-		System.out.println("Just created a cached setter...");
+		//System.out.println("Just created a cached setter...");
 	}
 		
 	/* (non-Javadoc)		

@@ -31,7 +31,7 @@ public class PtcimPropertySetter extends AbstractPropertySetter {
 	public PtcimPropertySetter() {}
 	
 	public PtcimPropertySetter(PtcimPropertyManager manager) {
-		System.out.println("Just created a normal setter...");
+		//System.out.println("Just created a normal setter...");
 		this.manager = manager;
 	}
 		

@@ -1,5 +1,36 @@
+var allPackages = Package.all();
+var softwareClass = allPackages.selectOne(p | p.name.equals("Software"));
+for (i in Sequence{0..300}) {
+	softwareClass.description.println();
+	softwareClass.id.println();
+}
+("Finished 1").println();
+
+/*
 var allClasses = Class.all();
 ("Number of classes: " + allClasses.size()).println();
 for (c in allClasses) {
 	c.name.println();
 }
+
+("Printing the names of all the classes in the software package").println();
+("-------------------------------------------------------------").println();
+var allPackages = Package.all();
+var softwarePackage = allPackages.selectOne(p | p.name.equals("Software"));
+var objectsInSoftware = softwarePackage.childObject;
+var classesInSoftware = objectsInSoftware.select(o | o.type.equals("Class"));
+for (c in classesInSoftware) {
+	c.name.println();
+}
+("").println();
+
+
+("Getting the id of the actors which name contains the letter g").println();
+("-------------------------------------------------------------").println();
+var allActors = Actor.all();
+var allActorsWithG = allActors.select(a | a.name.contains("g"));
+for (a in allActorsWithG) {
+	a.id.println();
+}
+("").println();
+*/

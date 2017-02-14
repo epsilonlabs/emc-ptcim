@@ -10,7 +10,7 @@ public class PtcimCachedPropertyGetter extends PtcimPropertyGetter {
  	public PtcimCachedPropertyGetter(PtcimPropertyManager manager, PtcimModel model) {
 		super.setManager(manager);
 		this.model = model;
-		System.out.println("Just created a cached getter...");
+		//System.out.println("Just created a cached getter...");
 	}
  			
  	/* (nonJavadoc)		
@@ -21,11 +21,11 @@ public class PtcimCachedPropertyGetter extends PtcimPropertyGetter {
  		String elementPropertyIdentifier = super.getManager().buildCachedElementPropertyIdentifier((PtcimObject) object, property);
  		Object o = model.propertiesValuesCache.get(elementPropertyIdentifier);		
  		if (o == null) {
- 			System.out.println("I didn't knew the property value...");
+ 			//System.out.println("I didn't knew the property value...");
  			o = super.invoke(object, property);
  			model.propertiesValuesCache.put(elementPropertyIdentifier, o);
  		} else {
- 			System.out.println("I knew the property value...");
+ 			//System.out.println("I knew the property value...");
  		}
  		return o;		
  	}		
