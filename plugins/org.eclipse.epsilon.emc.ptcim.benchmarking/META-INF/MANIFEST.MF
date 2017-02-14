@@ -9,6 +9,8 @@ Import-Package: com.google.common.base,
  org.eclipse.epsilon.eol,
  org.eclipse.epsilon.eol.execute.context,
  org.eclipse.epsilon.eol.models,
- org.eclipse.epsilon.evl
+ org.eclipse.epsilon.evl,
+ org.eclipse.epsilon.evl.execute,
+ org.eclipse.epsilon.evl.execute.context
 Require-Bundle: org.eclipse.epsilon.erl.engine;bundle-version="1.5.0"
 Main-Class: org.eclipse.epsilon.emc.ptcim.benchmarking.EvlStandalone

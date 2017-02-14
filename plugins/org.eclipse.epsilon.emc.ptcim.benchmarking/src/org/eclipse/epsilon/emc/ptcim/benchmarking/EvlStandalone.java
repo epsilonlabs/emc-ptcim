@@ -3,6 +3,7 @@ package org.eclipse.epsilon.emc.ptcim.benchmarking;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.eclipse.epsilon.emc.ptcim.PtcimCachedPropertyManager;
 import org.eclipse.epsilon.emc.ptcim.PtcimModel;
@@ -10,6 +11,7 @@ import org.eclipse.epsilon.emc.ptcim.PtcimPropertyManager;
 import org.eclipse.epsilon.eol.EolModule;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 import org.eclipse.epsilon.evl.EvlModule;
+import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 
 import com.google.common.base.Stopwatch;
 
@@ -24,10 +26,10 @@ public class EvlStandalone {
 		String modelId = args[0];
 		String resourceStr = args[1];
 		String outputFile = args[2];
-		boolean propertiesAttributesCacheEnabled = Boolean.parseBoolean(args[3]);
-		boolean propertiesValuesCacheEnabled = Boolean.parseBoolean(args[4]);
-		
-		
+		String outputErrorFile = args[3];
+		boolean propertiesAttributesCacheEnabled = Boolean.parseBoolean(args[4]);
+		boolean propertiesValuesCacheEnabled = Boolean.parseBoolean(args[5]);
+				
 		/*
 		String outputFile = "C:\\Users\\astal\\Documents\\test.txt";
 		String resourceStr = "\\\\Enabler\\KB_WORK\\Examples\\Traffic Lights\\0";
@@ -76,12 +78,16 @@ public class EvlStandalone {
 		
 		m.getContext().getModelRepository().addModel(p);
 		
+		long startTimeParse = System.currentTimeMillis();
 		m.parse(evlFile);
-		System.out.println(m.getParseProblems());
+		long stopTimeParse = System.currentTimeMillis();
+		long timeElapsedParse = stopTimeParse - startTimeParse;
+		System.out.println("Constraints are now being checked. This window will close automatically when finished.");
 		long startTime = System.currentTimeMillis();
 		m.execute();
 		long stopTime = System.currentTimeMillis();
 		long timeElapsed = stopTime - startTime;
+		ArrayList<UnsatisfiedConstraint> errors = (ArrayList<UnsatisfiedConstraint>) m.getContext().getUnsatisfiedConstraints();
 		String approach = "";
 		if (propertiesAttributesCacheEnabled && propertiesValuesCacheEnabled) {
 			approach = "EpsilonCacheAll";
@@ -92,16 +98,27 @@ public class EvlStandalone {
 		} else {
 			approach = "EpsilonNoCache";
 		}
-		System.out.println("Time passed: " + (timeElapsed));
+		//System.out.println("Time passed: " + (timeElapsed));
 		try {
 		    FileWriter fw = new FileWriter(outputFile,true);
-		    fw.write(modelId + "," + timeElapsed + "," + approach + "\n");
+		    FileWriter fwError = new FileWriter(outputErrorFile,true);
+
+		    fw.write(modelId + "," + timeElapsedParse + "," + timeElapsed + "," + approach + "\n");
+		    if (approach.equals("EpsilonCacheAll")) {
+		    	for (UnsatisfiedConstraint uc : errors) {
+		    		fwError.write("[Epsilon] " + uc.getMessage() + "\n");
+		    	}
+		    	fwError.write("[Epsilon] Number of errors: " + errors.size());
+		    }
 		    fw.close();
+		    fwError.close();
 		}
 		catch(IOException ioe)
 		{
 		    System.err.println("IOException: " + ioe.getMessage());
 		}
+		
+		
 	}
 	
 	private String[] modelReferenceToFields(String ref) {

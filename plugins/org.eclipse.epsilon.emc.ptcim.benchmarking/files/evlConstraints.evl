@@ -1,42 +1,42 @@
 context Class {
 	critique NameShouldStartWithUpperCase {
     	check : self.name.substring(0,1) = self.name.substring(0,1).toUpperCase()   
-    	message : "The name of class " + self.name + " (" + self.Id + ") should start with an upper-case letter"
+    	message : "The name of class " + self.name + " (" + self.Id + ") should start with an upper-case letter. [#1]"
  	}
 }
 
 context Attribute {
 	critique NameShouldNotStartWithUpperCase {
     	check : self.name.substring(0,1) = self.name.substring(0,1).toLowerCase()   
-    	message : "The name of attribute " + self.name + " (" + self.Id + ") should not start with an upper-case letter"
+    	message : "The name of attribute " + self.name + " (" + self.Id + ") should not start with an upper-case letter. [#2]"
  	}
 }
 
 context Class {
 	critique OperationsShouldeBeLessThanThree {
 		check : self.`operation`.size <= 3
-		message : "Class " + self.name + " (" + self.Id + ") has more than 3 operations"
+		message : "Class " + self.name + " (" + self.Id + ") has more than 3 operations. [#3]"
 	}
 }
 
 context Operation {
 	critique OperationsShouldHaveLessThanSevenParameters {
 		check : self.parameter.size <= 3
-		message : "Operation " + self.name + " (" + self.Id + ") has more than 7 parameters"
+		message : "Operation " + self.name + " (" + self.Id + ") has more than 7 parameters. [#4]"
 	}
 }
 
 context Package {
 	critique PackagesShouldNotBeEmpty {
 		check : self.ownedcontents.size > 0
-		message : "Package " + self.name + " (" + self.Id + ") is empty"
+		message : "Package " + self.name + " (" + self.Id + ") is empty. [#5]"
 	}
 }
 
 context Class { 
 	constraint MultipleInheritanceIsNotAllowed {
 		check : self.superclass.size - self.superclass.select(i|i.isInterface.equals("TRUE")).size() < 1
-		message : "Class " + self.name + " (" + self.Id + ") has multiple inheritance"
+		message : "Class " + self.name + " (" + self.Id + ") has multiple inheritance. [#6]"
 	}
 }
 
@@ -48,7 +48,7 @@ context Association {
 			}
 			return true;
 		}
-		message : "Aggregation " + self.name + " (" + self.Id + ") has multiplicity different than 1."
+		message : "Aggregation " + self.name + " (" + self.Id + ") has multiplicity different than 1. [#7]"
 	}
 }
 
@@ -65,7 +65,7 @@ context Association {
 			}
 			return true;
 		}
-		message : "Lower bound is bigger than upper bound in the start of association " + self.name + " (" + self.Id + ")"
+		message : "Lower bound is bigger than upper bound in the start of association " + self.name + " (" + self.Id + "). [#8a]"
 	}
 }
 
@@ -82,7 +82,7 @@ context Association {
 			}
 			return true;
 		}
-		message : "Lower bound is bigger than upper bound in the end of association " + self.name + " (" + self.Id + ")"
+		message : "Lower bound is bigger than upper bound in the end of association " + self.name + " (" + self.Id + "). [#8b]"
 	}
 }
 
@@ -98,12 +98,12 @@ context Association {
 			}
 			return true;
 		}
-		message : "Upper bound in the start of association " + self.name + " (" + self.Id + ") should be a positive integer"
+		message : "Upper bound in the start of association " + self.name + " (" + self.Id + ") should be a positive integer. [#9a]"
 	}
 }
 
 context Association {
-	constraint UpperBoundShouldBePositiveEnds {
+	constraint UpperBoundShouldBePositiveEnd {
 		check {
 			var endMultiplicity = self.endMultiplicityUML;
 			if (endMultiplicity.matches("(-)?[0-9]+\\.{2}(-)?[0-9]+")) {
@@ -114,6 +114,6 @@ context Association {
 			}
 			return true;
 		}
-		message : "Upper bound in the end of association " + self.name + " (" + self.Id + ") should be a positive integer"
+		message : "Upper bound in the end of association " + self.name + " (" + self.Id + ") should be a positive integer. [#9b]"
 	}
 }
