@@ -21,8 +21,11 @@ public class EvlStandalone {
 		String resourceStr = args[1];
 		String outputFile = args[2];
 		String outputErrorFile = args[3];
-		boolean propertiesAttributesCacheEnabled = Boolean.parseBoolean(args[4]);
-		boolean propertiesValuesCacheEnabled = Boolean.parseBoolean(args[5]);
+		String pathTxt = args[4];
+		String numOfElements = args[5];
+		String numOfIterations = args[6];
+		boolean propertiesAttributesCacheEnabled = Boolean.parseBoolean(args[7]);
+		boolean propertiesValuesCacheEnabled = Boolean.parseBoolean(args[8]);
 				
 		/*
 		String outputFile = "C:\\Users\\astal\\Documents\\test.txt";
@@ -54,7 +57,7 @@ public class EvlStandalone {
 		
 		IRelativePathResolver resolver = null;
 		
-		File evlFile = new File("C:\\Git\\Emc-ptcim\\plugins\\org.eclipse.epsilon.emc.ptcim.benchmarking\\files\\evlConstraints.evl");
+		File evlFile = new File(pathTxt + "\\evlConstraints.evl");
 		
 		EvlModule m = new EvlModule();
 		PtcimModel p = new PtcimModel();
@@ -97,12 +100,11 @@ public class EvlStandalone {
 		    FileWriter fw = new FileWriter(outputFile,true);
 		    FileWriter fwError = new FileWriter(outputErrorFile,true);
 
-		    fw.write(modelId + "," + timeElapsedParse + "," + timeElapsed + "," + approach + "\n");
+		    fw.write(modelId + "," + reference + "," + numOfElements + "," + numOfIterations + "," + timeElapsedParse + "," + timeElapsed + "," + m.getContext().getUnsatisfiedConstraints().size() + ","  + approach + "\n");
 		    if (approach.equals("EpsilonCacheAll")) {
 		    	for (UnsatisfiedConstraint uc : errors) {
-		    		fwError.write("[Epsilon] " + uc.getMessage() + "\n");
+		    		fwError.write("[Epsilon]," + uc.getMessage() + "\n");
 		    	}
-		    	fwError.write("[Epsilon] Number of errors: " + errors.size());
 		    }
 		    fw.close();
 		    fwError.close();
