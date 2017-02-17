@@ -8,13 +8,16 @@
  * Contributors:
  *     Horacio Hoyos - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.emc.ptcim;
+package org.eclipse.epsilon.emc.ptcim.dt;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.epsilon.emc.ptcim.PtcimModel;
+import org.eclipse.epsilon.emc.ptcim.PtcimObject;
+import org.eclipse.epsilon.emc.ptcim.PtcimUserInterface;
 import org.eclipse.epsilon.eol.dt.launching.EclipseContextManager;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -45,13 +48,8 @@ public class PtcimConstraintTracer implements IConstraintTracer {
 				e.printStackTrace();
 				return;
 			}
-			PtcimUserInterface studio;
-			try {
-				studio = Activator.getDefault().getFactory().getUIManager();
-			} catch (EolInternalException e1) {
-				e1.printStackTrace();
-				return;
-			}
+			PtcimUserInterface studio = new PtcimUserInterface();
+			
 			try {
 				showInModeler(instance, context, studio);
 			} catch (EolInternalException e) {

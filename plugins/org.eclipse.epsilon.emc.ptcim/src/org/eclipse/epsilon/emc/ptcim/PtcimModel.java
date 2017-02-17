@@ -630,7 +630,6 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	protected void loadModel() throws EolModelLoadingException {
 		if (isInitialized()) {
 			
-			Activator activator = Activator.getDefault();
 			PtcimModelManager manager;
 			try {
 				manager = factory.getModelManager();

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
-import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 
 public class PtcimPropertyManager {
 	

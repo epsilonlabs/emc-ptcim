@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension
-         point="org.eclipse.epsilon.evl.dt.dblClick">
-      <tracer
-            class="org.eclipse.epsilon.emc.ptcim.PtcimConstraintTracer">
-      </tracer>
-   </extension>
+
 
 </plugin>
