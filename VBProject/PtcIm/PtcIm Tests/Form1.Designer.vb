@@ -133,7 +133,7 @@ Partial Class Form1
         '
         'browseBtn
         '
-        Me.browseBtn.Location = New System.Drawing.Point(222, 246)
+        Me.browseBtn.Location = New System.Drawing.Point(222, 196)
         Me.browseBtn.Name = "browseBtn"
         Me.browseBtn.Size = New System.Drawing.Size(122, 23)
         Me.browseBtn.TabIndex = 10
@@ -147,13 +147,12 @@ Partial Class Form1
         Me.pathTxt.Name = "pathTxt"
         Me.pathTxt.Size = New System.Drawing.Size(323, 21)
         Me.pathTxt.TabIndex = 11
-        Me.pathTxt.Text = "C:\Windows\Microsoft.Net\assembly\GAC_MSIL\Microsoft.VisualStudio.Shell.Design\v4" &
-    ".0_14.0.0.0__b03f5f7f11d50a3a"
+        Me.pathTxt.Text = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Remove(0, 6)
         '
         'vbCheck
         '
         Me.vbCheck.AutoSize = True
-        Me.vbCheck.Location = New System.Drawing.Point(28, 200)
+        Me.vbCheck.Location = New System.Drawing.Point(28, 229)
         Me.vbCheck.Name = "vbCheck"
         Me.vbCheck.Size = New System.Drawing.Size(40, 17)
         Me.vbCheck.TabIndex = 12
@@ -163,7 +162,7 @@ Partial Class Form1
         'epsiloNoCheck
         '
         Me.epsiloNoCheck.AutoSize = True
-        Me.epsiloNoCheck.Location = New System.Drawing.Point(28, 223)
+        Me.epsiloNoCheck.Location = New System.Drawing.Point(28, 252)
         Me.epsiloNoCheck.Name = "epsiloNoCheck"
         Me.epsiloNoCheck.Size = New System.Drawing.Size(111, 17)
         Me.epsiloNoCheck.TabIndex = 13
@@ -173,7 +172,7 @@ Partial Class Form1
         'epsilonAttrCheck
         '
         Me.epsilonAttrCheck.AutoSize = True
-        Me.epsilonAttrCheck.Location = New System.Drawing.Point(81, 200)
+        Me.epsilonAttrCheck.Location = New System.Drawing.Point(81, 229)
         Me.epsilonAttrCheck.Name = "epsilonAttrCheck"
         Me.epsilonAttrCheck.Size = New System.Drawing.Size(131, 17)
         Me.epsilonAttrCheck.TabIndex = 14
@@ -183,7 +182,7 @@ Partial Class Form1
         'epsilonValuesCheck
         '
         Me.epsilonValuesCheck.AutoSize = True
-        Me.epsilonValuesCheck.Location = New System.Drawing.Point(226, 200)
+        Me.epsilonValuesCheck.Location = New System.Drawing.Point(226, 229)
         Me.epsilonValuesCheck.Name = "epsilonValuesCheck"
         Me.epsilonValuesCheck.Size = New System.Drawing.Size(119, 17)
         Me.epsilonValuesCheck.TabIndex = 15
@@ -193,7 +192,7 @@ Partial Class Form1
         'epsilonFullCheck
         '
         Me.epsilonFullCheck.AutoSize = True
-        Me.epsilonFullCheck.Location = New System.Drawing.Point(145, 223)
+        Me.epsilonFullCheck.Location = New System.Drawing.Point(145, 252)
         Me.epsilonFullCheck.Name = "epsilonFullCheck"
         Me.epsilonFullCheck.Size = New System.Drawing.Size(113, 17)
         Me.epsilonFullCheck.TabIndex = 16
@@ -205,6 +204,7 @@ Partial Class Form1
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(368, 676)
+        Me.Controls.Add(Me.OutTextBox)
         Me.Controls.Add(Me.epsilonFullCheck)
         Me.Controls.Add(Me.epsilonValuesCheck)
         Me.Controls.Add(Me.epsilonAttrCheck)
@@ -219,7 +219,6 @@ Partial Class Form1
         Me.Controls.Add(Me.RemoveModelBtn)
         Me.Controls.Add(Me.AddModelBtn)
         Me.Controls.Add(Me.ModelListView)
-        Me.Controls.Add(Me.OutTextBox)
         Me.Controls.Add(Me.ExecBtn)
         Me.Name = "Form1"
         Me.Text = "PTC IM Benchmarking"

@@ -62,6 +62,8 @@ Public Class Form1
         errorsFile = My.Computer.FileSystem.OpenTextFileWriter(errorsFilePath, False)
         OutTextBox.ForeColor = Color.Red
         Call OutTextBox.Clear()
+        'DONT DELETE THIS IS TO SET CURRENT PATH IN FORM1.DESIGNER.VB
+        ' System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Remove(0, 6)
         'WarmUpDB(projects.Item("Reference", strReference).Item("Dictionary", "Dictionary"))
         builder.Append("Id,Name,Elements,Iteration,ParsingTime,ExecutionTime,Errors,Approach").AppendLine()
         errorBuilder.Append("Approach,Message,ErrorId").AppendLine()
@@ -176,7 +178,7 @@ Public Class Form1
                     Dim numOfElements = project.Item("Dictionary", "Dictionary").ItemCount("")
                     Dim ProcessProperties As New ProcessStartInfo
                     ProcessProperties.FileName = "cmd.exe"
-                    ProcessProperties.Arguments = "/k Java -jar -Djava.library.path=" + pathTxt.Text + " " + pathTxt.Text + "/epsilon.jar " + id + " """ + modelInList + """ " + outputFilePath + " " + errorsFilePath + " " + pathTxt.Text + " " + numOfElements.ToString + " " + repeatExperiment.ToString + " true true"
+                    ProcessProperties.Arguments = "/c Java -jar -Djava.library.path=" + pathTxt.Text + " " + pathTxt.Text + "/epsilon.jar " + id + " """ + modelInList + """ " + outputFilePath + " " + errorsFilePath + " " + pathTxt.Text + " " + numOfElements.ToString + " " + repeatExperiment.ToString + " true true"
                     myProcess.Start(ProcessProperties).WaitForExit()
                     OutTextBox.Text += "Done" + vbCrLf
                     OutTextBox.Refresh()
