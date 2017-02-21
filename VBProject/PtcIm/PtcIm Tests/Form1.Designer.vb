@@ -33,13 +33,18 @@ Partial Class Form1
         Me.numOfIterations = New System.Windows.Forms.NumericUpDown()
         Me.browseBtn = New System.Windows.Forms.Button()
         Me.pathTxt = New System.Windows.Forms.TextBox()
+        Me.vbCheck = New System.Windows.Forms.CheckBox()
+        Me.epsiloNoCheck = New System.Windows.Forms.CheckBox()
+        Me.epsilonAttrCheck = New System.Windows.Forms.CheckBox()
+        Me.epsilonValuesCheck = New System.Windows.Forms.CheckBox()
+        Me.epsilonFullCheck = New System.Windows.Forms.CheckBox()
         CType(Me.numOfIterations, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'ExecBtn
         '
         Me.ExecBtn.Enabled = False
-        Me.ExecBtn.Location = New System.Drawing.Point(222, 225)
+        Me.ExecBtn.Location = New System.Drawing.Point(222, 275)
         Me.ExecBtn.Name = "ExecBtn"
         Me.ExecBtn.Size = New System.Drawing.Size(122, 41)
         Me.ExecBtn.TabIndex = 1
@@ -48,9 +53,9 @@ Partial Class Form1
         '
         'OutTextBox
         '
-        Me.OutTextBox.Location = New System.Drawing.Point(21, 297)
+        Me.OutTextBox.Location = New System.Drawing.Point(21, 335)
         Me.OutTextBox.Name = "OutTextBox"
-        Me.OutTextBox.Size = New System.Drawing.Size(323, 367)
+        Me.OutTextBox.Size = New System.Drawing.Size(323, 329)
         Me.OutTextBox.TabIndex = 2
         Me.OutTextBox.Text = ""
         Me.OutTextBox.UseWaitCursor = True
@@ -99,7 +104,7 @@ Partial Class Form1
         '
         Me.Label2.AutoSize = True
         Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.Location = New System.Drawing.Point(22, 269)
+        Me.Label2.Location = New System.Drawing.Point(22, 307)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(76, 25)
         Me.Label2.TabIndex = 7
@@ -109,7 +114,7 @@ Partial Class Form1
         '
         Me.Label3.AutoSize = True
         Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.Location = New System.Drawing.Point(23, 234)
+        Me.Label3.Location = New System.Drawing.Point(23, 284)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(158, 20)
         Me.Label3.TabIndex = 8
@@ -118,7 +123,7 @@ Partial Class Form1
         'numOfIterations
         '
         Me.numOfIterations.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.numOfIterations.Location = New System.Drawing.Point(178, 235)
+        Me.numOfIterations.Location = New System.Drawing.Point(178, 285)
         Me.numOfIterations.Maximum = New Decimal(New Integer() {10, 0, 0, 0})
         Me.numOfIterations.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
         Me.numOfIterations.Name = "numOfIterations"
@@ -128,7 +133,7 @@ Partial Class Form1
         '
         'browseBtn
         '
-        Me.browseBtn.Location = New System.Drawing.Point(222, 196)
+        Me.browseBtn.Location = New System.Drawing.Point(222, 246)
         Me.browseBtn.Name = "browseBtn"
         Me.browseBtn.Size = New System.Drawing.Size(122, 23)
         Me.browseBtn.TabIndex = 10
@@ -142,13 +147,69 @@ Partial Class Form1
         Me.pathTxt.Name = "pathTxt"
         Me.pathTxt.Size = New System.Drawing.Size(323, 21)
         Me.pathTxt.TabIndex = 11
-        Me.pathTxt.Text = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Remove(0, 6)
+        Me.pathTxt.Text = "C:\Windows\Microsoft.Net\assembly\GAC_MSIL\Microsoft.VisualStudio.Shell.Design\v4" &
+    ".0_14.0.0.0__b03f5f7f11d50a3a"
+        '
+        'vbCheck
+        '
+        Me.vbCheck.AutoSize = True
+        Me.vbCheck.Location = New System.Drawing.Point(28, 200)
+        Me.vbCheck.Name = "vbCheck"
+        Me.vbCheck.Size = New System.Drawing.Size(40, 17)
+        Me.vbCheck.TabIndex = 12
+        Me.vbCheck.Text = "VB"
+        Me.vbCheck.UseVisualStyleBackColor = True
+        '
+        'epsiloNoCheck
+        '
+        Me.epsiloNoCheck.AutoSize = True
+        Me.epsiloNoCheck.Location = New System.Drawing.Point(28, 223)
+        Me.epsiloNoCheck.Name = "epsiloNoCheck"
+        Me.epsiloNoCheck.Size = New System.Drawing.Size(111, 17)
+        Me.epsiloNoCheck.TabIndex = 13
+        Me.epsiloNoCheck.Text = "Epsilon No Cache"
+        Me.epsiloNoCheck.UseVisualStyleBackColor = True
+        '
+        'epsilonAttrCheck
+        '
+        Me.epsilonAttrCheck.AutoSize = True
+        Me.epsilonAttrCheck.Location = New System.Drawing.Point(81, 200)
+        Me.epsilonAttrCheck.Name = "epsilonAttrCheck"
+        Me.epsilonAttrCheck.Size = New System.Drawing.Size(131, 17)
+        Me.epsilonAttrCheck.TabIndex = 14
+        Me.epsilonAttrCheck.Text = "Epsilon Attributes Only"
+        Me.epsilonAttrCheck.UseVisualStyleBackColor = True
+        '
+        'epsilonValuesCheck
+        '
+        Me.epsilonValuesCheck.AutoSize = True
+        Me.epsilonValuesCheck.Location = New System.Drawing.Point(226, 200)
+        Me.epsilonValuesCheck.Name = "epsilonValuesCheck"
+        Me.epsilonValuesCheck.Size = New System.Drawing.Size(119, 17)
+        Me.epsilonValuesCheck.TabIndex = 15
+        Me.epsilonValuesCheck.Text = "Epsilon Values Only"
+        Me.epsilonValuesCheck.UseVisualStyleBackColor = True
+        '
+        'epsilonFullCheck
+        '
+        Me.epsilonFullCheck.AutoSize = True
+        Me.epsilonFullCheck.Location = New System.Drawing.Point(145, 223)
+        Me.epsilonFullCheck.Name = "epsilonFullCheck"
+        Me.epsilonFullCheck.Size = New System.Drawing.Size(113, 17)
+        Me.epsilonFullCheck.TabIndex = 16
+        Me.epsilonFullCheck.Text = "Epsilon Full Cache"
+        Me.epsilonFullCheck.UseVisualStyleBackColor = True
         '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(368, 676)
+        Me.Controls.Add(Me.epsilonFullCheck)
+        Me.Controls.Add(Me.epsilonValuesCheck)
+        Me.Controls.Add(Me.epsilonAttrCheck)
+        Me.Controls.Add(Me.epsiloNoCheck)
+        Me.Controls.Add(Me.vbCheck)
         Me.Controls.Add(Me.pathTxt)
         Me.Controls.Add(Me.browseBtn)
         Me.Controls.Add(Me.numOfIterations)
@@ -178,4 +239,9 @@ Partial Class Form1
     Friend WithEvents numOfIterations As NumericUpDown
     Friend WithEvents browseBtn As Button
     Friend WithEvents pathTxt As TextBox
+    Friend WithEvents vbCheck As CheckBox
+    Friend WithEvents epsiloNoCheck As CheckBox
+    Friend WithEvents epsilonAttrCheck As CheckBox
+    Friend WithEvents epsilonValuesCheck As CheckBox
+    Friend WithEvents epsilonFullCheck As CheckBox
 End Class

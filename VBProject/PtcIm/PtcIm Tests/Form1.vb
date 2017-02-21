@@ -62,118 +62,127 @@ Public Class Form1
         errorsFile = My.Computer.FileSystem.OpenTextFileWriter(errorsFilePath, False)
         OutTextBox.ForeColor = Color.Red
         Call OutTextBox.Clear()
-        OutTextBox.Text += "VB Benchmarking Started..." + vbCrLf
-        OutTextBox.Refresh()
         'WarmUpDB(projects.Item("Reference", strReference).Item("Dictionary", "Dictionary"))
         builder.Append("Id,Name,Elements,Iteration,ParsingTime,ExecutionTime,Errors,Approach").AppendLine()
         errorBuilder.Append("Approach,Message,ErrorId").AppendLine()
-        OutTextBox.Refresh()
-        For Each modelInList As Object In allModelsList
-            For repeatExperiment As Integer = 1 To numberOfRepeats
-                numberOfTotalErrors = 0
-                Dim stopWatch As New Stopwatch()
-                Dim project = projects.Item("Reference", modelInList)
-                Dim dictionary = project.Item("Dictionary", "Dictionary")
-                OutTextBox.Text += "Model: " + project.Property("Name").ToString + "... "
-                OutTextBox.Refresh()
-                id = project.Property("Id")
-                Dim numOfElements = dictionary.ItemCount("")
-                builder.Append(id)
-                Dim modelName = project.Property("Name")
-                builder.Append("," + modelName + "," + numOfElements.ToString + "," + repeatExperiment.ToString + "," + timeElapsedParse.ToString + ",")
-                stopWatch.Start()
-                errorBuilder.Append(CheckConstraint1(dictionary))
-                errorBuilder.Append(CheckConstraint2(dictionary))
-                errorBuilder.Append(CheckConstraint3(dictionary))
-                errorBuilder.Append(CheckConstraint4(dictionary))
-                errorBuilder.Append(CheckConstraint5(dictionary))
-                errorBuilder.Append(CheckConstraint6(dictionary))
-                errorBuilder.Append(CheckConstraint7(dictionary))
-                errorBuilder.Append(CheckConstraint8a(dictionary))
-                errorBuilder.Append(CheckConstraint8b(dictionary))
-                errorBuilder.Append(CheckConstraint9a(dictionary))
-                errorBuilder.Append(CheckConstraint9b(dictionary))
-                builder.Append(stopWatch.ElapsedMilliseconds.ToString)
-                builder.Append(",")
-                builder.Append(numberOfTotalErrors.ToString + ",")
-                builder.Append("VB").AppendLine()
-                OutTextBox.Text += "Done" + vbCrLf
-                OutTextBox.Refresh()
+        If (vbCheck.Checked) Then
+            OutTextBox.Text += "VB Benchmarking Started..." + vbCrLf
+            OutTextBox.Refresh()
+            For Each modelInList As Object In allModelsList
+                For repeatExperiment As Integer = 1 To numberOfRepeats
+                    numberOfTotalErrors = 0
+                    Dim stopWatch As New Stopwatch()
+                    Dim project = projects.Item("Reference", modelInList)
+                    Dim dictionary = project.Item("Dictionary", "Dictionary")
+                    OutTextBox.Text += "Model: " + project.Property("Name").ToString + "... "
+                    OutTextBox.Refresh()
+                    id = project.Property("Id")
+                    Dim numOfElements = dictionary.ItemCount("")
+                    builder.Append(id)
+                    Dim modelName = project.Property("Name")
+                    builder.Append("," + modelName + "," + numOfElements.ToString + "," + repeatExperiment.ToString + "," + timeElapsedParse.ToString + ",")
+                    stopWatch.Start()
+                    errorBuilder.Append(CheckConstraint1(dictionary))
+                    errorBuilder.Append(CheckConstraint2(dictionary))
+                    errorBuilder.Append(CheckConstraint3(dictionary))
+                    errorBuilder.Append(CheckConstraint4(dictionary))
+                    errorBuilder.Append(CheckConstraint5(dictionary))
+                    errorBuilder.Append(CheckConstraint6(dictionary))
+                    errorBuilder.Append(CheckConstraint7(dictionary))
+                    errorBuilder.Append(CheckConstraint8a(dictionary))
+                    errorBuilder.Append(CheckConstraint8b(dictionary))
+                    errorBuilder.Append(CheckConstraint9a(dictionary))
+                    errorBuilder.Append(CheckConstraint9b(dictionary))
+                    builder.Append(stopWatch.ElapsedMilliseconds.ToString)
+                    builder.Append(",")
+                    builder.Append(numberOfTotalErrors.ToString + ",")
+                    builder.Append("VB").AppendLine()
+                    OutTextBox.Text += "Done" + vbCrLf
+                    OutTextBox.Refresh()
+                Next
             Next
-        Next
+        End If
         file.WriteLine(builder)
         errorsFile.WriteLine(errorBuilder)
         errorsFile.Close()
         file.Close()
         Dim myProcess As New Process
-        OutTextBox.Clear()
-        OutTextBox.Text += "Epsilon Benchmarking (No Cache) Started..." + vbCrLf
-        For Each modelInList As Object In allModelsList
-            For repeatExperiment As Integer = 1 To numberOfRepeats
-                Dim project = projects.Item("Reference", modelInList)
-                OutTextBox.Text += "Model: " + project.Property("Name").ToString + "... "
-                OutTextBox.Refresh()
-                id = project.Property("Id")
-                Dim numOfElements = project.Item("Dictionary", "Dictionary").ItemCount("")
-                Dim ProcessProperties As New ProcessStartInfo
-                ProcessProperties.FileName = "cmd.exe"
-                ProcessProperties.Arguments = "/c Java -jar -Djava.library.path=" + pathTxt.Text + " " + pathTxt.Text + "/epsilon.jar " + id + " """ + modelInList + """ " + outputFilePath + " " + errorsFilePath + " " + pathTxt.Text + " " + numOfElements.ToString + " " + repeatExperiment.ToString + " false false"
-                myProcess.Start(ProcessProperties).WaitForExit()
-                OutTextBox.Text += "Done" + vbCrLf
-                OutTextBox.Refresh()
+        If (epsiloNoCheck.Checked) Then
+            OutTextBox.Clear()
+            OutTextBox.Text += "Epsilon Benchmarking (No Cache) Started..." + vbCrLf
+            For Each modelInList As Object In allModelsList
+                For repeatExperiment As Integer = 1 To numberOfRepeats
+                    Dim project = projects.Item("Reference", modelInList)
+                    OutTextBox.Text += "Model: " + project.Property("Name").ToString + "... "
+                    OutTextBox.Refresh()
+                    id = project.Property("Id")
+                    Dim numOfElements = project.Item("Dictionary", "Dictionary").ItemCount("")
+                    Dim ProcessProperties As New ProcessStartInfo
+                    ProcessProperties.FileName = "cmd.exe"
+                    ProcessProperties.Arguments = "/c Java -jar -Djava.library.path=" + pathTxt.Text + " " + pathTxt.Text + "/epsilon.jar " + id + " """ + modelInList + """ " + outputFilePath + " " + errorsFilePath + " " + pathTxt.Text + " " + numOfElements.ToString + " " + repeatExperiment.ToString + " false false"
+                    myProcess.Start(ProcessProperties).WaitForExit()
+                    OutTextBox.Text += "Done" + vbCrLf
+                    OutTextBox.Refresh()
+                Next
             Next
-        Next
-        OutTextBox.Clear()
-        OutTextBox.Text += "Epsilon Benchmarking (Attributes Only Cache) Started..." + vbCrLf
-        For Each modelInList As Object In allModelsList
-            For repeatExperiment As Integer = 1 To numberOfRepeats
-                Dim project = projects.Item("Reference", modelInList)
-                OutTextBox.Text += "Model: " + project.Property("Name").ToString + "... "
-                OutTextBox.Refresh()
-                id = project.Property("Id")
-                Dim numOfElements = project.Item("Dictionary", "Dictionary").ItemCount("")
-                Dim ProcessProperties As New ProcessStartInfo
-                ProcessProperties.FileName = "cmd.exe"
-                ProcessProperties.Arguments = "/c Java -jar -Djava.library.path=" + pathTxt.Text + " " + pathTxt.Text + "/epsilon.jar " + id + " """ + modelInList + """ " + outputFilePath + " " + errorsFilePath + " " + pathTxt.Text + " " + numOfElements.ToString + " " + repeatExperiment.ToString + " true false"
-                myProcess.Start(ProcessProperties).WaitForExit()
-                OutTextBox.Text += "Done" + vbCrLf
-                OutTextBox.Refresh()
+        End If
+        If (epsilonAttrCheck.Checked) Then
+            OutTextBox.Clear()
+            OutTextBox.Text += "Epsilon Benchmarking (Attributes Only Cache) Started..." + vbCrLf
+            For Each modelInList As Object In allModelsList
+                For repeatExperiment As Integer = 1 To numberOfRepeats
+                    Dim project = projects.Item("Reference", modelInList)
+                    OutTextBox.Text += "Model: " + project.Property("Name").ToString + "... "
+                    OutTextBox.Refresh()
+                    id = project.Property("Id")
+                    Dim numOfElements = project.Item("Dictionary", "Dictionary").ItemCount("")
+                    Dim ProcessProperties As New ProcessStartInfo
+                    ProcessProperties.FileName = "cmd.exe"
+                    ProcessProperties.Arguments = "/c Java -jar -Djava.library.path=" + pathTxt.Text + " " + pathTxt.Text + "/epsilon.jar " + id + " """ + modelInList + """ " + outputFilePath + " " + errorsFilePath + " " + pathTxt.Text + " " + numOfElements.ToString + " " + repeatExperiment.ToString + " true false"
+                    myProcess.Start(ProcessProperties).WaitForExit()
+                    OutTextBox.Text += "Done" + vbCrLf
+                    OutTextBox.Refresh()
+                Next
             Next
-        Next
-        OutTextBox.Clear()
-        OutTextBox.Text += "Epsilon Benchmarking (Values Only Cache) Started..." + vbCrLf
-        For Each modelInList As Object In allModelsList
-            For repeatExperiment As Integer = 1 To numberOfRepeats
-                Dim project = projects.Item("Reference", modelInList)
-                OutTextBox.Text += "Model: " + project.Property("Name").ToString + "... "
-                OutTextBox.Refresh()
-                id = project.Property("Id")
-                Dim numOfElements = project.Item("Dictionary", "Dictionary").ItemCount("")
-                Dim ProcessProperties As New ProcessStartInfo
-                ProcessProperties.FileName = "cmd.exe"
-                ProcessProperties.Arguments = "/c Java -jar -Djava.library.path=" + pathTxt.Text + " " + pathTxt.Text + "/epsilon.jar " + id + " """ + modelInList + """ " + outputFilePath + " " + errorsFilePath + " " + pathTxt.Text + " " + numOfElements.ToString + " " + repeatExperiment.ToString + " false true"
-                myProcess.Start(ProcessProperties).WaitForExit()
-                OutTextBox.Text += "Done" + vbCrLf
-                OutTextBox.Refresh()
+        End If
+        If (epsilonValuesCheck.Checked) Then
+            OutTextBox.Clear()
+            OutTextBox.Text += "Epsilon Benchmarking (Values Only Cache) Started..." + vbCrLf
+            For Each modelInList As Object In allModelsList
+                For repeatExperiment As Integer = 1 To numberOfRepeats
+                    Dim project = projects.Item("Reference", modelInList)
+                    OutTextBox.Text += "Model: " + project.Property("Name").ToString + "... "
+                    OutTextBox.Refresh()
+                    id = project.Property("Id")
+                    Dim numOfElements = project.Item("Dictionary", "Dictionary").ItemCount("")
+                    Dim ProcessProperties As New ProcessStartInfo
+                    ProcessProperties.FileName = "cmd.exe"
+                    ProcessProperties.Arguments = "/c Java -jar -Djava.library.path=" + pathTxt.Text + " " + pathTxt.Text + "/epsilon.jar " + id + " """ + modelInList + """ " + outputFilePath + " " + errorsFilePath + " " + pathTxt.Text + " " + numOfElements.ToString + " " + repeatExperiment.ToString + " false true"
+                    myProcess.Start(ProcessProperties).WaitForExit()
+                    OutTextBox.Text += "Done" + vbCrLf
+                    OutTextBox.Refresh()
+                Next
             Next
-        Next
-        OutTextBox.Clear()
-        OutTextBox.Text += "Epsilon Benchmarking (Both Caches) Started..." + vbCrLf
-        For Each modelInList As Object In allModelsList
-            For repeatExperiment As Integer = 1 To numberOfRepeats
-                Dim project = projects.Item("Reference", modelInList)
-                OutTextBox.Text += "Model: " + project.Property("Name").ToString + "... "
-                OutTextBox.Refresh()
-                id = project.Property("Id")
-                Dim numOfElements = project.Item("Dictionary", "Dictionary").ItemCount("")
-                Dim ProcessProperties As New ProcessStartInfo
-                ProcessProperties.FileName = "cmd.exe"
-                ProcessProperties.Arguments = "/c Java -jar -Djava.library.path=" + pathTxt.Text + " " + pathTxt.Text + "/epsilon.jar " + id + " """ + modelInList + """ " + outputFilePath + " " + errorsFilePath + " " + pathTxt.Text + " " + numOfElements.ToString + " " + repeatExperiment.ToString + " true true"
-                myProcess.Start(ProcessProperties).WaitForExit()
-                OutTextBox.Text += "Done" + vbCrLf
-                OutTextBox.Refresh()
+        End If
+        If (epsilonFullCheck.Checked) Then
+            OutTextBox.Clear()
+            OutTextBox.Text += "Epsilon Benchmarking (Both Caches) Started..." + vbCrLf
+            For Each modelInList As Object In allModelsList
+                For repeatExperiment As Integer = 1 To numberOfRepeats
+                    Dim project = projects.Item("Reference", modelInList)
+                    OutTextBox.Text += "Model: " + project.Property("Name").ToString + "... "
+                    OutTextBox.Refresh()
+                    id = project.Property("Id")
+                    Dim numOfElements = project.Item("Dictionary", "Dictionary").ItemCount("")
+                    Dim ProcessProperties As New ProcessStartInfo
+                    ProcessProperties.FileName = "cmd.exe"
+                    ProcessProperties.Arguments = "/k Java -jar -Djava.library.path=" + pathTxt.Text + " " + pathTxt.Text + "/epsilon.jar " + id + " """ + modelInList + """ " + outputFilePath + " " + errorsFilePath + " " + pathTxt.Text + " " + numOfElements.ToString + " " + repeatExperiment.ToString + " true true"
+                    myProcess.Start(ProcessProperties).WaitForExit()
+                    OutTextBox.Text += "Done" + vbCrLf
+                    OutTextBox.Refresh()
+                Next
             Next
-        Next
+        End If
     End Sub
     Private Function CheckConstraint1(dictionary As Object)
         Dim errorBuilder As New StringBuilder
