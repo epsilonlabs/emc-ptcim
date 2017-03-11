@@ -14,12 +14,8 @@ import java.util.AbstractCollection;
 import java.util.Iterator;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
-import org.jawin.COMException;
 
 
-/**
- * The Class JawinFilteredCollection.
- */
 public class PtcimFilteredCollection extends AbstractCollection<PtcimObject> {
 	
 	/** The object that points to the collection. */
@@ -28,7 +24,7 @@ public class PtcimFilteredCollection extends AbstractCollection<PtcimObject> {
 	private final String association;
 	
 	/**
-	 * Instantiates a new jawin collection.
+	 * Instantiates a new collection.
 	 *
 	 * @param comObject the com object
 	 * @param association the association
@@ -42,7 +38,7 @@ public class PtcimFilteredCollection extends AbstractCollection<PtcimObject> {
 	public void disconnect() throws EolInternalException {
 		try {
 			comObject.close();
-		} catch (COMException e) {
+		} catch (Exception e) {
 			throw new EolInternalException(e);
 		}
 	}

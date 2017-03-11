@@ -15,9 +15,6 @@ import java.util.List;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
-/**
- * The Class JawinUserInterface is a Jawin implementation of the interface.
- */
 public class PtcimUserInterface {
 	
 	PtcimObject studio;

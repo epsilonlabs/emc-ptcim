@@ -106,7 +106,7 @@ public class PtcimObject extends DispatchPtr {
 	}
 
 	public Object getAttribute(String name, List<Object> args) throws EolInternalException {
-		Object res;	// = new JawinObject();
+		Object res;
 		try {
 			Object comres = getN(name, args.toArray());
 			if (comres instanceof DispatchPtr) {
@@ -123,7 +123,7 @@ public class PtcimObject extends DispatchPtr {
 	}
 
 	public Object getAttribute(String name, Object arg) throws EolInternalException {
-		Object res;	// = new JawinObject();
+		Object res;
 		try {
 			Object comres = super.get(name, arg);
 			if (comres instanceof DispatchPtr) {

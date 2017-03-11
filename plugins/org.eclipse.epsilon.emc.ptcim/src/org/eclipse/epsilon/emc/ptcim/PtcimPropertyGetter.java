@@ -8,9 +8,6 @@
  import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;		
  import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter;		
  		
- /**		
-  * The Class JawinPropertyGetter.		
-  */		
  public class PtcimPropertyGetter extends AbstractPropertyGetter {		
  		
  	/** The manager. */		

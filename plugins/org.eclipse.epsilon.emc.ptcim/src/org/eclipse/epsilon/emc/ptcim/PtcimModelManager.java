@@ -14,9 +14,6 @@ import java.util.ArrayList;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
-/**
- * The Class JawinModelManager.
- */
 public class PtcimModelManager  {
 	
 	/**

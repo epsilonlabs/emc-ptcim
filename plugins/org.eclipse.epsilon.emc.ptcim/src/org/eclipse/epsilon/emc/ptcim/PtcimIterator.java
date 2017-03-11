@@ -15,15 +15,10 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
-/**
- * The Class JawinIterator.
- *
- * @param <E> the element type
- */
 public class PtcimIterator implements Iterator<PtcimObject> {
 	
 	/**
-	 * The IPtcObject that points to the collection.
+	 * The object that points to the collection.
 	 */
 	private final PtcimObject source;
 	
@@ -31,7 +26,7 @@ public class PtcimIterator implements Iterator<PtcimObject> {
 	private PtcimObject next;
 	
 	/**
-	 * Instantiates a new jawin iterator.
+	 * Instantiates a new iterator.
 	 *
 	 * @param source the source
 	 * @param owner the owner

@@ -19,10 +19,9 @@ import java.util.List;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.execute.operations.AbstractOperation;
 import org.eclipse.epsilon.eol.execute.operations.declarative.IAbstractOperationContributor;
-import org.jawin.COMException;
 
 /**
- * The Class JawinCollection. This collection only guarantees the implementation
+ * This collection only guarantees the implementation
  * of the methods used by Epsilon (Sequence type). All other operations can produce
  * unexpected results. Collections that are a result of a filtered Items only
  * provide iteration. 
@@ -39,7 +38,7 @@ public class PtcimCollection extends AbstractList<PtcimObject> implements IAbstr
 	private final String association;
 	
 	/**
-	 * Instantiates a new jawin collection.
+	 * Instantiates a new collection.
 	 *
 	 * @param comCollection the source
 	 * @param owner the owner
@@ -82,7 +81,7 @@ public class PtcimCollection extends AbstractList<PtcimObject> implements IAbstr
 	public void disconnect() throws EolInternalException {
 		try {
 			comObject.close();
-		} catch (COMException e) {
+		} catch (Exception e) {
 			throw new EolInternalException(e);
 		}
 	}
@@ -92,7 +91,7 @@ public class PtcimCollection extends AbstractList<PtcimObject> implements IAbstr
 	 * getting the iterator and iterating till the index
 	 *
 	 * @param index the index
-	 * @return the jawin object
+	 * @return the object
 	 */
 	@Override
 	public PtcimObject get(int index) {

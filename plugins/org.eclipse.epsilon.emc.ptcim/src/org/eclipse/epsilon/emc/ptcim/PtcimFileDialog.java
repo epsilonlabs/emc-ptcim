@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
-import org.jawin.COMException;
 
 public class PtcimFileDialog {
 	
@@ -31,7 +30,7 @@ public class PtcimFileDialog {
 	public String openDialog() throws EolInternalException {
 		try {
 			return (String) dialog.invoke("Create", "True");
-		} catch (COMException e) {
+		} catch (Exception e) {
 			throw new EolInternalException(e);
 		}
 	}

@@ -9,9 +9,6 @@ import org.eclipse.epsilon.eol.exceptions.EolReadOnlyPropertyException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;		
 import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertySetter;		
 		
-/**		
- * The Class JawinPropertySetter.		
- */		
 public class PtcimPropertySetter extends AbstractPropertySetter {		
 		
 	/** The property  manager. */		

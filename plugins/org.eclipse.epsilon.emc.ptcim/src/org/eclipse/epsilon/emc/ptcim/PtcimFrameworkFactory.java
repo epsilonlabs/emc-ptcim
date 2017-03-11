@@ -12,29 +12,26 @@ package org.eclipse.epsilon.emc.ptcim;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
-/**
- * A factory for creating JawinFramework objects.
- */
 public class PtcimFrameworkFactory {
 	
 	private PtcimComBridge bridge = new PtcimComBridge();
-	private PtcimModelManager jawinModelManager = new PtcimModelManager();
-	private PtcimUserInterface jawinUserInterface = new PtcimUserInterface();
-	private PtcimFileDialog jawinFileDialog = new PtcimFileDialog();
+	private PtcimModelManager modelManager = new PtcimModelManager();
+	private PtcimUserInterface userInterface = new PtcimUserInterface();
+	private PtcimFileDialog fileDialog = new PtcimFileDialog();
 	
 	public PtcimFileDialog getFileDialogManager() throws EolInternalException {
-		jawinFileDialog.connect(bridge);
-		return jawinFileDialog;
+		fileDialog.connect(bridge);
+		return fileDialog;
 	}
 
 	public PtcimModelManager getModelManager() throws EolInternalException {
-		jawinModelManager.connect(bridge);
-		return jawinModelManager;
+		modelManager.connect(bridge);
+		return modelManager;
 	}
 
 	public PtcimUserInterface getUIManager() throws EolInternalException {
-		jawinUserInterface.connect(bridge);
-		return jawinUserInterface;
+		userInterface.connect(bridge);
+		return userInterface;
 	}
 
 	private void initialiseCOM() throws EolInternalException {
@@ -48,17 +45,17 @@ public class PtcimFrameworkFactory {
 	
 	public void shutdown() {
 		try {
-			jawinModelManager.disconnect();
+			modelManager.disconnect();
 		} catch (EolInternalException e) {
 			e.printStackTrace();
 		}
 		try {
-			jawinUserInterface.disconnect();
+			userInterface.disconnect();
 		} catch (EolInternalException e) {
 			e.printStackTrace();
 		}
 		try {
-			jawinFileDialog.disconnect();
+			fileDialog.disconnect();
 		} catch (EolInternalException e1) {
 			e1.printStackTrace();
 		}

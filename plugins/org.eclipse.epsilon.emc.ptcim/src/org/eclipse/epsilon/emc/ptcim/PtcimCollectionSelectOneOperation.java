@@ -25,7 +25,7 @@ import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.execute.operations.declarative.SelectOneOperation;
 
 /**
- * The Class JawinCollectionSelectOneOperation allows the Artisan Model to provide
+ * The class allows the Artisan Model to provide
  * optimized execution of selectOne queries by attribute value using
  * ItemEx automation calls.  
  */

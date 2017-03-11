@@ -317,7 +317,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 			} catch (EolInternalException e) {
 				throw new EolModelElementTypeNotFoundException(name, type);
 			}
-			elements = res.wrapInColleciton(model, type);	//new JawinCollection(res, model, type);
+			elements = res.wrapInColleciton(model, type);
 			return (List<PtcimObject>) elements;
 		}
 		else {
@@ -504,7 +504,6 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	}
 
 	protected PtcimPropertyManager getPropertyManager() {
-		// return new JawinCachedProXetter(isCachedPropertyCcess);
 		return factory.getPropertyManager(isPropertiesAttributesCacheEnabled());
 	}
 
