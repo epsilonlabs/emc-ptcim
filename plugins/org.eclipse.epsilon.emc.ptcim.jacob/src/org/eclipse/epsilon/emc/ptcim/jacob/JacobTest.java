@@ -10,10 +10,11 @@ import com.jacob.com.Variant;
 public class JacobTest {
 
 	public static void main(String[] args) {
+		System.out.println("Jacob benchmarking started...");
 		long start = System.nanoTime();
 		// Locate the app using its unique clsid
 		ActiveXComponent ptcimApp = new ActiveXComponent("clsid:{594B0CA2-7610-11D1-BA96-444553540000}");
-		for (int i=0;i<100;i++) {
+		for (int i=0;i<10000;i++) {
 			Dispatch hsuvProject = Dispatch.call(ptcimApp, "Item", new Object[]{"Project", "HSUV"}).getDispatch();
 			Variant id = Dispatch.call(hsuvProject, "Property", "id");
 			Variant description = Dispatch.call(hsuvProject, "Property", "description");
