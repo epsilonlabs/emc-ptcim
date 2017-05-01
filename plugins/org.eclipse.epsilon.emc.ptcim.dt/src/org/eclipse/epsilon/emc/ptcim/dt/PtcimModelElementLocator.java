@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.epsilon.common.dt.locators.IModelElementLocator;
+import org.eclipse.epsilon.common.dt.util.LogUtil;
 import org.eclipse.epsilon.emc.ptcim.PtcimModel;
 import org.eclipse.epsilon.emc.ptcim.PtcimObject;
 import org.eclipse.epsilon.emc.ptcim.PtcimUserInterface;
@@ -33,23 +34,33 @@ import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
  */
 public class PtcimModelElementLocator implements IModelElementLocator {
 
+	@Override
+	public boolean canLocate(Object o) {
+		return o instanceof PtcimObject;
+	}
+
+	@Override
+	public void locate(Object instance) {
+		/*
+		try { locateImpl(instance, model); }
+		catch (Exception ex) { 
+			LogUtil.log(ex);
+		}*/
+	}
+	
 	/**
 	 * Show an specific model element in the Artisan Modeler. If the object is associated with a diagram, the first 
 	 * diagram in the list of associated diagrams is opened and then a visual object related to the element is selected.
 	 * If the element does not have an associated diagram, then we show it in the Packages tree view. 
-	 * @param instance
-	 * @param context
-	 * @param studio
-	 * @throws EpsilonCOMException 
 	 */
-	private void showInModeler(PtcimObject item, EolContext context, PtcimUserInterface studio) throws EolInternalException {
-		//IModel model = context.getModelRepository().getOwningModel(instance);
-		//assert model instanceof PtcimModel;
-		//String modelId = ((PtcimModel) model).getModelId();
-		String itemId = ((PtcimObject) item).getId();
-		//PtcimObject item = (PtcimObject) ((PtcimModel) model).getElementById(itemId);
+	protected void locateImpl(Object instance, IModel model) throws Exception {
+
+		PtcimUserInterface studio = new PtcimUserInterface();
+		String modelId = ((PtcimModel) model).getModelId();
+		PtcimObject item = (PtcimObject) instance;
+		String itemId =item.getId();
 		studio.showMainWindow();
-		//studio.openModel(modelId);
+		studio.openModel(modelId);
 		List<Object> args = new ArrayList<Object>();
 		args.clear();
 		args.add("Using Diagram");
@@ -74,34 +85,6 @@ public class PtcimModelElementLocator implements IModelElementLocator {
 			studio.selectBrowserItem(itemId, "Packages");
 		}
 		studio.setForegroundWindow();
-	}
-
-	@Override
-	public boolean canLocate(Object o) {
-		return o instanceof PtcimObject;
-	}
-
-	@Override
-	public void locate(Object instance) {
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		EolContext context = new EolContext();
-		//try {
-			//EclipseContextManager.setup(context, configuration, monitor, null, true);
-		//} catch (EolRuntimeException e) {
-		//	e.printStackTrace();
-		//	return;
-		//}
-		PtcimUserInterface studio = new PtcimUserInterface();
-		
-		try {
-			showInModeler((PtcimObject) instance, context, studio);
-		} catch (EolInternalException e) {
-			e.printStackTrace();
-			return;
-		}
-		// Free the memory of the newly created context
-		context.getModelRepository().dispose();
-		context.dispose();
 	}
 
 }
