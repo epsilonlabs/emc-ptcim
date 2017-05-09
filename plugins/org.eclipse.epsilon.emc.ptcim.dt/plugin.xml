@@ -12,10 +12,10 @@
             type="PTC IM Model">
       </modelType>
    </extension>
-   <extension
-         point="org.eclipse.epsilon.evl.dt.dblClick">
-      <tracer
-            class="org.eclipse.epsilon.emc.ptcim.dt.PtcimConstraintTracer">
-      </tracer>
-   </extension>
+   <!--extension
+         point="org.eclipse.epsilon.common.dt.modelElementLocator">
+      <modelElementLocator
+            class="org.eclipse.epsilon.emc.ptcim.dt.PtcimModelElementLocator">
+      </modelElementLocator>
+   </extension-->
 </plugin>

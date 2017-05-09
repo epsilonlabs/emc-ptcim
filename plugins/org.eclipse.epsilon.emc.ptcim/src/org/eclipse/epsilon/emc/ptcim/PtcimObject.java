@@ -244,7 +244,7 @@ public class PtcimObject extends DispatchPtr {
 		}
 	}
 	
-	public List<PtcimObject> wrapInColleciton(PtcimObject owner, String association) {
+	public List<PtcimObject> wrapInCollection(PtcimObject owner, String association) {
 		return new PtcimCollection(this, owner, association);
 	}
 	

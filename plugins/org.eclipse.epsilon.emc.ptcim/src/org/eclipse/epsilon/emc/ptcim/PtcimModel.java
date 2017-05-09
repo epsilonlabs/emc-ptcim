@@ -163,7 +163,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		args.add("");
 		try {
 			PtcimObject res = (PtcimObject) model.invoke("Items", args);
-			elements = res.wrapInColleciton(model, "");
+			elements = res.wrapInCollection(model, "");
 		} catch (EolInternalException e) {
 			throw new IllegalStateException(e);
 		}
@@ -317,7 +317,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 			} catch (EolInternalException e) {
 				throw new EolModelElementTypeNotFoundException(name, type);
 			}
-			elements = res.wrapInColleciton(model, type);
+			elements = res.wrapInCollection(model, type);
 			return (List<PtcimObject>) elements;
 		}
 		else {
@@ -374,7 +374,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 			e1.printStackTrace();
 		}
 		if (res != null) {
-			return res.wrapInColleciton(root, asocName);
+			return res.wrapInCollection(root, asocName);
 		}
 		return Collections.emptyList();
 	}
