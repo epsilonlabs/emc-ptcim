@@ -9,5 +9,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.epsilon.eol.dt,
  org.eclipse.epsilon.evl.dt,
  org.eclipse.epsilon.evl.engine,
- org.jawin_2.0-alpha1;bundle-version="2.0.0"
+ org.jawin_2.0-alpha1,
+ org.eclipse.epsilon.emc.ptcim.com4j
 Bundle-ActivationPolicy: lazy

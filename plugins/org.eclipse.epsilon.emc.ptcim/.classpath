@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.jawin_2.0-alpha1"/>
+	<classpathentry kind="lib" path="com4j.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

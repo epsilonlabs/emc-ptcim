@@ -416,9 +416,6 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		return type;
 	}
 
-	public PtcimObject getCOMModel() {
-		return model;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.models.IModel#getElementById(java.lang.String)

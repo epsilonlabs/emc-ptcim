@@ -13,20 +13,11 @@ package org.eclipse.epsilon.emc.ptcim.dt;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.epsilon.common.dt.locators.IModelElementLocator;
-import org.eclipse.epsilon.common.dt.util.LogUtil;
 import org.eclipse.epsilon.emc.ptcim.PtcimModel;
 import org.eclipse.epsilon.emc.ptcim.PtcimObject;
 import org.eclipse.epsilon.emc.ptcim.PtcimUserInterface;
-import org.eclipse.epsilon.eol.dt.launching.EclipseContextManager;
-import org.eclipse.epsilon.eol.exceptions.EolInternalException;
-import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
-import org.eclipse.epsilon.eol.execute.context.EolContext;
 import org.eclipse.epsilon.eol.models.IModel;
-import org.eclipse.epsilon.evl.dt.views.IConstraintTracer;
-import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 
 /**
  * The Class PtcimConstraintTracer provides the link between an element in the eclipse

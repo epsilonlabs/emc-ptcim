@@ -128,7 +128,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 				if (manager != null) {
 					PtcimObject ap = null;
 					try {
-						ap = manager.getActiveProjet();
+						ap = manager.getActiveProject();
 					} catch (EolInternalException e) {
 						showErrorMsg("Failed to get active project. Make sure the PTC IM Molder is opened and the"
 								+ " desired model loaded, and that an element is selected.");
