@@ -15,11 +15,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
-import org.jawin.COMException;
-import org.jawin.COMPtr;
-import org.jawin.DispatchPtr;
-import org.jawin.GUID;
-import org.jawin.Variant;
 
 import com4j.Com4jObject;
 import com4j.ComThread;

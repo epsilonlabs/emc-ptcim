@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.epsilon.common.dt.locators.IModelElementLocator;
-import org.eclipse.epsilon.emc.ptcim.PtcimModel;
-import org.eclipse.epsilon.emc.ptcim.PtcimObject;
-import org.eclipse.epsilon.emc.ptcim.PtcimUserInterface;
+import org.eclipse.epsilon.emc.ptcim.com4j.Com4jPtcimModel;
+import org.eclipse.epsilon.emc.ptcim.com4j.Com4jPtcimObject;
+import org.eclipse.epsilon.emc.ptcim.com4j.Com4jPtcimUserInterface;
 import org.eclipse.epsilon.eol.models.IModel;
 
 /**
@@ -27,7 +27,7 @@ public class PtcimModelElementLocator implements IModelElementLocator {
 
 	@Override
 	public boolean canLocate(Object o) {
-		return o instanceof PtcimObject;
+		return o instanceof Com4jPtcimObject;
 	}
 
 	@Override
@@ -46,27 +46,27 @@ public class PtcimModelElementLocator implements IModelElementLocator {
 	 */
 	protected void locateImpl(Object instance, IModel model) throws Exception {
 
-		PtcimUserInterface studio = new PtcimUserInterface();
-		String modelId = ((PtcimModel) model).getModelId();
-		PtcimObject item = (PtcimObject) instance;
+		Com4jPtcimUserInterface studio = new Com4jPtcimUserInterface();
+		String modelId = ((Com4jPtcimModel) model).getModelId();
+		Com4jPtcimObject item = (Com4jPtcimObject) instance;
 		String itemId =item.getId();
 		studio.showMainWindow();
 		studio.openModel(modelId);
 		List<Object> args = new ArrayList<Object>();
 		args.clear();
 		args.add("Using Diagram");
-		PtcimObject diag;
-		diag = (PtcimObject) item.invoke("Item", args);
+		Com4jPtcimObject diag;
+		diag = (Com4jPtcimObject) item.item("Using Diagram", null);
 		if (diag != null) {
-			String diagId = (String) diag.getAttribute("Property", "Id");
+			String diagId = (String) diag.property("Id", null);
 			//String diagId = diag.getId();
 			args.clear();
 			args.add("Representing Symbol");
-			PtcimObject objSymbol;
-			objSymbol = (PtcimObject) item.invoke("Item", args);
+			Com4jPtcimObject objSymbol;
+			objSymbol = (Com4jPtcimObject) item.item("Representing Symbol", null);
 			// FIXME What if the objSymbol does not exist? Test for Null
 			//String symboldId = objSymbol.getId();
-			String symboldId = (String) objSymbol.getAttribute("Property", "Id");
+			String symboldId = (String) objSymbol.property("Id", null);
 			args.clear();
 			args.add(diagId);
 			studio.openDiagram(diagId);

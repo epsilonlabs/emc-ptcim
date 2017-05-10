@@ -22,10 +22,10 @@ public class Com4jPtcimUserInterface {
 	
 	public Com4jPtcimUserInterface() {
 	}
-	/*
-	public void connect(Com4jPtcimComBridge bridge) throws EolInternalException {
+	
+	public void connect() throws EolInternalException {
 		if (!isConnected)
-			studio = bridge.connectByProgId("Studio.Editor");
+			//studio = bridge.connectByProgId("Studio.Editor");
 		isConnected = true;
 	}
 
@@ -44,12 +44,6 @@ public class Com4jPtcimUserInterface {
 		List<Object> args = new ArrayList<Object>();
 		args.add(id);
 		Object res = null;
-		try {
-			res = studio.invoke("OpenDiagram", args);
-		} catch (EolInternalException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		if (res == null) {
 			return false;
 		}
@@ -63,12 +57,6 @@ public class Com4jPtcimUserInterface {
 		List<Object> args = new ArrayList<Object>();
 		args.add(name);
 		Object res = null;
-		try {
-			res = studio.invoke("OpenModel", args);
-		} catch (EolInternalException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		if (res == null) {
 			return false;
 		}
@@ -83,12 +71,6 @@ public class Com4jPtcimUserInterface {
 		args.add(name);
 		args.add(directory);
 		Object res = null;
-		try {
-			res = studio.invoke("OpenModel2", args);
-		} catch (EolInternalException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		if (res == null) {
 			return false;
 		}
@@ -103,12 +85,6 @@ public class Com4jPtcimUserInterface {
 		args.add(itemId);
 		args.add(pane);
 		Object res = null;
-		try {
-			res = studio.invoke("SelectBrowserItem", args);
-		} catch (EolInternalException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		if (res == null) {
 			return false;
 		}
@@ -123,12 +99,6 @@ public class Com4jPtcimUserInterface {
 		args.add(diagramId);
 		args.add(itemId);
 		Object res = null;
-		try {
-			res = studio.invoke("SelectSymbol2", args);
-		} catch (EolInternalException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		if (res == null) {
 			return false;
 		}
@@ -139,23 +109,11 @@ public class Com4jPtcimUserInterface {
 	}
 
 	public void setForegroundWindow() {
-		try {
-			studio.invokeMethod("SetForegroundWindow");
-		} catch (EolInternalException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 	}
 
 	public void showMainWindow() {
-		try {
-			studio.invokeMethod("ShowMainWindow");
-		} catch (EolInternalException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 	}
-	*/
+	
 }

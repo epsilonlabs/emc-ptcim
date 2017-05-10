@@ -291,7 +291,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 		if (!fromSelection) {
 			List<? extends Com4jPtcimObject> elements;
 			Com4jPtcimObject res;
-			res = (Com4jPtcimObject) model.items(type, null);	//, byRefArgs);
+			res = (Com4jPtcimObject) model.items(type, null).queryInterface(IAutomationCaseObject.class);	//, byRefArgs);
 			elements = res.wrapInCollection(model, type);
 			return (List<Com4jPtcimObject>) elements;
 		}
@@ -339,7 +339,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 		List<Object> args = new ArrayList<Object>();
 		args.add(asocName);
 		Com4jPtcimObject res = null;
-		res = (Com4jPtcimObject) root.items(asocName, null);
+		res = (Com4jPtcimObject) root.items(asocName, null).queryInterface(IAutomationCaseObject.class);
 		if (res != null) {
 			return res.wrapInCollection(root, asocName);
 		}
@@ -386,7 +386,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	@Override
 	public Object getElementById(String id) {
 		Com4jPtcimObject res = null;
-		res = (Com4jPtcimObject) theProject.itemByID(id);
+		res = (Com4jPtcimObject) theProject.itemByID(id).queryInterface(IAutomationCaseObject.class);
 		if (res != null)
 			res.setId(id);
 		return res;

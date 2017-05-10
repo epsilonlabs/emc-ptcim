@@ -196,4 +196,9 @@ public class Com4jPtcimCollection extends AbstractList<Com4jPtcimObject> impleme
 		else
 			return null;
 	}
+
+	public void disconnect() {
+		// TODO Auto-generated method stub
+		
+	}
 }
