@@ -19,7 +19,7 @@ public class Com4jPtcimFrameworkFactory {
 	private Com4jPtcimFileDialog fileDialog = new Com4jPtcimFileDialog();
 	
 	public Com4jPtcimFileDialog getFileDialogManager() throws EolInternalException {
-		fileDialog.connect(bridge);
+		fileDialog.connect();
 		return fileDialog;
 	}
 
@@ -28,17 +28,20 @@ public class Com4jPtcimFrameworkFactory {
 		return modelManager;
 	}
 
+	/*
 	public Com4jPtcimUserInterface getUIManager() throws EolInternalException {
 		userInterface.connect(bridge);
 		return userInterface;
 	}
-	
+	*/
 	public void shutdown() {
+		/*
 		try {
 			userInterface.disconnect();
 		} catch (EolInternalException e) {
 			e.printStackTrace();
 		}
+		*/
 		try {
 			fileDialog.disconnect();
 		} catch (EolInternalException e1) {
@@ -55,6 +58,6 @@ public class Com4jPtcimFrameworkFactory {
 	}
 
 	public void startup() throws EolInternalException {
-		initialiseCOM();
+		//initialiseCOM();
 	}
 }

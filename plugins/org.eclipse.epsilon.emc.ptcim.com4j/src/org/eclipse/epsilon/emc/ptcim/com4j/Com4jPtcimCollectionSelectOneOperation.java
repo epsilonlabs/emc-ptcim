@@ -77,33 +77,16 @@ public class Com4jPtcimCollectionSelectOneOperation extends SelectOneOperation {
 					+ iterator.getName() + ") is not used in this process.\nDefaulting to Epsion's select");
 		}
 		String value = String.valueOf(attributevalue);
-		List<Object> args = new ArrayList<Object>();
-		args.add(target.getAssociation());
-		args.add(value);
 		Com4jPtcimObject comresult = null;
 		if ("name".equals(attributename.toLowerCase())) {		// Name is the default Id
-			try {
-				comresult = (Com4jPtcimObject) target.getOwner().invoke("Item", args);
-			} catch (EolInternalException e) {
-				throw new EolInternalException(e);
-			}
+			comresult = (Com4jPtcimObject) target.getOwner().item(target.getAssociation(), value);
 		}
 		else {
-			// FIXME Validate that the attribute exists and use the property getter? Apparently Artisan understands all lower case no spaces
-			args.add(attributename);
-			try {
-				comresult = (Com4jPtcimObject) target.getOwner().invoke("ItemEx", args);
-			} catch (EolInternalException e) {
-				throw new EolInternalException(e);
-			}
+			comresult = (Com4jPtcimObject) target.getOwner().itemEx(target.getAssociation(), value, attributename);
 		}
 		if (comresult != null) {
-			try {
-				String strId = (String) comresult.getAttribute("Property", "Id");
-				comresult.setId(strId);
-			} catch (EolInternalException e) {
-				throw new EolInternalException(e);
-			}
+			String strId = (String) comresult.property("Id", null);
+			comresult.setId(strId);
 		}
 		return comresult;
 	}

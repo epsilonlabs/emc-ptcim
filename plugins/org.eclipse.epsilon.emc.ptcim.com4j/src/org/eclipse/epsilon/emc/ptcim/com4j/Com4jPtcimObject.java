@@ -100,5 +100,10 @@ public abstract class Com4jPtcimObject implements IAutomationCaseObject {
 	public Collection<Com4jPtcimObject> wrapInFilteredColleciton(String association) {
 		return new Com4jPtcimFilteredCollection(this, association);
 	}
+
+	public void disconnect() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

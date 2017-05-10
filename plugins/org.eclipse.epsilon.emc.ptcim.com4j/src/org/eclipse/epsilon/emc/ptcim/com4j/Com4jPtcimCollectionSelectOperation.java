@@ -87,15 +87,8 @@ public class Com4jPtcimCollectionSelectOperation extends SelectOperation {
 		}
 		if (attributevalue != null) {
 			assert attributevalue instanceof String;
-			List<Object> args = new ArrayList<Object>();
-			args.add(target.getAssociation());
-			args.add(attributevalue);
 			Com4jPtcimObject comresult = null;
-			try {
-				comresult = (Com4jPtcimObject) target.getOwner().invoke("Items", args);
-			} catch (EolInternalException e) {
-				throw new EolInternalException(e);
-			}
+			comresult = (Com4jPtcimObject) target.getOwner().items(target.getAssociation(), attributevalue);
 			Collection<Com4jPtcimObject> result = comresult.wrapInFilteredColleciton(target.getAssociation());
 			return (Collection<Com4jPtcimObject>) result;
 			

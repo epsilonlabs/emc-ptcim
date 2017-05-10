@@ -28,12 +28,7 @@ public static final Com4jPtcimCachedPropertyManager INSTANCE = new Com4jPtcimCac
 		String typeDotPropertyNameId = buildCachedTypePropertyIdentifier(object, property);
 		prop = elementPropertiesNamesCache.get(typeDotPropertyNameId);
 		if (prop == null) {
-			try {
-				descriptors = (String) object.getAttribute("Property", args);
-			} catch (EolInternalException e) {
-				// TODO We probably need better understanding of errors
-				return null;
-			}
+			descriptors = (String) object.property("All Property Descriptors", null);
 			List<String> list = Arrays.asList(descriptors.split("\\n"));
 			for (String d : list) {
 				String[] info = d.split(",");

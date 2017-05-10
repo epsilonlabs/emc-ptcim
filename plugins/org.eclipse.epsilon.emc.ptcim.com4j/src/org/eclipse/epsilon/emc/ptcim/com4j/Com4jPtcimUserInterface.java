@@ -22,7 +22,7 @@ public class Com4jPtcimUserInterface {
 	
 	public Com4jPtcimUserInterface() {
 	}
-	
+	/*
 	public void connect(Com4jPtcimComBridge bridge) throws EolInternalException {
 		if (!isConnected)
 			studio = bridge.connectByProgId("Studio.Editor");
@@ -157,4 +157,5 @@ public class Com4jPtcimUserInterface {
 		}
 		
 	}
+	*/
 }

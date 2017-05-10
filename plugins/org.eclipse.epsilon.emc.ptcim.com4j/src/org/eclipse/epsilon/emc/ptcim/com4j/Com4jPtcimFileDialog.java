@@ -5,48 +5,46 @@ import java.util.List;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
+import com4j.Holder;
+
 public class Com4jPtcimFileDialog {
 	
 	/**
 	 * The ArtisanModelFileDialog COM object
 	 */
-	private Com4jPtcimObject dialog;
+	private IArtisanModelFileDialog dialog;
 	
 	boolean isConnected = false;
 
-	public void connect(Com4jPtcimComBridge bridge) throws EolInternalException {
+	
+	public void connect() throws EolInternalException {
 		if (!isConnected)
-			dialog = bridge.connectByProgId("COMGUIUtil.ArtisanModelFileDialog");
+			dialog = ClassFactory.createArtisanModelFileDialog();
 		isConnected = true;
 	}
 
 	public void disconnect() throws EolInternalException {
 		if (isConnected) {
-			dialog.disconnect();
+			//dialog.disconnect();
 			isConnected = false;
 		}
 	}
-
+	
 	public String openDialog() throws EolInternalException {
 		try {
-			return (String) dialog.invoke("Create", "True");
+			return (String) dialog.create(true);
 		} catch (Exception e) {
 			throw new EolInternalException(e);
 		}
 	}
 
 	public String[] openDialogEx() throws EolInternalException {
-		String ref = null, id = null, modelName = null;
-		List<Object> args = new ArrayList<Object>();
+		Holder<String> ref = null, id = null, modelName = null;
 		List<Object> byRefArgs = new ArrayList<Object>();
 		byRefArgs.add(ref);
 		byRefArgs.add(id);
 		byRefArgs.add(modelName);
-		try {
-			dialog.invoke("CreateEx", args, byRefArgs);
-		} catch (EolInternalException e) {
-			throw new EolInternalException(e);
-		}
+		dialog.createEx(true, ref, id, modelName);
 		return byRefArgs.toArray(new String[] {});
 	}
 }

@@ -37,7 +37,8 @@ public class Com4jPtcimFilteredCollection extends AbstractCollection<Com4jPtcimO
 	
 	public void disconnect() throws EolInternalException {
 		try {
-			comObject.close();
+			System.out.println("Closing");
+			//comObject.close();
 		} catch (Exception e) {
 			throw new EolInternalException(e);
 		}

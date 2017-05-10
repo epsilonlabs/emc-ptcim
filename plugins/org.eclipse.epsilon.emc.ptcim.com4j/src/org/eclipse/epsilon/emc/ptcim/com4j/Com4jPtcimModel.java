@@ -189,11 +189,9 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 		Iterator<Object> it = parameters.iterator();
 		Object parent = it.next();
 		Com4jPtcimObject comParent = (Com4jPtcimObject) parent;
-		List<Object> args = new ArrayList<Object>();
-		args.add(type);
 		if (parameters.size() == 1) {		// Add
 			try {
-				newInstance = comParent.invoke("Add", args);
+				newInstance = comParent.add(type, null);
 				setNewInstanceId(newInstance);
 			} catch (EolInternalException e) {
 				throw new EolModelElementTypeNotFoundException(this.name, type);
@@ -201,9 +199,8 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 		}
 		else {								// AddByType
 			Object association = it.next();
-			args.add(association);
 			try {
-				newInstance = comParent.invoke("AddByType", args);
+				newInstance = comParent.addByType(type, association.toString());
 				setNewInstanceId(newInstance);
 			} catch (EolInternalException e) {
 				throw new EolModelElementTypeNotFoundException(this.name, type);
@@ -227,11 +224,9 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 		if (!isInstantiable(type)) {
 			throw new EolNotInstantiableModelElementTypeException(getName(), type);
 		}
-		List<Object> args = new ArrayList<Object>();
-		args.add(type);
 		Object newInstance = null;
 		try {
-			newInstance = model.invoke("Add", args);
+			newInstance = model.add(type, null);
 			setNewInstanceId(newInstance);
 		} catch (EolInternalException e) {
 			throw new EolModelElementTypeNotFoundException(getName(), type);
@@ -256,12 +251,8 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	protected boolean deleteElementInModel(Object instance) throws EolRuntimeException {
 		assert instance instanceof Com4jPtcimObject;
 		boolean success = false;
-		try {
-			((Com4jPtcimObject) instance).invokeMethod("Delete");
-			success = true;
-		} catch (EolInternalException e) {
-			throw new EolRuntimeException(e.getMessage());
-		}
+		((Com4jPtcimObject) instance).delete();
+		success = true;
 		return success;
 	}
 
@@ -275,11 +266,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 				// TODO: Discuss with Dimitris about store on disposal strategy
 			}
 		}
-		try {
-			theProject.disconnect();
-		} catch (EolInternalException e) {
-			e.printStackTrace();
-		}
+		theProject.disconnect();
 	}
 
 	/**
@@ -303,14 +290,8 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 		assert model != null;
 		if (!fromSelection) {
 			List<? extends Com4jPtcimObject> elements;
-			List<Object> args = new ArrayList<Object>();
-			args.add(type);
 			Com4jPtcimObject res;
-			try {
-				res = (Com4jPtcimObject) model.invoke("Items", args);	//, byRefArgs);
-			} catch (EolInternalException e) {
-				throw new EolModelElementTypeNotFoundException(name, type);
-			}
+			res = (Com4jPtcimObject) model.items(type, null);	//, byRefArgs);
 			elements = res.wrapInCollection(model, type);
 			return (List<Com4jPtcimObject>) elements;
 		}
@@ -326,11 +307,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	
 	private List<Com4jPtcimObject> getOwnedContents(Com4jPtcimObject root, String type) throws EolModelElementTypeNotFoundException {
 		String rootType = null;
-		try {
-			rootType = (String) root.getAttribute("Property", "Type");
-		} catch (EolInternalException e2) {
-			throw new EolModelElementTypeNotFoundException(name, type);
-		}
+		rootType = (String) root.property("Type", null);
 		List<Com4jPtcimObject> result = new ArrayList<Com4jPtcimObject>();
 		if ("Category".equals(rootType)) {	// Root is a package
 			String asocName = "Package Item";
@@ -362,11 +339,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 		List<Object> args = new ArrayList<Object>();
 		args.add(asocName);
 		Com4jPtcimObject res = null;
-		try {
-			res = (Com4jPtcimObject) root.invoke("Items", args);
-		} catch (EolInternalException e1) {
-			e1.printStackTrace();
-		}
+		res = (Com4jPtcimObject) root.items(asocName, null);
 		if (res != null) {
 			return res.wrapInCollection(root, asocName);
 		}
@@ -379,11 +352,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 		while (it.hasNext()) {
 			Com4jPtcimObject e = it.next();
 			Object etype = null;
-			try {
-				etype = e.getAttribute("Property", "Type");
-			} catch (EolInternalException e1) {
-				e1.printStackTrace();
-			}
+			etype = e.property("Type", null);
 			if (type.equals(etype)) {
 				result.add(e);
 			}
@@ -416,17 +385,10 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	 */
 	@Override
 	public Object getElementById(String id) {
-		List<Object> args = new ArrayList<Object>();
-		args.add(id);
 		Com4jPtcimObject res = null;
-		try {
-			res = (Com4jPtcimObject) theProject.invoke("ItemById", args);
-			if (res != null)
-				res.setId(id);
-		} catch (EolInternalException e) {
-			// FIXME Log me!
-			e.printStackTrace();
-		}
+		res = (Com4jPtcimObject) theProject.itemByID(id);
+		if (res != null)
+			res.setId(id);
 		return res;
 	}
 
@@ -437,17 +399,9 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	public String getElementId(Object instance) {
 		assert instance instanceof Com4jPtcimObject;
 		String id = ((Com4jPtcimObject) instance).getId();
-		if (id == null)
-		{
-			List<Object> args = new ArrayList<Object>();
-			args.add("Id");
-			try {
-				id = (String) ((Com4jPtcimObject) instance).getAttribute("Property", args);
-				((Com4jPtcimObject) instance).setId(id);
-			} catch (EolInternalException e) {
-				// FIXME Log me!
-				throw new IllegalStateException(e);
-			}
+		if (id == null) {
+			id = (String) ((Com4jPtcimObject) instance).property("Id", null);
+			((Com4jPtcimObject) instance).setId(id);
 		}
 		return id;
 	}
@@ -513,11 +467,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	public String getTypeNameOf(Object instance) {
 		assert instance instanceof Com4jPtcimObject;
 		String typeName;
-		try {
-			typeName = (String) ((Com4jPtcimObject) instance).getAttribute("Property", "Type");
-		} catch (EolInternalException e) {
-			throw new IllegalArgumentException(e);
-		}
+		typeName = (String) ((Com4jPtcimObject) instance).property("Type", null);
 		return typeName;
 	}
 
@@ -526,15 +476,8 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	 */
 	@Override
 	public boolean hasType(String type) {
-		List<Object> args = new ArrayList<Object>();
-		args.add(type);
 		String errDispPtr = "";
-		try {
-			errDispPtr = (String) theProject.invoke("GetClassProperties", args);
-		} catch (EolInternalException e) {
-			// FIXME Log me!
-			e.printStackTrace();
-		}
+		errDispPtr = (String) theProject.getClassProperties(type, null);
 		return errDispPtr.length() > 0;
 	}
 
