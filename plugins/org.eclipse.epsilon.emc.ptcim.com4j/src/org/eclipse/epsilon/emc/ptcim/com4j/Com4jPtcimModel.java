@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.WeakHashMap;
 
+import com4j.Com4jObject;
+
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -291,7 +293,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 		if (!fromSelection) {
 			List<? extends Com4jPtcimObject> elements;
 			Com4jPtcimObject res;
-			res = (Com4jPtcimObject) model.items(type, null).queryInterface(IAutomationCaseObject.class);	//, byRefArgs);
+			res = new Com4jPtcimObject(model.items(type, null).queryInterface(IAutomationCaseObject.class));	//, byRefArgs);
 			elements = res.wrapInCollection(model, type);
 			return (List<Com4jPtcimObject>) elements;
 		}
@@ -339,7 +341,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 		List<Object> args = new ArrayList<Object>();
 		args.add(asocName);
 		Com4jPtcimObject res = null;
-		res = (Com4jPtcimObject) root.items(asocName, null).queryInterface(IAutomationCaseObject.class);
+		res = new Com4jPtcimObject(root.items(asocName, null).queryInterface(IAutomationCaseObject.class));
 		if (res != null) {
 			return res.wrapInCollection(root, asocName);
 		}
@@ -386,7 +388,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	@Override
 	public Object getElementById(String id) {
 		Com4jPtcimObject res = null;
-		res = (Com4jPtcimObject) theProject.itemByID(id).queryInterface(IAutomationCaseObject.class);
+		res = new Com4jPtcimObject(theProject.itemByID(id).queryInterface(IAutomationCaseObject.class));
 		if (res != null)
 			res.setId(id);
 		return res;
@@ -539,7 +541,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	}
 	
 	public void loadDictionary() throws EolModelLoadingException {
-		model = (Com4jPtcimObject) theProject.item("Dictionary", "Dictionary").queryInterface(IAutomationCaseObject.class);
+		model = new Com4jPtcimObject(theProject.item("Dictionary", "Dictionary").queryInterface(IAutomationCaseObject.class));
 	}
 
 	/* (non-Javadoc)

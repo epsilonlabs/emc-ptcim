@@ -55,7 +55,7 @@ public class Com4jPtcimIterator implements Iterator<Com4jPtcimObject> {
 	 */
 	@Override
 	public Com4jPtcimObject next() {
-		next = (Com4jPtcimObject) source.nextItem();
+		next = new Com4jPtcimObject(source.nextItem().queryInterface(IAutomationCaseObject.class));
 		String strId = (String) next.property("Id", null);
 		next.setId(strId);
 		return next;

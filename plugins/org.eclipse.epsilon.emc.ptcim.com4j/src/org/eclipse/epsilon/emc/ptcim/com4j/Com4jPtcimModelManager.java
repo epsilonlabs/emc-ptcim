@@ -61,7 +61,7 @@ public class Com4jPtcimModelManager  {
 	public Com4jPtcimObject getProjectByReference(String id, String server, String repository, String version)
 			throws EolInternalException {
 		String method = "";
-		Com4jPtcimObject model;
+		IAutomationCaseObject model;
 		method = "Reference";
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add(method);
@@ -70,8 +70,8 @@ public class Com4jPtcimModelManager  {
 			modelPath += "\\" + version;
 		}
 		args.add(modelPath); 
-		model = (Com4jPtcimObject) projects.item("Reference", modelPath).queryInterface(IAutomationCaseObject.class);
-		return model;
+		model = projects.item("Reference", modelPath).queryInterface(IAutomationCaseObject.class);
+		return new Com4jPtcimObject(model);
 	}
 
 	public Com4jPtcimObject getProjectByTitle(String title) throws EolInternalException {

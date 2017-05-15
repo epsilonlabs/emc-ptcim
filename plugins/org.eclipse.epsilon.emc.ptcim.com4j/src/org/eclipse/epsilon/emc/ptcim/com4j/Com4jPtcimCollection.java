@@ -182,7 +182,8 @@ public class Com4jPtcimCollection extends AbstractList<Com4jPtcimObject> impleme
 	public int size() {
 		Object resCount;
 		resCount = owner.itemCount(association);
-		return (Integer)resCount;
+		// itemCount return long. Danger for integer overflow here.
+		return Integer.parseInt(resCount.toString());
 	}
 
 	@Override
