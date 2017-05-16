@@ -26,6 +26,8 @@ public class TestCom4j {
 			name = trafficLightsProject.property("name", null);
 			IAutomationCaseObject trafficLightsDictionary = trafficLightsProject.item("Dictionary", "Dictionary").queryInterface(IAutomationCaseObject.class);
 			IAutomationCaseObject lightsClass = trafficLightsDictionary.item("Class", "Lights").queryInterface(IAutomationCaseObject.class);
+			IAutomationCaseObject scopingItem = lightsClass.item("Scoping Item", null).queryInterface(IAutomationCaseObject.class);
+			System.out.println(scopingItem.property("Name", null));
 			Object lightsClassDescription = lightsClass.property("description", null);
 		}
 		long elapsed = System.nanoTime() - start;

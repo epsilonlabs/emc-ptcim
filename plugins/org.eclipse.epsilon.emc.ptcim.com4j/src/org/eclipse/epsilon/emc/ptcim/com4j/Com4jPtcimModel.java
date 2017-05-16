@@ -161,7 +161,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 		Collection<Com4jPtcimObject> elements;
 		List<Object> args = new ArrayList<Object>();
 		args.add("");
-		Com4jPtcimObject res = (Com4jPtcimObject) model.items("", null).queryInterface(IAutomationCaseObject.class);
+		Com4jPtcimObject res = new Com4jPtcimObject(model.items("", null).queryInterface(IAutomationCaseObject.class));
 		elements = res.wrapInCollection(model, "");
 		return (Collection<Com4jPtcimObject>) elements;
 	}

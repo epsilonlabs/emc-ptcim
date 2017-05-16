@@ -45,13 +45,13 @@
  				args.add(property);		
  				if (p.isMultiple()) {		
  					Com4jPtcimCollection elements;		
- 					Object res = jObject.items(property, null).queryInterface(IAutomationCaseObject.class);		
+ 					Object res = new Com4jPtcimObject(jObject.items(property, null).queryInterface(IAutomationCaseObject.class));		
 					assert res instanceof Com4jPtcimObject;		
 					elements = new Com4jPtcimCollection((Com4jPtcimObject) res, jObject, property);		
  					o = elements;		
  				}		
  				else {		
- 					o = jObject.item(property, null);		
+ 					o = new Com4jPtcimObject(jObject.item(property, null).queryInterface(IAutomationCaseObject.class));		
 					if ( o instanceof Com4jPtcimObject) {		
 						String strId = (String) ((Com4jPtcimObject) o).property("Id", null);		
 						((Com4jPtcimObject) o).setId(strId);		
