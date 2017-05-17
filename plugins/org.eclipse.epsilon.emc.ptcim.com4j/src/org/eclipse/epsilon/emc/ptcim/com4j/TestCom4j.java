@@ -29,6 +29,8 @@ public class TestCom4j {
 			IAutomationCaseObject scopingItem = lightsClass.item("Scoping Item", null).queryInterface(IAutomationCaseObject.class);
 			System.out.println(scopingItem.property("Name", null));
 			Object lightsClassDescription = lightsClass.property("description", null);
+			IArtisanModelFileDialog fileDialogue = ClassFactory.createArtisanModelFileDialog();
+			fileDialogue.create(true);
 		}
 		long elapsed = System.nanoTime() - start;
 		System.out.println("Elapsed: " + elapsed/1000000000.0 + " secs");

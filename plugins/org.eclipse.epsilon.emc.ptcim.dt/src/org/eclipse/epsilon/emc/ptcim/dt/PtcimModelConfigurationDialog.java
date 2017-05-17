@@ -79,7 +79,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	public PtcimModelConfigurationDialog() {
 		factory = new Com4jPtcimFrameworkFactory();
 		try {
-			factory.startup();;
+			factory.startup();
 		} catch (EolInternalException e) {
 			throw new IllegalStateException(e);
 		}

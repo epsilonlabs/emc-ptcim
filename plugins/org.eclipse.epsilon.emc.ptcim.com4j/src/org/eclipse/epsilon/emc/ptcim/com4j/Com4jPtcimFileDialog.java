@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
+import com4j.Com4jObject;
+import com4j.ComThread;
+import com4j.EventCookie;
 import com4j.Holder;
 
 public class Com4jPtcimFileDialog {
@@ -18,8 +21,15 @@ public class Com4jPtcimFileDialog {
 
 	
 	public void connect() throws EolInternalException {
-		if (!isConnected)
-			dialog = ClassFactory.createArtisanModelFileDialog();
+		if (!isConnected) {
+			Thread t = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					dialog = ClassFactory.createArtisanModelFileDialog();
+				}
+			});
+			t.start();
+		}
 		isConnected = true;
 	}
 
@@ -47,4 +57,5 @@ public class Com4jPtcimFileDialog {
 		dialog.createEx(true, ref, id, modelName);
 		return byRefArgs.toArray(new String[] {});
 	}
+
 }

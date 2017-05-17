@@ -25,36 +25,43 @@ public class Com4jPtcimModelManager  {
 	boolean isConnected = false;
 
 	public void connect() throws EolInternalException {
-		if (!isConnected)
-			projects = ClassFactory.createCCaseProjects();
+		if (!isConnected) {
+			Thread t = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					projects = ClassFactory.createCCaseProjects();
+				}
+			});
+			t.start();
+		}
 		isConnected = true;
 	}
 	
 	
 
 	public Com4jPtcimCollection getActiveDagrams() throws EolInternalException {
-		Com4jPtcimObject comCollection = (Com4jPtcimObject) projects.items("Active Diagram", null).queryInterface(IAutomationCaseObject.class);
+		Com4jPtcimObject comCollection = new Com4jPtcimObject(projects.items("Active Diagram", null).queryInterface(IAutomationCaseObject.class));
 		return new Com4jPtcimCollection(comCollection, (Com4jPtcimObject) projects, "ActiveDiagram");
 	}
 
 	public Com4jPtcimCollection getActiveItems() throws EolInternalException {
-		Com4jPtcimObject comCollection = (Com4jPtcimObject) projects.items("Active Dictionary Item", null).queryInterface(IAutomationCaseObject.class);
+		Com4jPtcimObject comCollection = new Com4jPtcimObject(projects.items("Active Dictionary Item", null).queryInterface(IAutomationCaseObject.class));
 		return new Com4jPtcimCollection(comCollection, (Com4jPtcimObject) projects, "Active Dictionary Item");
 	}
 
 	public Com4jPtcimObject getActiveProject() throws EolInternalException {
-		return (Com4jPtcimObject) projects.item("Active Project", null).queryInterface(IAutomationCaseObject.class);
+		return new Com4jPtcimObject(projects.item("Active Project", null).queryInterface(IAutomationCaseObject.class));
 	}
 
 	public Com4jPtcimCollection getActiveSelectinContext() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Selection Context");
-		Com4jPtcimObject comCollection = (Com4jPtcimObject) projects.items("Active Selection Context", args).queryInterface(IAutomationCaseObject.class);
+		Com4jPtcimObject comCollection = new Com4jPtcimObject(projects.items("Active Selection Context", args).queryInterface(IAutomationCaseObject.class));
 		return new Com4jPtcimCollection(comCollection, (Com4jPtcimObject) projects, "Active Selection Context");
 	}
 
 	public Com4jPtcimCollection getActiveSymbols() throws EolInternalException {
-		Com4jPtcimObject comCollection = (Com4jPtcimObject) projects.items("Active Symbol", null).queryInterface(IAutomationCaseObject.class);
+		Com4jPtcimObject comCollection = new Com4jPtcimObject(projects.items("Active Symbol", null).queryInterface(IAutomationCaseObject.class));
 		return new Com4jPtcimCollection(comCollection, (Com4jPtcimObject) projects, "Active Symbol");
 	}
 
@@ -75,11 +82,11 @@ public class Com4jPtcimModelManager  {
 	}
 
 	public Com4jPtcimObject getProjectByTitle(String title) throws EolInternalException {
-		return (Com4jPtcimObject) projects.item("Project", title).queryInterface(IAutomationCaseObject.class);
+		return new Com4jPtcimObject(projects.item("Project", title).queryInterface(IAutomationCaseObject.class));
 	}
 
 	public Com4jPtcimCollection getProjects() throws EolInternalException {
-		Com4jPtcimObject comCollection = (Com4jPtcimObject) projects.items("Project", null).queryInterface(IAutomationCaseObject.class);
+		Com4jPtcimObject comCollection = new Com4jPtcimObject(projects.items("Project", null).queryInterface(IAutomationCaseObject.class));
 		return new Com4jPtcimCollection(comCollection, (Com4jPtcimObject) projects, "Project");
 	}
 
