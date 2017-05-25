@@ -51,7 +51,7 @@ public class PtcimModelManager  {
 		return new PtcimCollection(comCollection, projects, "Active Dictionary Item");
 	}
 
-	public PtcimObject getActiveProjet() throws EolInternalException {
+	public PtcimObject getActiveProject() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Project");
 		return (PtcimObject) projects.invoke("Item", args);

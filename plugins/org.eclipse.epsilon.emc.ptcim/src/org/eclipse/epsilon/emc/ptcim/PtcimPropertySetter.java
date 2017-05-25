@@ -37,10 +37,10 @@ public class PtcimPropertySetter extends AbstractPropertySetter {
 	 */		
 	@Override		
 	public void invoke(Object value) throws EolRuntimeException {		
-		
-		comProperty = manager.getPtcProperty((PtcimObject) object, property);		
+		String normalisedProperty = manager.normalise(property);
+		comProperty = manager.getPtcProperty((PtcimObject) object, normalisedProperty);		
 		if (comProperty != null) {		
-			super.setProperty(property);		
+			super.setProperty(normalisedProperty);		
 		}		
 		else {		
 			// FIXME It can be other reason, double check 		

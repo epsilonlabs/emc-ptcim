@@ -17,7 +17,8 @@ public class PtcimCachedPropertySetter extends PtcimPropertySetter {
 	@Override		
 	public void invoke(Object value) throws EolRuntimeException {	
 		super.invoke(value);
-		String elementPropertyIdentifier = super.getManager().buildCachedElementPropertyIdentifier((PtcimObject) object, property);
+		String normalisedProperty = this.getManager().normalise(property);
+		String elementPropertyIdentifier = super.getManager().buildCachedElementPropertyIdentifier((PtcimObject) object, normalisedProperty);
 		model.propertiesValuesCache.put(elementPropertyIdentifier, value);
 	}		
 }

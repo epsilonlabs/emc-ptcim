@@ -17,8 +17,9 @@ public class PtcimCachedPropertyGetter extends PtcimPropertyGetter {
  	 * @see org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter#invoke(java.lang.Object, java.lang.String)		
  	 */		
  	@Override		
- 	public Object invoke(Object object, String property) throws EolRuntimeException {		
- 		String elementPropertyIdentifier = super.getManager().buildCachedElementPropertyIdentifier((PtcimObject) object, property);
+ 	public Object invoke(Object object, String property) throws EolRuntimeException {
+ 		String normalisedProperty = super.getManager().normalise(property);
+ 		String elementPropertyIdentifier = super.getManager().buildCachedElementPropertyIdentifier((PtcimObject) object, normalisedProperty);
  		Object o = model.propertiesValuesCache.get(elementPropertyIdentifier);		
  		if (o == null) {
  			//System.out.println("I didn't knew the property value...");

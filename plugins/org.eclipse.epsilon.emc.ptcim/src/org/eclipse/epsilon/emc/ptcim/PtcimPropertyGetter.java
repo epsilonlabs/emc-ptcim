@@ -34,9 +34,10 @@
  	@Override		
  	public Object invoke(Object object, String property) throws EolRuntimeException {		
  		PtcimObject jObject = (PtcimObject) object;		
+ 		String normalisedProperty = manager.normalise(property);
  		Object o = null;		
  		try {		
- 			PtcimProperty p = manager.getPtcProperty(jObject, property);		
+ 			PtcimProperty p = manager.getPtcProperty(jObject, normalisedProperty);		
  			if (p == null) {		
  				throw new EolRuntimeException("No such property");		
  			}		
@@ -50,7 +51,7 @@
  					try {		
  						Object res = jObject.invoke("Items", args);		
  						assert res instanceof PtcimObject;		
- 						elements = new PtcimCollection((PtcimObject) res, jObject, property);		
+ 						elements = new PtcimCollection((PtcimObject) res, jObject, normalisedProperty);		
  					} catch (EolInternalException e) {		
  						throw new EolRuntimeException(e.getMessage());		
  					}		
@@ -69,7 +70,7 @@
  				}		
  			}		
  			else {		
- 				o = jObject.getAttribute("Property", property);		
+ 				o = jObject.getAttribute("Property", normalisedProperty);		
  			}		
  		} catch (EolInternalException e) {		
  			throw new EolRuntimeException(e.getMessage());		
@@ -81,10 +82,11 @@
  	 * @see org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter#hasProperty(java.lang.Object, java.lang.String)		
  	 */		
  	@Override		
- 	public boolean hasProperty(Object object, String property) {		
+ 	public boolean hasProperty(Object object, String property) {
+ 		String normalisedProperty = manager.normalise(property);
  		assert object instanceof PtcimObject;		
  		PtcimObject jObject = (PtcimObject) object;		
- 		PtcimProperty p = manager.getPtcProperty(jObject, property);		
+ 		PtcimProperty p = manager.getPtcProperty(jObject, normalisedProperty);		
  		return p != null;		
  	}		
  }
