@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.epsilon.emc.ptcim.com4j;
 
+import java.util.Observer;
+
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
+
+import com4j.NativeType;
 
 public class Com4jPtcimFrameworkFactory {
 	
@@ -18,13 +22,13 @@ public class Com4jPtcimFrameworkFactory {
 	private Com4jPtcimUserInterface userInterface = new Com4jPtcimUserInterface();
 	private Com4jPtcimFileDialog fileDialog = new Com4jPtcimFileDialog();
 	
-	public Com4jPtcimFileDialog getFileDialogManager() throws EolInternalException {
-		fileDialog.connect();
+	public Com4jPtcimFileDialog getFileDialogManager(Observer o) throws EolInternalException {
+		fileDialog.connect(o);
 		return fileDialog;
 	}
 
-	public Com4jPtcimModelManager getModelManager() throws EolInternalException {
-		modelManager.connect();
+	public Com4jPtcimModelManager getModelManager(boolean fromUI) throws EolInternalException {
+		modelManager.connect(fromUI);
 		return modelManager;
 	}
 
@@ -58,6 +62,7 @@ public class Com4jPtcimFrameworkFactory {
 	}
 
 	public void startup() throws EolInternalException {
-		//initialiseCOM();
+		//coInitialize();
+		
 	}
 }

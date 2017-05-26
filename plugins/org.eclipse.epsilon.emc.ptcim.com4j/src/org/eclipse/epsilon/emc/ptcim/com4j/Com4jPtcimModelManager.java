@@ -11,41 +11,69 @@
 package org.eclipse.epsilon.emc.ptcim.com4j;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
+import org.eclipse.epsilon.eol.parse.Eol_EolParserRules.newExpression_return;
 
-public class Com4jPtcimModelManager  {
-	
+import com4j.ComThread;
+
+public class Com4jPtcimModelManager {
+
 	/**
 	 * This is the root object for Modeler. It is a collection object for all
 	 * the Project objects you can read, that is, the Models available in the
-	 * repositories that are bookmarked in your Model Explorer. 
+	 * repositories that are bookmarked in your Model Explorer.
 	 */
 	private IAutomationCaseObject projects;
 	boolean isConnected = false;
 
-	public void connect() throws EolInternalException {
+	public void connect(boolean fromUI) throws EolInternalException {
 		if (!isConnected) {
-			Thread t = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					projects = ClassFactory.createCCaseProjects();
-				}
-			});
-			t.start();
+			System.out.println("Here");
+			if (fromUI)
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						System.out.println("Inside here");
+						projects = ClassFactory.createCCaseProjects();
+						if (Com4jPtcimFileDialog.dialog == null) {
+							Com4jPtcimFileDialog.dialog = ClassFactory.createArtisanModelFileDialog();
+						}
+						System.out.println("dialog: " + Com4jPtcimFileDialog.dialog);
+						System.out.println(projects);
+						System.out.println("After inseide");
+						isConnected = true;
+					}
+				}).start();
+			else
+				projects = ClassFactory.createCCaseProjects();
+
+			System.out.println("Before: " + isConnected);
+			/*
+			 * while (!isConnected) { try { Thread.sleep(100); } catch
+			 * (InterruptedException e) { // TODO Auto-generated catch block
+			 * e.printStackTrace(); } }
+			 */
+			System.out.println("After: " + isConnected);
 		}
-		isConnected = true;
 	}
-	
-	
 
 	public Com4jPtcimCollection getActiveDagrams() throws EolInternalException {
-		Com4jPtcimObject comCollection = new Com4jPtcimObject(projects.items("Active Diagram", null).queryInterface(IAutomationCaseObject.class));
+		Com4jPtcimObject comCollection = new Com4jPtcimObject(
+				projects.items("Active Diagram", null).queryInterface(IAutomationCaseObject.class));
 		return new Com4jPtcimCollection(comCollection, (Com4jPtcimObject) projects, "ActiveDiagram");
 	}
 
 	public Com4jPtcimCollection getActiveItems() throws EolInternalException {
-		Com4jPtcimObject comCollection = new Com4jPtcimObject(projects.items("Active Dictionary Item", null).queryInterface(IAutomationCaseObject.class));
+		Com4jPtcimObject comCollection = new Com4jPtcimObject(
+				projects.items("Active Dictionary Item", null).queryInterface(IAutomationCaseObject.class));
 		return new Com4jPtcimCollection(comCollection, (Com4jPtcimObject) projects, "Active Dictionary Item");
 	}
 
@@ -56,12 +84,14 @@ public class Com4jPtcimModelManager  {
 	public Com4jPtcimCollection getActiveSelectinContext() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Selection Context");
-		Com4jPtcimObject comCollection = new Com4jPtcimObject(projects.items("Active Selection Context", args).queryInterface(IAutomationCaseObject.class));
+		Com4jPtcimObject comCollection = new Com4jPtcimObject(
+				projects.items("Active Selection Context", args).queryInterface(IAutomationCaseObject.class));
 		return new Com4jPtcimCollection(comCollection, (Com4jPtcimObject) projects, "Active Selection Context");
 	}
 
 	public Com4jPtcimCollection getActiveSymbols() throws EolInternalException {
-		Com4jPtcimObject comCollection = new Com4jPtcimObject(projects.items("Active Symbol", null).queryInterface(IAutomationCaseObject.class));
+		Com4jPtcimObject comCollection = new Com4jPtcimObject(
+				projects.items("Active Symbol", null).queryInterface(IAutomationCaseObject.class));
 		return new Com4jPtcimCollection(comCollection, (Com4jPtcimObject) projects, "Active Symbol");
 	}
 
@@ -76,7 +106,7 @@ public class Com4jPtcimModelManager  {
 		if (version.length() > 0) {
 			modelPath += "\\" + version;
 		}
-		args.add(modelPath); 
+		args.add(modelPath);
 		model = projects.item("Reference", modelPath).queryInterface(IAutomationCaseObject.class);
 		return new Com4jPtcimObject(model);
 	}
@@ -86,12 +116,13 @@ public class Com4jPtcimModelManager  {
 	}
 
 	public Com4jPtcimCollection getProjects() throws EolInternalException {
-		Com4jPtcimObject comCollection = new Com4jPtcimObject(projects.items("Project", null).queryInterface(IAutomationCaseObject.class));
+		Com4jPtcimObject comCollection = new Com4jPtcimObject(
+				projects.items("Project", null).queryInterface(IAutomationCaseObject.class));
 		return new Com4jPtcimCollection(comCollection, (Com4jPtcimObject) projects, "Project");
 	}
 
 	public void disconnect() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

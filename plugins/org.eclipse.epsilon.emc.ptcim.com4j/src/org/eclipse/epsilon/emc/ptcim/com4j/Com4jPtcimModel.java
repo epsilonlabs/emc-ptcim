@@ -159,8 +159,6 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	protected Collection<Com4jPtcimObject> allContentsFromModel() {
 		assert model != null;
 		Collection<Com4jPtcimObject> elements;
-		List<Object> args = new ArrayList<Object>();
-		args.add("");
 		Com4jPtcimObject res = new Com4jPtcimObject(model.items("", null).queryInterface(IAutomationCaseObject.class));
 		elements = res.wrapInCollection(model, "");
 		return (Collection<Com4jPtcimObject>) elements;
@@ -553,7 +551,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 			
 			Com4jPtcimModelManager manager;
 			try {
-				manager = factory.getModelManager();
+				manager = factory.getModelManager(false);
 			} catch (EolInternalException e1) {
 				throw new EolModelLoadingException(e1, this);
 			}

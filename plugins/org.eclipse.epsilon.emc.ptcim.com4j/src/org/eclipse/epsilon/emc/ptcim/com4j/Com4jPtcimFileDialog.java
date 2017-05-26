@@ -2,35 +2,26 @@ package org.eclipse.epsilon.emc.ptcim.com4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
-import com4j.Com4jObject;
-import com4j.ComThread;
-import com4j.EventCookie;
 import com4j.Holder;
 
-public class Com4jPtcimFileDialog {
+public class Com4jPtcimFileDialog extends Observable{
 	
 	/**
 	 * The ArtisanModelFileDialog COM object
 	 */
-	private IArtisanModelFileDialog dialog;
+	public static IArtisanModelFileDialog dialog;
 	
 	boolean isConnected = false;
 
-	
-	public void connect() throws EolInternalException {
-		if (!isConnected) {
-			Thread t = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					dialog = ClassFactory.createArtisanModelFileDialog();
-				}
-			});
-			t.start();
-		}
-		isConnected = true;
+	public void connect(Observer o) throws EolInternalException {
+		
+		this.addObserver(o);
+
 	}
 
 	public void disconnect() throws EolInternalException {
@@ -41,10 +32,22 @@ public class Com4jPtcimFileDialog {
 	}
 	
 	public String openDialog() throws EolInternalException {
-		try {
-			return (String) dialog.create(true);
+		try {			
+			Com4jPtcimFileDialog thisobject = this;
+			new Thread (new Runnable() {
+				
+				@Override
+				public void run() {
+					String ref = dialog.create(true);
+					thisobject.notifyObservers(ref);
+				}
+			}).start();
+			System.out.println("before dialog");
+			return (String) "hhh";
 		} catch (Exception e) {
 			throw new EolInternalException(e);
+		} finally {
+			System.out.println("finally");
 		}
 	}
 
