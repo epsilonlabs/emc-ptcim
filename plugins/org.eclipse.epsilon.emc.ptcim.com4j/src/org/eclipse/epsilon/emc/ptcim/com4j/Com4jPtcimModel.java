@@ -386,7 +386,10 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	@Override
 	public Object getElementById(String id) {
 		Com4jPtcimObject res = null;
+		System.out.println("id: " + id);
+		System.out.println("New the project: " + theProject);
 		res = new Com4jPtcimObject(theProject.itemByID(id).queryInterface(IAutomationCaseObject.class));
+		System.out.println(res);
 		if (res != null)
 			res.setId(id);
 		return res;
@@ -548,7 +551,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	@Override
 	protected void loadModel() throws EolModelLoadingException {
 		if (isInitialized()) {
-			
+
 			Com4jPtcimModelManager manager;
 			try {
 				manager = factory.getModelManager(false);
@@ -566,6 +569,8 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 				} catch (EolInternalException e) {
 					throw new EolModelLoadingException(e, this);
 				}
+				System.out.println("theProject: " + theProject);
+
 			}
 			else if (storeOnDisposal) {
 				// TODO Decide how the readOnLoad/storeOnDisposal flags control how the model is either

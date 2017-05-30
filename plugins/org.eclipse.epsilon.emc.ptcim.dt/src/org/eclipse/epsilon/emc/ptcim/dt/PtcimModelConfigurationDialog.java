@@ -14,19 +14,23 @@ package org.eclipse.epsilon.emc.ptcim.dt;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.ForkJoinPool;
 
 import org.eclipse.epsilon.common.dt.launching.dialogs.AbstractCachedModelConfigurationDialog;
+import org.eclipse.epsilon.emc.ptcim.com4j.ClassFactory;
 import org.eclipse.epsilon.emc.ptcim.com4j.Com4jPtcimCollection;
 import org.eclipse.epsilon.emc.ptcim.com4j.Com4jPtcimFileDialog;
 import org.eclipse.epsilon.emc.ptcim.com4j.Com4jPtcimFrameworkFactory;
 import org.eclipse.epsilon.emc.ptcim.com4j.Com4jPtcimModel;
 import org.eclipse.epsilon.emc.ptcim.com4j.Com4jPtcimModelManager;
 import org.eclipse.epsilon.emc.ptcim.com4j.Com4jPtcimObject;
+import org.eclipse.epsilon.emc.ptcim.com4j.IAutomationCaseObject;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -36,7 +40,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * The Class PtcimModelConfigurationDialog.
  */
-public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurationDialog implements Observer{
+public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurationDialog implements Observer {
 
 	private static final String MODEL_TYPE = "PTC IM Model";
 
@@ -77,7 +81,8 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	Com4jPtcimModelManager manager = null;
 
 	private GridData twoCol;
-
+	private IAutomationCaseObject projects;
+	boolean isConnected = false;
 	public PtcimModelConfigurationDialog() {
 		factory = new Com4jPtcimFrameworkFactory();
 		try {
@@ -85,7 +90,20 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		} catch (EolInternalException e) {
 			throw new IllegalStateException(e);
 		}
+		// Com4j commands should be invoked by a new thread
 		try {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					projects = ClassFactory.createCCaseProjects();
+					if (Com4jPtcimFileDialog.dialog == null) {
+						Com4jPtcimFileDialog.dialog = ClassFactory.createArtisanModelFileDialog();
+					}
+					isConnected = true;
+				}
+			}).start();
+			// We need to know if the whole process was triggered by the UI or not. This is done by passing an attribute to the model manager. 
+			// Here we know that this is accessed if and only if the UI was used so we pass the 'true' value for the fromUI parameter.
 			manager = factory.getModelManager(true);
 		} catch (EolInternalException e) {
 			throw new IllegalStateException(e);
@@ -432,9 +450,14 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		properties.put(Com4jPtcimModel.PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED, propertiesValuesCacheEnabledSelection);
 	}
 
+	// When the user has selected the model from the PTC IM model explorer, the observable object notifies this observer and the update method is called.
+	// We need to run the population of the UI from the default display thread because this is the only thread that can update Java SWT UIs.
 	@Override
 	public void update(Observable o, Object arg) {
-		modelReferenceToFields(((String)arg));
+		Display.getDefault().asyncExec(new Runnable() {
+		    public void run() {
+				modelReferenceToFields(((String)arg));
+		    }
+		});
 	}
-
 }

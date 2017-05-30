@@ -33,13 +33,13 @@ public class Com4jPtcimFileDialog extends Observable{
 	
 	public String openDialog() throws EolInternalException {
 		try {			
-			Com4jPtcimFileDialog thisobject = this;
 			new Thread (new Runnable() {
 				
 				@Override
 				public void run() {
 					String ref = dialog.create(true);
-					thisobject.notifyObservers(ref);
+					setChanged();
+					notifyObservers(ref);
 				}
 			}).start();
 			System.out.println("before dialog");

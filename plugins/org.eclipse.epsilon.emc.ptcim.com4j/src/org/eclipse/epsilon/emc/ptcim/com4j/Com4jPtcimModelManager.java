@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
@@ -36,31 +37,14 @@ public class Com4jPtcimModelManager {
 	public void connect(boolean fromUI) throws EolInternalException {
 		if (!isConnected) {
 			System.out.println("Here");
-			if (fromUI)
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						System.out.println("Inside here");
-						projects = ClassFactory.createCCaseProjects();
-						if (Com4jPtcimFileDialog.dialog == null) {
-							Com4jPtcimFileDialog.dialog = ClassFactory.createArtisanModelFileDialog();
-						}
-						System.out.println("dialog: " + Com4jPtcimFileDialog.dialog);
-						System.out.println(projects);
-						System.out.println("After inseide");
-						isConnected = true;
-					}
-				}).start();
-			else
+			if (fromUI) {
+				isConnected = true;
+			}
+			else {
 				projects = ClassFactory.createCCaseProjects();
-
+				isConnected = true;
+			}
 			System.out.println("Before: " + isConnected);
-			/*
-			 * while (!isConnected) { try { Thread.sleep(100); } catch
-			 * (InterruptedException e) { // TODO Auto-generated catch block
-			 * e.printStackTrace(); } }
-			 */
 			System.out.println("After: " + isConnected);
 		}
 	}
