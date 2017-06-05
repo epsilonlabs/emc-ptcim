@@ -36,7 +36,6 @@ public class Com4jPtcimModelManager {
 
 	public void connect(boolean fromUI) throws EolInternalException {
 		if (!isConnected) {
-			System.out.println("Here");
 			if (fromUI) {
 				isConnected = true;
 			}
@@ -44,8 +43,6 @@ public class Com4jPtcimModelManager {
 				projects = ClassFactory.createCCaseProjects();
 				isConnected = true;
 			}
-			System.out.println("Before: " + isConnected);
-			System.out.println("After: " + isConnected);
 		}
 	}
 
@@ -84,15 +81,13 @@ public class Com4jPtcimModelManager {
 		String method = "";
 		IAutomationCaseObject model;
 		method = "Reference";
-		ArrayList<Object> args = new ArrayList<Object>();
-		args.add(method);
 		String modelPath = "\\\\Enabler\\" + server + "\\" + repository + "\\" + id;
 		if (version.length() > 0) {
 			modelPath += "\\" + version;
 		}
-		args.add(modelPath);
 		model = projects.item("Reference", modelPath).queryInterface(IAutomationCaseObject.class);
-		return new Com4jPtcimObject(model);
+		Com4jPtcimObject theModel = new Com4jPtcimObject(model);
+		return theModel;
 	}
 
 	public Com4jPtcimObject getProjectByTitle(String title) throws EolInternalException {

@@ -60,6 +60,7 @@ public class Com4jPtcimObject implements IAutomationCaseObject {
 		return id;
 	}
 	
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

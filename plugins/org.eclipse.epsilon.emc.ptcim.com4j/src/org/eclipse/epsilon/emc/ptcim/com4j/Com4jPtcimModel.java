@@ -385,13 +385,18 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	 */
 	@Override
 	public Object getElementById(String id) {
+		Com4jObject res_ = null;
 		Com4jPtcimObject res = null;
-		System.out.println("id: " + id);
-		System.out.println("New the project: " + theProject);
-		res = new Com4jPtcimObject(theProject.itemByID(id).queryInterface(IAutomationCaseObject.class));
-		System.out.println(res);
-		if (res != null)
-			res.setId(id);
+		try {
+			res_ = theProject.itemByID(id);
+			if (res_ != null) {
+				res = new Com4jPtcimObject(res_.queryInterface(IAutomationCaseObject.class));
+				if (res != null)
+					res.setId(id);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return res;
 	}
 
@@ -569,7 +574,6 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 				} catch (EolInternalException e) {
 					throw new EolModelLoadingException(e, this);
 				}
-				System.out.println("theProject: " + theProject);
 
 			}
 			else if (storeOnDisposal) {

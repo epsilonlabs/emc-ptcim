@@ -390,6 +390,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		if (properties == null)
 			return;
 		referenceText.setText(properties.getProperty(Com4jPtcimModel.PROPERTY_MODEL_REFERENCE));
+		System.out.println("Reference text: " + referenceText);
 		serverText.setText(properties.getProperty(Com4jPtcimModel.PROPERTY_SERVER_NAME));
 		repositoryText.setText(properties.getProperty(Com4jPtcimModel.PROPERTY_REPOSITORY_NAME));
 		versionText.setText(properties.getProperty(Com4jPtcimModel.PROPERTY_VERSION_NUMBER));

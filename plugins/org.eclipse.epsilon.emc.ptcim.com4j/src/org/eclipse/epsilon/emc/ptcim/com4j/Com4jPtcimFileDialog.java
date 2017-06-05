@@ -18,6 +18,11 @@ public class Com4jPtcimFileDialog extends Observable{
 	
 	boolean isConnected = false;
 
+	/* Com4j is not able to run from main/UI thread. As as result a new Thread should start to execute com4j commands. This creates race conditions
+	 * which cannot be solved by any of the known Java solutions (e.g., wait, join, Futures, forks, etc.). For a reason unknown to me the new thread
+	 * only executes if the main thread is running as well. As a result we attach an observer to the file dialog, so when the use rhas selected 
+	 * a model, it notifies the UI to populate the model configuration with the model details (e.g., server, repository, etc.)
+	 */
 	public void connect(Observer o) throws EolInternalException {
 		
 		this.addObserver(o);
@@ -42,7 +47,6 @@ public class Com4jPtcimFileDialog extends Observable{
 					notifyObservers(ref);
 				}
 			}).start();
-			System.out.println("before dialog");
 			return (String) "hhh";
 		} catch (Exception e) {
 			throw new EolInternalException(e);
