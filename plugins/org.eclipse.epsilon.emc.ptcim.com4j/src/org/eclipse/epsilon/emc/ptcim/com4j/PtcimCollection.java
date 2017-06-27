@@ -26,13 +26,13 @@ import org.eclipse.epsilon.eol.execute.operations.declarative.IAbstractOperation
  * unexpected results. Collections that are a result of a filtered Items only
  * provide iteration. 
  */
-public class Com4jPtcimCollection extends AbstractList<Com4jPtcimObject> implements IAbstractOperationContributor {
+public class PtcimCollection extends AbstractList<PtcimObject> implements IAbstractOperationContributor {
 	
 	/** The object that points to the collection. */
-	private final Com4jPtcimObject comObject;
+	private final PtcimObject comObject;
 	
 	/** The owner. */
-	private final Com4jPtcimObject owner;
+	private final PtcimObject owner;
 	
 	/** The association. */
 	private final String association;
@@ -44,16 +44,16 @@ public class Com4jPtcimCollection extends AbstractList<Com4jPtcimObject> impleme
 	 * @param owner the owner
 	 * @param association the association
 	 */
-	public Com4jPtcimCollection(Com4jPtcimObject comCollection, Com4jPtcimObject owner, String association) {
-		assert comCollection instanceof Com4jPtcimObject;
-		assert owner instanceof Com4jPtcimObject;
-		this.comObject = (Com4jPtcimObject) comCollection;
-		this.owner = (Com4jPtcimObject) owner;
+	public PtcimCollection(PtcimObject comCollection, PtcimObject owner, String association) {
+		assert comCollection instanceof PtcimObject;
+		assert owner instanceof PtcimObject;
+		this.comObject = (PtcimObject) comCollection;
+		this.owner = (PtcimObject) owner;
 		this.association = association;
 	}
 
 	@Override
-	public boolean add(Com4jPtcimObject e) {
+	public boolean add(PtcimObject e) {
 		assert e.getId() != null;
 		List<Object> args = new ArrayList<Object>();
 		args.add(association);
@@ -80,11 +80,11 @@ public class Com4jPtcimCollection extends AbstractList<Com4jPtcimObject> impleme
 	 * @return the object
 	 */
 	@Override
-	public Com4jPtcimObject get(int index) {
+	public PtcimObject get(int index) {
 		if (index >= size()) {
 			throw new IndexOutOfBoundsException();
 		}
-		Iterator<Com4jPtcimObject> it = iterator();
+		Iterator<PtcimObject> it = iterator();
 		if (index == 0) {
 			if (it.hasNext()) {
 				return it.next();
@@ -104,11 +104,11 @@ public class Com4jPtcimCollection extends AbstractList<Com4jPtcimObject> impleme
 		return association;
 	}
 
-	public Com4jPtcimObject getCOMObject() {
+	public PtcimObject getCOMObject() {
 		return comObject;
 	}
 
-	public Com4jPtcimObject getOwner() {
+	public PtcimObject getOwner() {
 		return owner;
 	}
 	
@@ -124,7 +124,7 @@ public class Com4jPtcimCollection extends AbstractList<Com4jPtcimObject> impleme
      */
 	@Override
 	public int indexOf(Object o) {
-		Iterator<Com4jPtcimObject> e = iterator();
+		Iterator<PtcimObject> e = iterator();
 		if (o==null) {
 		    return -1;
 		} 
@@ -144,14 +144,14 @@ public class Com4jPtcimCollection extends AbstractList<Com4jPtcimObject> impleme
 	}
 
 	@Override
-	public Iterator<Com4jPtcimObject> iterator() {
-		Iterator<Com4jPtcimObject> iterator = new Com4jPtcimIterator(comObject);
+	public Iterator<PtcimObject> iterator() {
+		Iterator<PtcimObject> iterator = new PtcimIterator(comObject);
 		return iterator;
 	}
 	
 	@Override
-	public Com4jPtcimObject remove(int index) {
-		Com4jPtcimObject obj = get(index);
+	public PtcimObject remove(int index) {
+		PtcimObject obj = get(index);
 		remove(obj);
 		return obj;
 	}
@@ -189,10 +189,10 @@ public class Com4jPtcimCollection extends AbstractList<Com4jPtcimObject> impleme
 	@Override
 	public AbstractOperation getAbstractOperation(String name) {
 		if ("select".equals(name)) {
-			return new Com4jPtcimCollectionSelectOperation();
+			return new PtcimCollectionSelectOperation();
 		}
 		else if( "selectOne".equals(name)) {
-			return new Com4jPtcimCollectionSelectOneOperation();
+			return new PtcimCollectionSelectOneOperation();
 		}
 		else
 			return null;

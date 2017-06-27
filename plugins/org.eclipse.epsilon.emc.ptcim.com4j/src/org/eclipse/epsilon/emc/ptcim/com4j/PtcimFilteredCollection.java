@@ -16,10 +16,10 @@ import java.util.Iterator;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
 
-public class Com4jPtcimFilteredCollection extends AbstractCollection<Com4jPtcimObject> {
+public class PtcimFilteredCollection extends AbstractCollection<PtcimObject> {
 	
 	/** The object that points to the collection. */
-	private final Com4jPtcimObject comObject;
+	private final PtcimObject comObject;
 	
 	private final String association;
 	
@@ -29,9 +29,9 @@ public class Com4jPtcimFilteredCollection extends AbstractCollection<Com4jPtcimO
 	 * @param comObject the com object
 	 * @param association the association
 	 */
-	public Com4jPtcimFilteredCollection(Com4jPtcimObject comObject, String association) {
-		assert comObject instanceof Com4jPtcimObject;
-		this.comObject = (Com4jPtcimObject) comObject;
+	public PtcimFilteredCollection(PtcimObject comObject, String association) {
+		assert comObject instanceof PtcimObject;
+		this.comObject = (PtcimObject) comObject;
 		this.association = association;
 	}
 	
@@ -53,11 +53,11 @@ public class Com4jPtcimFilteredCollection extends AbstractCollection<Com4jPtcimO
 	 *
 	 * @return the owner
 	 */
-	public Com4jPtcimObject getOwner() {
+	public PtcimObject getOwner() {
 		return null;
 	}
 
-	public Com4jPtcimObject getCOMObject() {
+	public PtcimObject getCOMObject() {
 		return this.comObject;
 	}
 
@@ -69,8 +69,8 @@ public class Com4jPtcimFilteredCollection extends AbstractCollection<Com4jPtcimO
 	 * @see java.util.AbstractCollection#iterator()
 	 */
 	@Override
-	public Iterator<Com4jPtcimObject> iterator() {
-		Iterator<Com4jPtcimObject> iterator = new Com4jPtcimIterator(comObject);
+	public Iterator<PtcimObject> iterator() {
+		Iterator<PtcimObject> iterator = new PtcimIterator(comObject);
 		return iterator;
 	}
 
@@ -83,7 +83,7 @@ public class Com4jPtcimFilteredCollection extends AbstractCollection<Com4jPtcimO
 	 * implementation used the iterator;
 	 */
 	public int size() {
-		Iterator<Com4jPtcimObject> it = iterator();
+		Iterator<PtcimObject> it = iterator();
 		int size = 0;
 		while (it.hasNext()) {
 			it.next();

@@ -24,7 +24,7 @@ import org.eclipse.epsilon.eol.parse.Eol_EolParserRules.newExpression_return;
 
 import com4j.ComThread;
 
-public class Com4jPtcimModelManager {
+public class PtcimModelManager {
 
 	/**
 	 * This is the root object for Modeler. It is a collection object for all
@@ -46,37 +46,37 @@ public class Com4jPtcimModelManager {
 		}
 	}
 
-	public Com4jPtcimCollection getActiveDagrams() throws EolInternalException {
-		Com4jPtcimObject comCollection = new Com4jPtcimObject(
+	public PtcimCollection getActiveDagrams() throws EolInternalException {
+		PtcimObject comCollection = new PtcimObject(
 				projects.items("Active Diagram", null).queryInterface(IAutomationCaseObject.class));
-		return new Com4jPtcimCollection(comCollection, (Com4jPtcimObject) projects, "ActiveDiagram");
+		return new PtcimCollection(comCollection, (PtcimObject) projects, "ActiveDiagram");
 	}
 
-	public Com4jPtcimCollection getActiveItems() throws EolInternalException {
-		Com4jPtcimObject comCollection = new Com4jPtcimObject(
+	public PtcimCollection getActiveItems() throws EolInternalException {
+		PtcimObject comCollection = new PtcimObject(
 				projects.items("Active Dictionary Item", null).queryInterface(IAutomationCaseObject.class));
-		return new Com4jPtcimCollection(comCollection, (Com4jPtcimObject) projects, "Active Dictionary Item");
+		return new PtcimCollection(comCollection, (PtcimObject) projects, "Active Dictionary Item");
 	}
 
-	public Com4jPtcimObject getActiveProject() throws EolInternalException {
-		return new Com4jPtcimObject(projects.item("Active Project", null).queryInterface(IAutomationCaseObject.class));
+	public PtcimObject getActiveProject() throws EolInternalException {
+		return new PtcimObject(projects.item("Active Project", null).queryInterface(IAutomationCaseObject.class));
 	}
 
-	public Com4jPtcimCollection getActiveSelectinContext() throws EolInternalException {
+	public PtcimCollection getActiveSelectinContext() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Selection Context");
-		Com4jPtcimObject comCollection = new Com4jPtcimObject(
+		PtcimObject comCollection = new PtcimObject(
 				projects.items("Active Selection Context", args).queryInterface(IAutomationCaseObject.class));
-		return new Com4jPtcimCollection(comCollection, (Com4jPtcimObject) projects, "Active Selection Context");
+		return new PtcimCollection(comCollection, (PtcimObject) projects, "Active Selection Context");
 	}
 
-	public Com4jPtcimCollection getActiveSymbols() throws EolInternalException {
-		Com4jPtcimObject comCollection = new Com4jPtcimObject(
+	public PtcimCollection getActiveSymbols() throws EolInternalException {
+		PtcimObject comCollection = new PtcimObject(
 				projects.items("Active Symbol", null).queryInterface(IAutomationCaseObject.class));
-		return new Com4jPtcimCollection(comCollection, (Com4jPtcimObject) projects, "Active Symbol");
+		return new PtcimCollection(comCollection, (PtcimObject) projects, "Active Symbol");
 	}
 
-	public Com4jPtcimObject getProjectByReference(String id, String server, String repository, String version)
+	public PtcimObject getProjectByReference(String id, String server, String repository, String version)
 			throws EolInternalException {
 		String method = "";
 		IAutomationCaseObject model;
@@ -86,18 +86,18 @@ public class Com4jPtcimModelManager {
 			modelPath += "\\" + version;
 		}
 		model = projects.item("Reference", modelPath).queryInterface(IAutomationCaseObject.class);
-		Com4jPtcimObject theModel = new Com4jPtcimObject(model);
+		PtcimObject theModel = new PtcimObject(model);
 		return theModel;
 	}
 
-	public Com4jPtcimObject getProjectByTitle(String title) throws EolInternalException {
-		return new Com4jPtcimObject(projects.item("Project", title).queryInterface(IAutomationCaseObject.class));
+	public PtcimObject getProjectByTitle(String title) throws EolInternalException {
+		return new PtcimObject(projects.item("Project", title).queryInterface(IAutomationCaseObject.class));
 	}
 
-	public Com4jPtcimCollection getProjects() throws EolInternalException {
-		Com4jPtcimObject comCollection = new Com4jPtcimObject(
+	public PtcimCollection getProjects() throws EolInternalException {
+		PtcimObject comCollection = new PtcimObject(
 				projects.items("Project", null).queryInterface(IAutomationCaseObject.class));
-		return new Com4jPtcimCollection(comCollection, (Com4jPtcimObject) projects, "Project");
+		return new PtcimCollection(comCollection, (PtcimObject) projects, "Project");
 	}
 
 	public void disconnect() {

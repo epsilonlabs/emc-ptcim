@@ -15,12 +15,12 @@ import java.util.List;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
-public class Com4jPtcimUserInterface {
+public class PtcimUserInterface {
 	
-	Com4jPtcimObject studio;
+	PtcimObject studio;
 	boolean isConnected = false;
 	
-	public Com4jPtcimUserInterface() {
+	public PtcimUserInterface() {
 	}
 	
 	public void connect() throws EolInternalException {

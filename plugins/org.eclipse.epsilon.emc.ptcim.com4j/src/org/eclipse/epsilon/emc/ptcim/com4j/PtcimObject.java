@@ -21,11 +21,11 @@ import com4j.Com4jObject;
 import com4j.ComThread;
 import com4j.EventCookie;
 
-public class Com4jPtcimObject implements IAutomationCaseObject {
+public class PtcimObject implements IAutomationCaseObject {
 
 	private String id;
 	private final IAutomationCaseObject theIaco; 
-	public Com4jPtcimObject(IAutomationCaseObject iaco) {
+	public PtcimObject(IAutomationCaseObject iaco) {
 		this.theIaco = iaco;
 	}
 
@@ -47,7 +47,7 @@ public class Com4jPtcimObject implements IAutomationCaseObject {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Com4jPtcimObject other = (Com4jPtcimObject) obj;
+		PtcimObject other = (PtcimObject) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -93,12 +93,12 @@ public class Com4jPtcimObject implements IAutomationCaseObject {
 		}
 	}
 	
-	public List<Com4jPtcimObject> wrapInCollection(Com4jPtcimObject owner, String association) {
-		return new Com4jPtcimCollection(this, owner, association);
+	public List<PtcimObject> wrapInCollection(PtcimObject owner, String association) {
+		return new PtcimCollection(this, owner, association);
 	}
 	
-	public Collection<Com4jPtcimObject> wrapInFilteredColleciton(String association) {
-		return new Com4jPtcimFilteredCollection(this, association);
+	public Collection<PtcimObject> wrapInFilteredColleciton(String association) {
+		return new PtcimFilteredCollection(this, association);
 	}
 
 	public void disconnect() {

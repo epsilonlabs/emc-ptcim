@@ -2,12 +2,12 @@ package org.eclipse.epsilon.emc.ptcim.com4j;
 
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 
-public class Com4jPtcimCachedPropertyGetter extends Com4jPtcimPropertyGetter {
+public class PtcimCachedPropertyGetter extends PtcimPropertyGetter {
 
 	/** The property manager. */		
- 	private final Com4jPtcimModel model;
+ 	private final PtcimModel model;
  	
- 	public Com4jPtcimCachedPropertyGetter(Com4jPtcimPropertyManager manager, Com4jPtcimModel model) {
+ 	public PtcimCachedPropertyGetter(PtcimPropertyManager manager, PtcimModel model) {
 		super.setManager(manager);
 		this.model = model;
 		//System.out.println("Just created a cached getter...");
@@ -18,7 +18,7 @@ public class Com4jPtcimCachedPropertyGetter extends Com4jPtcimPropertyGetter {
  	 */		
  	@Override		
  	public Object invoke(Object object, String property) throws EolRuntimeException {		
- 		String elementPropertyIdentifier = super.getManager().buildCachedElementPropertyIdentifier((Com4jPtcimObject) object, property);
+ 		String elementPropertyIdentifier = super.getManager().buildCachedElementPropertyIdentifier((PtcimObject) object, property);
  		Object o = model.propertiesValuesCache.get(elementPropertyIdentifier);		
  		if (o == null) {
  			//System.out.println("I didn't knew the property value...");

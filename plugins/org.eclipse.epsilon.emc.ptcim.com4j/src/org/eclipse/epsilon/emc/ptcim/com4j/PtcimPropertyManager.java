@@ -6,19 +6,19 @@ import java.util.List;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
-public class Com4jPtcimPropertyManager {
+public class PtcimPropertyManager {
 	
-	public static final Com4jPtcimPropertyManager INSTANCE = new Com4jPtcimPropertyManager();
+	public static final PtcimPropertyManager INSTANCE = new PtcimPropertyManager();
 	
 	private static final Object ASSOCIATION_ROLE = "Association";
 	
-	public Com4jPtcimPropertyManager getInstance() {
+	public PtcimPropertyManager getInstance() {
 		System.out.println("This runs with a normal property manager.");
 		return INSTANCE;
 	}
 	
-	public Com4jPtcimProperty getPtcProperty(Com4jPtcimObject object, String property) {
-		Com4jPtcimProperty prop = null;
+	public PtcimProperty getPtcProperty(PtcimObject object, String property) {
+		PtcimProperty prop = null;
 		String descriptors = (String) object.property("All Property Descriptors", null);
 		List<String> list = Arrays.asList(descriptors.split("\\n"));
 		for (String d : list) {
@@ -44,7 +44,7 @@ public class Com4jPtcimPropertyManager {
 				if (multy.contains("+")) {
 					isMultiple = true;
 				}
-				prop = new Com4jPtcimProperty(name, isPublic, readOnly, isMultiple, isAssociation);
+				prop = new PtcimProperty(name, isPublic, readOnly, isMultiple, isAssociation);
 				break;
 			}
 		}
@@ -66,11 +66,11 @@ public class Com4jPtcimPropertyManager {
  		return theString.replaceAll("\\s", "").toLowerCase();
  	}
 	
- 	public String buildCachedTypePropertyIdentifier(Com4jPtcimObject object, String property) {
- 		return ((Com4jPtcimObject) object).getType() + "." + property;
+ 	public String buildCachedTypePropertyIdentifier(PtcimObject object, String property) {
+ 		return ((PtcimObject) object).getType() + "." + property;
  	}
  	
- 	public String buildCachedElementPropertyIdentifier(Com4jPtcimObject object, String property) {
- 		return ((Com4jPtcimObject) object).getId() + "." + property;
+ 	public String buildCachedElementPropertyIdentifier(PtcimObject object, String property) {
+ 		return ((PtcimObject) object).getId() + "." + property;
  	}
 }

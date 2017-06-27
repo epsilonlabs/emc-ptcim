@@ -18,12 +18,12 @@ import java.util.concurrent.ForkJoinPool;
 
 import org.eclipse.epsilon.common.dt.launching.dialogs.AbstractCachedModelConfigurationDialog;
 import org.eclipse.epsilon.emc.ptcim.com4j.ClassFactory;
-import org.eclipse.epsilon.emc.ptcim.com4j.Com4jPtcimCollection;
-import org.eclipse.epsilon.emc.ptcim.com4j.Com4jPtcimFileDialog;
-import org.eclipse.epsilon.emc.ptcim.com4j.Com4jPtcimFrameworkFactory;
-import org.eclipse.epsilon.emc.ptcim.com4j.Com4jPtcimModel;
-import org.eclipse.epsilon.emc.ptcim.com4j.Com4jPtcimModelManager;
-import org.eclipse.epsilon.emc.ptcim.com4j.Com4jPtcimObject;
+import org.eclipse.epsilon.emc.ptcim.com4j.PtcimCollection;
+import org.eclipse.epsilon.emc.ptcim.com4j.PtcimFileDialog;
+import org.eclipse.epsilon.emc.ptcim.com4j.PtcimFrameworkFactory;
+import org.eclipse.epsilon.emc.ptcim.com4j.PtcimModel;
+import org.eclipse.epsilon.emc.ptcim.com4j.PtcimModelManager;
+import org.eclipse.epsilon.emc.ptcim.com4j.PtcimObject;
 import org.eclipse.epsilon.emc.ptcim.com4j.IAutomationCaseObject;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.swt.SWT;
@@ -48,7 +48,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 
 	public static final String ATT_CLASS = "class";
 
-	private Com4jPtcimFrameworkFactory factory;
+	private PtcimFrameworkFactory factory;
 
 	protected Label fileTextLabel;
 	protected Text fileText;
@@ -78,13 +78,13 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	private Button propertiesValuesCacheEnabledCheckbox;
 	private Label propertiesValuesCacheEnabledLabel;
 
-	Com4jPtcimModelManager manager = null;
+	PtcimModelManager manager = null;
 
 	private GridData twoCol;
 	private IAutomationCaseObject projects;
 	boolean isConnected = false;
 	public PtcimModelConfigurationDialog() {
-		factory = new Com4jPtcimFrameworkFactory();
+		factory = new PtcimFrameworkFactory();
 		try {
 			factory.startup();
 		} catch (EolInternalException e) {
@@ -96,8 +96,8 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 				@Override
 				public void run() {
 					projects = ClassFactory.createCCaseProjects();
-					if (Com4jPtcimFileDialog.dialog == null) {
-						Com4jPtcimFileDialog.dialog = ClassFactory.createArtisanModelFileDialog();
+					if (PtcimFileDialog.dialog == null) {
+						PtcimFileDialog.dialog = ClassFactory.createArtisanModelFileDialog();
 					}
 					isConnected = true;
 				}
@@ -144,7 +144,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 			public void handleEvent(Event event) {
 				selectedElementIdText.setText("");
 				if (manager != null) {
-					Com4jPtcimObject ap = null;
+					PtcimObject ap = null;
 					try {
 						ap = manager.getActiveProject();
 					} catch (EolInternalException e) {
@@ -152,21 +152,21 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 								+ " desired model loaded, and that an element is selected.");
 					}
 					if (ap != null) {
-						Com4jPtcimCollection selection = null;
+						PtcimCollection selection = null;
 						try {
 							selection = manager.getActiveItems();
 						} catch (EolInternalException e1) {
 							showErrorMsg("Failed to connect to the PTC IM Modeler.");
 						}
 						if (selection != null) {
-							Iterator<Com4jPtcimObject> it = selection.iterator();
+							Iterator<PtcimObject> it = selection.iterator();
 							boolean seletionExists = true;
 							if (!it.hasNext()) {
 								showErrorMsg("There is no element selected.");
 								seletionExists = false;
 							}
 							if (seletionExists) {
-								Com4jPtcimObject current = it.next();
+								PtcimObject current = it.next();
 								Object id = null;
 								Object name = null;
 								Object type = null;
@@ -261,7 +261,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 
 			@Override
 			public void handleEvent(Event event) {
-				Com4jPtcimFileDialog diag;
+				PtcimFileDialog diag;
 				try {
 					diag = factory.getFileDialogManager(o);
 				} catch (EolInternalException e1) {
@@ -389,26 +389,26 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		super.loadProperties();
 		if (properties == null)
 			return;
-		referenceText.setText(properties.getProperty(Com4jPtcimModel.PROPERTY_MODEL_REFERENCE));
+		referenceText.setText(properties.getProperty(PtcimModel.PROPERTY_MODEL_REFERENCE));
 		System.out.println("Reference text: " + referenceText);
-		serverText.setText(properties.getProperty(Com4jPtcimModel.PROPERTY_SERVER_NAME));
-		repositoryText.setText(properties.getProperty(Com4jPtcimModel.PROPERTY_REPOSITORY_NAME));
-		versionText.setText(properties.getProperty(Com4jPtcimModel.PROPERTY_VERSION_NUMBER));
-		boolean fromSelection = properties.getBooleanProperty(Com4jPtcimModel.PROPERTY_FROM_SELECTION, false);
+		serverText.setText(properties.getProperty(PtcimModel.PROPERTY_SERVER_NAME));
+		repositoryText.setText(properties.getProperty(PtcimModel.PROPERTY_REPOSITORY_NAME));
+		versionText.setText(properties.getProperty(PtcimModel.PROPERTY_VERSION_NUMBER));
+		boolean fromSelection = properties.getBooleanProperty(PtcimModel.PROPERTY_FROM_SELECTION, false);
 		fromSelectionCheckbox.setSelection(fromSelection);
 		enableElementId(fromSelection);
-		selectedElementIdText.setText(properties.getProperty(Com4jPtcimModel.PROPERTY_ELEMENT_ID));
+		selectedElementIdText.setText(properties.getProperty(PtcimModel.PROPERTY_ELEMENT_ID));
 		selectedElementNameAndTypeTextLabel
-				.setText(properties.getProperty(Com4jPtcimModel.PROPERTY_ELEMENT_NAME_AND_TYPE));
+				.setText(properties.getProperty(PtcimModel.PROPERTY_ELEMENT_NAME_AND_TYPE));
 		boolean propertiesAttributesCacheEnabledSelection = properties
-				.getBooleanProperty(Com4jPtcimModel.PROPERTY_PROPERTIES_ATTRIBUTES_CACHE_ENABLED, false);
+				.getBooleanProperty(PtcimModel.PROPERTY_PROPERTIES_ATTRIBUTES_CACHE_ENABLED, false);
 		propertiesAttributesCacheEnabledCheckbox.setSelection(propertiesAttributesCacheEnabledSelection);
 		boolean propertiesValuesCacheEnabledSelection = properties
-				.getBooleanProperty(Com4jPtcimModel.PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED, false);
+				.getBooleanProperty(PtcimModel.PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED, false);
 		propertiesValuesCacheEnabledCheckbox.setSelection(propertiesValuesCacheEnabledSelection);
 	}
 
-	private String setProjectPropertiesText(Com4jPtcimObject ap) {
+	private String setProjectPropertiesText(PtcimObject ap) {
 		// Get current project information
 		String ref = null;
 		ref = (String) ap.property("Reference", null);
@@ -434,21 +434,21 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	 */
 	protected void storeProperties() {
 		super.storeProperties();
-		properties.put(Com4jPtcimModel.PROPERTY_MODEL_REFERENCE, referenceText.getText());
-		properties.put(Com4jPtcimModel.PROPERTY_SERVER_NAME, serverText.getText());
-		properties.put(Com4jPtcimModel.PROPERTY_REPOSITORY_NAME, repositoryText.getText());
-		properties.put(Com4jPtcimModel.PROPERTY_VERSION_NUMBER, versionText.getText());
+		properties.put(PtcimModel.PROPERTY_MODEL_REFERENCE, referenceText.getText());
+		properties.put(PtcimModel.PROPERTY_SERVER_NAME, serverText.getText());
+		properties.put(PtcimModel.PROPERTY_REPOSITORY_NAME, repositoryText.getText());
+		properties.put(PtcimModel.PROPERTY_VERSION_NUMBER, versionText.getText());
 		String fromSelection = Boolean.toString(fromSelectionCheckbox.getSelection());
-		properties.put(Com4jPtcimModel.PROPERTY_FROM_SELECTION, fromSelection);
-		properties.put(Com4jPtcimModel.PROPERTY_ELEMENT_ID, selectedElementIdText.getText());
-		properties.put(Com4jPtcimModel.PROPERTY_ELEMENT_NAME_AND_TYPE, selectedElementNameAndTypeTextLabel.getText());
+		properties.put(PtcimModel.PROPERTY_FROM_SELECTION, fromSelection);
+		properties.put(PtcimModel.PROPERTY_ELEMENT_ID, selectedElementIdText.getText());
+		properties.put(PtcimModel.PROPERTY_ELEMENT_NAME_AND_TYPE, selectedElementNameAndTypeTextLabel.getText());
 		String propertiesAttributesCacheEnabledSelection = Boolean
 				.toString(propertiesAttributesCacheEnabledCheckbox.getSelection());
-		properties.put(Com4jPtcimModel.PROPERTY_PROPERTIES_ATTRIBUTES_CACHE_ENABLED,
+		properties.put(PtcimModel.PROPERTY_PROPERTIES_ATTRIBUTES_CACHE_ENABLED,
 				propertiesAttributesCacheEnabledSelection);
 		String propertiesValuesCacheEnabledSelection = Boolean
 				.toString(propertiesValuesCacheEnabledCheckbox.getSelection());
-		properties.put(Com4jPtcimModel.PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED, propertiesValuesCacheEnabledSelection);
+		properties.put(PtcimModel.PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED, propertiesValuesCacheEnabledSelection);
 	}
 
 	// When the user has selected the model from the PTC IM model explorer, the observable object notifies this observer and the update method is called.

@@ -15,7 +15,7 @@ package org.eclipse.epsilon.emc.ptcim.com4j;
  * The Class PtcProperty is used to access PTC IM properties, using their characteristics
  * (multiplicity, visibility, etc.) to return the correct Java wrapper objects. 
  */
-public class Com4jPtcimProperty {
+public class PtcimProperty {
 	
 		/** The name. */
 		private final String name;
@@ -41,7 +41,7 @@ public class Com4jPtcimProperty {
 		 * @param isMultiple the is multiple
 		 * @param isAssociation the is association
 		 */
-		public Com4jPtcimProperty(String name, boolean isPublic, boolean readOnly, boolean isMultiple, boolean isAssociation) {
+		public PtcimProperty(String name, boolean isPublic, boolean readOnly, boolean isMultiple, boolean isAssociation) {
 			super();
 			this.name = name;
 			this.isPublic = isPublic;

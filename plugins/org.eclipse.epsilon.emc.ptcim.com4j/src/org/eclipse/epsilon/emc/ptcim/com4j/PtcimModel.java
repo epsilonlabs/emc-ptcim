@@ -36,7 +36,7 @@ import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 /**
  * The Class PtcimModel provides the EMC access to PTC Intregity Modeler models.
  */
-public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
+public class PtcimModel extends CachedModel<PtcimObject> {
 
 	/** The Constant PROPERTY_MODEL_REFERENCE refers to the name of the model in the PTC IM database. */
 	public static final String PROPERTY_MODEL_REFERENCE = "modelRef";
@@ -69,15 +69,15 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	public static final String PROPERTY_ELEMENT_NAME_AND_TYPE = "elementNameAndType";
 	
 	/**  The Project, needed for type testing and instantiation. */ 
-	private Com4jPtcimObject theProject;
+	private PtcimObject theProject;
 	
 	private boolean isInitialized = false;
 	
 	/**  The PTC IM Model handle. */
-	private Com4jPtcimObject model = null;
+	private PtcimObject model = null;
 	
 	/** The property manager class includes utility methods for both the getter and the setter. */
-	private Com4jPtcimPropertyManager manager; //Activator.getDefault().getFactory().getPropertyManager(isPropertiesAttributesCacheEnabled());
+	private PtcimPropertyManager manager; //Activator.getDefault().getFactory().getPropertyManager(isPropertiesAttributesCacheEnabled());
 	
 	/** The getter. One getter per model. */
 	private AbstractPropertyGetter getter = null; //new PtcimPropertyGetter(manager);
@@ -90,7 +90,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	 */
 	public WeakHashMap<String, Object> propertiesValuesCache = new WeakHashMap<String, Object>();
 	
-	public Com4jPtcimFrameworkFactory factory = new Com4jPtcimFrameworkFactory();
+	public PtcimFrameworkFactory factory = new PtcimFrameworkFactory();
 
 	private String modelId;
 	private String server;
@@ -148,7 +148,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	/**
 	 * Instantiates a new artisan model. Gets the COM helpers from the extension
 	 */
-	public Com4jPtcimModel() {
+	public PtcimModel() {
 		isInitialized = true;
 	}
 
@@ -156,12 +156,12 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#allContentsFromModel()
 	 */
 	@Override
-	protected Collection<Com4jPtcimObject> allContentsFromModel() {
+	protected Collection<PtcimObject> allContentsFromModel() {
 		assert model != null;
-		Collection<Com4jPtcimObject> elements;
-		Com4jPtcimObject res = new Com4jPtcimObject(model.items("", null).queryInterface(IAutomationCaseObject.class));
+		Collection<PtcimObject> elements;
+		PtcimObject res = new PtcimObject(model.items("", null).queryInterface(IAutomationCaseObject.class));
 		elements = res.wrapInCollection(model, "");
-		return (Collection<Com4jPtcimObject>) elements;
+		return (Collection<PtcimObject>) elements;
 	}
 	
 	/**
@@ -188,7 +188,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 		Object newInstance = null;
 		Iterator<Object> it = parameters.iterator();
 		Object parent = it.next();
-		Com4jPtcimObject comParent = (Com4jPtcimObject) parent;
+		PtcimObject comParent = (PtcimObject) parent;
 		if (parameters.size() == 1) {		// Add
 			try {
 				newInstance = comParent.add(type, null);
@@ -219,7 +219,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	 * @throws EolNotInstantiableModelElementTypeException the eol not instantiable model element type exception
 	 */
 	@Override
-	protected Com4jPtcimObject createInstanceInModel(String type)
+	protected PtcimObject createInstanceInModel(String type)
 			throws EolModelElementTypeNotFoundException, EolNotInstantiableModelElementTypeException {
 		if (!isInstantiable(type)) {
 			throw new EolNotInstantiableModelElementTypeException(getName(), type);
@@ -231,7 +231,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 		} catch (EolInternalException e) {
 			throw new EolModelElementTypeNotFoundException(getName(), type);
 		}
-		return (Com4jPtcimObject) newInstance;
+		return (PtcimObject) newInstance;
 	}
 	
 	/**
@@ -249,9 +249,9 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	 */
 	@Override
 	protected boolean deleteElementInModel(Object instance) throws EolRuntimeException {
-		assert instance instanceof Com4jPtcimObject;
+		assert instance instanceof PtcimObject;
 		boolean success = false;
-		((Com4jPtcimObject) instance).delete();
+		((PtcimObject) instance).delete();
 		success = true;
 		return success;
 	}
@@ -278,7 +278,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	 * @throws EolModelElementTypeNotFoundException the eol model element type not found exception
 	 */
 	@Override
-	public Collection<Com4jPtcimObject> getAllOfKindFromModel(String kind) throws EolModelElementTypeNotFoundException {
+	public Collection<PtcimObject> getAllOfKindFromModel(String kind) throws EolModelElementTypeNotFoundException {
 		return getAllOfTypeFromModel(kind);
 	}
 	
@@ -286,29 +286,29 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	 * @see org.eclipse.epsilon.eol.models.CachedModel#getAllOfType(java.lang.String)
 	 */
 	@Override
-	public Collection<Com4jPtcimObject> getAllOfTypeFromModel(String type) throws EolModelElementTypeNotFoundException {
+	public Collection<PtcimObject> getAllOfTypeFromModel(String type) throws EolModelElementTypeNotFoundException {
 		assert model != null;
 		if (!fromSelection) {
-			List<? extends Com4jPtcimObject> elements;
-			Com4jPtcimObject res;
-			res = new Com4jPtcimObject(model.items(type, null).queryInterface(IAutomationCaseObject.class));	//, byRefArgs);
+			List<? extends PtcimObject> elements;
+			PtcimObject res;
+			res = new PtcimObject(model.items(type, null).queryInterface(IAutomationCaseObject.class));	//, byRefArgs);
 			elements = res.wrapInCollection(model, type);
-			return (List<Com4jPtcimObject>) elements;
+			return (List<PtcimObject>) elements;
 		}
 		else {
 			if ("Package".equals(type)) {	// Important: When you retrieve the type of a Package, it is returned as Category.
 				type = "Category";
 			}
-			Com4jPtcimObject root = (Com4jPtcimObject) getElementById(selectedElementId);
-			List<Com4jPtcimObject> result = getOwnedContents(root, type);
+			PtcimObject root = (PtcimObject) getElementById(selectedElementId);
+			List<PtcimObject> result = getOwnedContents(root, type);
 			return result;
 		}
 	}
 	
-	private List<Com4jPtcimObject> getOwnedContents(Com4jPtcimObject root, String type) throws EolModelElementTypeNotFoundException {
+	private List<PtcimObject> getOwnedContents(PtcimObject root, String type) throws EolModelElementTypeNotFoundException {
 		String rootType = null;
 		rootType = (String) root.property("Type", null);
-		List<Com4jPtcimObject> result = new ArrayList<Com4jPtcimObject>();
+		List<PtcimObject> result = new ArrayList<PtcimObject>();
 		if ("Category".equals(rootType)) {	// Root is a package
 			String asocName = "Package Item";
 			result.addAll(associationToListRecursive(root, type, asocName));
@@ -316,41 +316,41 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 		else {
 			// TODO Other types may need specific associations to get the contents
 			String asocName = "Owned Contents";
-			List<Com4jPtcimObject> ownedContents = associationToList(root, asocName);
+			List<PtcimObject> ownedContents = associationToList(root, asocName);
 			result.addAll(filterByType(ownedContents, type));
 		}
 		return result;
 	}
 	
-	private List<Com4jPtcimObject> associationToListRecursive(Com4jPtcimObject root, String type, String asocName)
+	private List<PtcimObject> associationToListRecursive(PtcimObject root, String type, String asocName)
 			throws EolModelElementTypeNotFoundException {
 		
-		List<Com4jPtcimObject> ownedContents = associationToList(root, asocName);
-		List<Com4jPtcimObject> result = filterByType(ownedContents, type);
-		for (Com4jPtcimObject e : ownedContents) {
+		List<PtcimObject> ownedContents = associationToList(root, asocName);
+		List<PtcimObject> result = filterByType(ownedContents, type);
+		for (PtcimObject e : ownedContents) {
 			result.addAll(getOwnedContents(e, type));
 		}
 		return result;
 	}
 
-	private List<Com4jPtcimObject> associationToList(Com4jPtcimObject root, String asocName)
+	private List<PtcimObject> associationToList(PtcimObject root, String asocName)
 			throws EolModelElementTypeNotFoundException {
 		
 		List<Object> args = new ArrayList<Object>();
 		args.add(asocName);
-		Com4jPtcimObject res = null;
-		res = new Com4jPtcimObject(root.items(asocName, null).queryInterface(IAutomationCaseObject.class));
+		PtcimObject res = null;
+		res = new PtcimObject(root.items(asocName, null).queryInterface(IAutomationCaseObject.class));
 		if (res != null) {
 			return res.wrapInCollection(root, asocName);
 		}
 		return Collections.emptyList();
 	}
 
-	private List<Com4jPtcimObject>  filterByType(List<Com4jPtcimObject> ptcCollection, String type) {
-		List<Com4jPtcimObject> result = new ArrayList<Com4jPtcimObject>();
-		Iterator<Com4jPtcimObject> it = ptcCollection.iterator();
+	private List<PtcimObject>  filterByType(List<PtcimObject> ptcCollection, String type) {
+		List<PtcimObject> result = new ArrayList<PtcimObject>();
+		Iterator<PtcimObject> it = ptcCollection.iterator();
 		while (it.hasNext()) {
-			Com4jPtcimObject e = it.next();
+			PtcimObject e = it.next();
 			Object etype = null;
 			etype = e.property("Type", null);
 			if (type.equals(etype)) {
@@ -386,11 +386,11 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	@Override
 	public Object getElementById(String id) {
 		Com4jObject res_ = null;
-		Com4jPtcimObject res = null;
+		PtcimObject res = null;
 		try {
 			res_ = theProject.itemByID(id);
 			if (res_ != null) {
-				res = new Com4jPtcimObject(res_.queryInterface(IAutomationCaseObject.class));
+				res = new PtcimObject(res_.queryInterface(IAutomationCaseObject.class));
 				if (res != null)
 					res.setId(id);
 			}
@@ -405,11 +405,11 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	 */
 	@Override
 	public String getElementId(Object instance) {
-		assert instance instanceof Com4jPtcimObject;
-		String id = ((Com4jPtcimObject) instance).getId();
+		assert instance instanceof PtcimObject;
+		String id = ((PtcimObject) instance).getId();
 		if (id == null) {
-			id = (String) ((Com4jPtcimObject) instance).property("Id", null);
-			((Com4jPtcimObject) instance).setId(id);
+			id = (String) ((PtcimObject) instance).property("Id", null);
+			((PtcimObject) instance).setId(id);
 		}
 		return id;
 	}
@@ -456,7 +456,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 		return getter;
 	}
 
-	protected Com4jPtcimPropertyManager getPropertyManager() {
+	protected PtcimPropertyManager getPropertyManager() {
 		return factory.getPropertyManager(isPropertiesAttributesCacheEnabled());
 	}
 
@@ -473,9 +473,9 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	 */
 	@Override
 	public String getTypeNameOf(Object instance) {
-		assert instance instanceof Com4jPtcimObject;
+		assert instance instanceof PtcimObject;
 		String typeName;
-		typeName = (String) ((Com4jPtcimObject) instance).property("Type", null);
+		typeName = (String) ((PtcimObject) instance).property("Type", null);
 		return typeName;
 	}
 
@@ -516,7 +516,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	 */
 	@Override
 	public boolean isOfType(Object instance, String metaClass) throws EolModelElementTypeNotFoundException {
-		assert instance instanceof Com4jPtcimObject;
+		assert instance instanceof PtcimObject;
 		String type = getTypeNameOf(instance);
 		return metaClass.equals(type);
 	}
@@ -537,17 +537,17 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 		propertiesValuesCacheEnabled = properties.getBooleanProperty(PROPERTY_PROPERTIES_VALUES_CACHE_ENABLED, false);
 		manager = factory.getPropertyManager(isPropertiesAttributesCacheEnabled());
 		if (isPropertiesValuesCacheEnabled()) {
-			getter = new Com4jPtcimCachedPropertyGetter(manager, this);
-			setter = new Com4jPtcimCachedPropertySetter(manager, this);
+			getter = new PtcimCachedPropertyGetter(manager, this);
+			setter = new PtcimCachedPropertySetter(manager, this);
 		} else {
-			getter = new Com4jPtcimPropertyGetter(manager);
-			setter = new Com4jPtcimPropertySetter(manager);
+			getter = new PtcimPropertyGetter(manager);
+			setter = new PtcimPropertySetter(manager);
 		}
 		load();
 	}
 	
 	public void loadDictionary() throws EolModelLoadingException {
-		model = new Com4jPtcimObject(theProject.item("Dictionary", "Dictionary").queryInterface(IAutomationCaseObject.class));
+		model = new PtcimObject(theProject.item("Dictionary", "Dictionary").queryInterface(IAutomationCaseObject.class));
 	}
 
 	/* (non-Javadoc)
@@ -557,7 +557,7 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	protected void loadModel() throws EolModelLoadingException {
 		if (isInitialized()) {
 
-			Com4jPtcimModelManager manager;
+			PtcimModelManager manager;
 			try {
 				manager = factory.getModelManager(false);
 			} catch (EolInternalException e1) {
@@ -589,11 +589,11 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	 */
 	@Override
 	public boolean owns(Object instance) {
-		if (instance instanceof Com4jPtcimObject) {
-			if (((Com4jPtcimObject) instance).getId() == null) {
+		if (instance instanceof PtcimObject) {
+			if (((PtcimObject) instance).getId() == null) {
 				throw new IllegalStateException("COMObjects can not be found without an Id");
 			}
-			Object other = getElementById(((Com4jPtcimObject) instance).getId());
+			Object other = getElementById(((PtcimObject) instance).getId());
 			return other != null;
 		}
 		return false;
@@ -612,8 +612,8 @@ public class Com4jPtcimModel extends CachedModel<Com4jPtcimObject> {
 	 * @throws EpsilonCOMException
 	 */
 	private void setNewInstanceId(Object newInstance) throws EolInternalException {
-		String id = (String) ((Com4jPtcimObject) newInstance).property("Id", null);
-		((Com4jPtcimObject) newInstance).setId(id);
+		String id = (String) ((PtcimObject) newInstance).property("Id", null);
+		((PtcimObject) newInstance).setId(id);
 	}
 	
 	/* (non-Javadoc)

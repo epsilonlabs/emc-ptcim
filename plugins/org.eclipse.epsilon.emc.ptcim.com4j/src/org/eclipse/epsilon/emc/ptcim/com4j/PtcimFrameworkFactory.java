@@ -16,18 +16,18 @@ import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
 import com4j.NativeType;
 
-public class Com4jPtcimFrameworkFactory {
+public class PtcimFrameworkFactory {
 	
-	private Com4jPtcimModelManager modelManager = new Com4jPtcimModelManager();
-	private Com4jPtcimUserInterface userInterface = new Com4jPtcimUserInterface();
-	private Com4jPtcimFileDialog fileDialog = new Com4jPtcimFileDialog();
+	private PtcimModelManager modelManager = new PtcimModelManager();
+	private PtcimUserInterface userInterface = new PtcimUserInterface();
+	private PtcimFileDialog fileDialog = new PtcimFileDialog();
 	
-	public Com4jPtcimFileDialog getFileDialogManager(Observer o) throws EolInternalException {
+	public PtcimFileDialog getFileDialogManager(Observer o) throws EolInternalException {
 		fileDialog.connect(o);
 		return fileDialog;
 	}
 
-	public Com4jPtcimModelManager getModelManager(boolean fromUI) throws EolInternalException {
+	public PtcimModelManager getModelManager(boolean fromUI) throws EolInternalException {
 		modelManager.connect(fromUI);
 		return modelManager;
 	}
@@ -53,11 +53,11 @@ public class Com4jPtcimFrameworkFactory {
 		}
 	}
 
-	public Com4jPtcimPropertyManager getPropertyManager(boolean cache) {
+	public PtcimPropertyManager getPropertyManager(boolean cache) {
 		if (cache) {
-			return (Com4jPtcimCachedPropertyManager) new Com4jPtcimCachedPropertyManager();
+			return (PtcimCachedPropertyManager) new PtcimCachedPropertyManager();
 		} else {
-			return (Com4jPtcimPropertyManager) new Com4jPtcimPropertyManager();
+			return (PtcimPropertyManager) new PtcimPropertyManager();
 		}
 	}
 

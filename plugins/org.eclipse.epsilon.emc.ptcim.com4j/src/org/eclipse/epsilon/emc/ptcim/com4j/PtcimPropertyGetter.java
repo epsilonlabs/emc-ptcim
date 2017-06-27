@@ -3,27 +3,27 @@
  import java.util.ArrayList;		
  import java.util.List;		
  		
- import org.eclipse.epsilon.emc.ptcim.com4j.Com4jPtcimProperty;	
+ import org.eclipse.epsilon.emc.ptcim.com4j.PtcimProperty;	
  import org.eclipse.epsilon.eol.exceptions.EolInternalException;
  import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;		
  import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter;		
  		
- public class Com4jPtcimPropertyGetter extends AbstractPropertyGetter {		
+ public class PtcimPropertyGetter extends AbstractPropertyGetter {		
  		
  	/** The manager. */		
- 	private Com4jPtcimPropertyManager manager;
+ 	private PtcimPropertyManager manager;
  	
- 	public Com4jPtcimPropertyManager getManager() {
+ 	public PtcimPropertyManager getManager() {
 		return manager;
 	}
 
-	public void setManager(Com4jPtcimPropertyManager manager) {
+	public void setManager(PtcimPropertyManager manager) {
 		this.manager = manager;
 	}
 
-	public Com4jPtcimPropertyGetter() {}
+	public PtcimPropertyGetter() {}
  	
- 	public Com4jPtcimPropertyGetter(Com4jPtcimPropertyManager manager) {
+ 	public PtcimPropertyGetter(PtcimPropertyManager manager) {
  		//System.out.println("Just created a normal getter...");
 		this.manager = manager;
 	}
@@ -33,10 +33,10 @@
  	 */		
  	@Override		
  	public Object invoke(Object object, String property) throws EolRuntimeException {		
- 		Com4jPtcimObject jObject = (Com4jPtcimObject) object;		
+ 		PtcimObject jObject = (PtcimObject) object;		
  		Object o = null;		
  		try {		
- 			Com4jPtcimProperty p = manager.getPtcProperty(jObject, property);		
+ 			PtcimProperty p = manager.getPtcProperty(jObject, property);		
  			if (p == null) {		
  				throw new EolRuntimeException("No such property");		
  			}		
@@ -44,17 +44,17 @@
  				List<Object> args = new ArrayList<Object>();		
  				args.add(property);		
  				if (p.isMultiple()) {		
- 					Com4jPtcimCollection elements;		
- 					Object res = new Com4jPtcimObject(jObject.items(property, null).queryInterface(IAutomationCaseObject.class));		
-					assert res instanceof Com4jPtcimObject;		
-					elements = new Com4jPtcimCollection((Com4jPtcimObject) res, jObject, property);		
+ 					PtcimCollection elements;		
+ 					Object res = new PtcimObject(jObject.items(property, null).queryInterface(IAutomationCaseObject.class));		
+					assert res instanceof PtcimObject;		
+					elements = new PtcimCollection((PtcimObject) res, jObject, property);		
  					o = elements;		
  				}		
  				else {		
- 					o = new Com4jPtcimObject(jObject.item(property, null).queryInterface(IAutomationCaseObject.class));		
-					if ( o instanceof Com4jPtcimObject) {		
-						String strId = (String) ((Com4jPtcimObject) o).property("Id", null);		
-						((Com4jPtcimObject) o).setId(strId);		
+ 					o = new PtcimObject(jObject.item(property, null).queryInterface(IAutomationCaseObject.class));		
+					if ( o instanceof PtcimObject) {		
+						String strId = (String) ((PtcimObject) o).property("Id", null);		
+						((PtcimObject) o).setId(strId);		
 					}		
  				}		
  			}		
@@ -72,9 +72,9 @@
  	 */		
  	@Override		
  	public boolean hasProperty(Object object, String property) {		
- 		assert object instanceof Com4jPtcimObject;		
- 		Com4jPtcimObject jObject = (Com4jPtcimObject) object;		
- 		Com4jPtcimProperty p = manager.getPtcProperty(jObject, property);		
+ 		assert object instanceof PtcimObject;		
+ 		PtcimObject jObject = (PtcimObject) object;		
+ 		PtcimProperty p = manager.getPtcProperty(jObject, property);		
  		return p != null;		
  	}		
  }

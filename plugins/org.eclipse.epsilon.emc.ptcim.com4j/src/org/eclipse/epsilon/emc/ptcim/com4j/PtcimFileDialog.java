@@ -9,7 +9,7 @@ import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
 import com4j.Holder;
 
-public class Com4jPtcimFileDialog extends Observable{
+public class PtcimFileDialog extends Observable{
 	
 	/**
 	 * The ArtisanModelFileDialog COM object

@@ -9,25 +9,25 @@ import org.eclipse.epsilon.eol.exceptions.EolReadOnlyPropertyException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;		
 import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertySetter;		
 		
-public class Com4jPtcimPropertySetter extends AbstractPropertySetter {		
+public class PtcimPropertySetter extends AbstractPropertySetter {		
 		
 	/** The property  manager. */		
-	private Com4jPtcimPropertyManager manager;
+	private PtcimPropertyManager manager;
 	
-	public Com4jPtcimPropertyManager getManager() {
+	public PtcimPropertyManager getManager() {
 		return manager;
 	}
 
-	public void setManager(Com4jPtcimPropertyManager manager) {
+	public void setManager(PtcimPropertyManager manager) {
 		this.manager = manager;
 	}
 
 	/** The COM property. */		
-	private Com4jPtcimProperty comProperty;		
+	private PtcimProperty comProperty;		
 	
-	public Com4jPtcimPropertySetter() {}
+	public PtcimPropertySetter() {}
 	
-	public Com4jPtcimPropertySetter(Com4jPtcimPropertyManager manager) {
+	public PtcimPropertySetter(PtcimPropertyManager manager) {
 		//System.out.println("Just created a normal setter...");
 		this.manager = manager;
 	}
@@ -38,7 +38,7 @@ public class Com4jPtcimPropertySetter extends AbstractPropertySetter {
 	@Override		
 	public void invoke(Object value) throws EolRuntimeException {		
 		
-		comProperty = manager.getPtcProperty((Com4jPtcimObject) object, property);		
+		comProperty = manager.getPtcProperty((PtcimObject) object, property);		
 		if (comProperty != null) {		
 			super.setProperty(property);		
 		}		
@@ -52,13 +52,13 @@ public class Com4jPtcimPropertySetter extends AbstractPropertySetter {
 			throw new EolReadOnlyPropertyException();		
 		}		
 		if (comProperty.isAssociation()) {		
-			if (!(value instanceof Com4jPtcimObject)) {		
+			if (!(value instanceof PtcimObject)) {		
 				throw new EolRuntimeException("Association (0..1) properties' values must be COM objects.");		
 			}		
-			((Com4jPtcimObject) object).add(comProperty.getName(), value);		
+			((PtcimObject) object).add(comProperty.getName(), value);		
 		}		
 		else {		
-			((Com4jPtcimObject) object).propertySet(comProperty.getName(), 0, value);		
+			((PtcimObject) object).propertySet(comProperty.getName(), 0, value);		
 		}		
 	}		
 }

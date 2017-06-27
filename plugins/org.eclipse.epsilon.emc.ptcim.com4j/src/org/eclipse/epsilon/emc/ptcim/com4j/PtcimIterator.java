@@ -15,15 +15,15 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
-public class Com4jPtcimIterator implements Iterator<Com4jPtcimObject> {
+public class PtcimIterator implements Iterator<PtcimObject> {
 	
 	/**
 	 * The object that points to the collection.
 	 */
-	private final Com4jPtcimObject source;
+	private final PtcimObject source;
 	
 	/** The next object returned from {@link #next()}. */
-	private Com4jPtcimObject next;
+	private PtcimObject next;
 	
 	/**
 	 * Instantiates a new iterator.
@@ -32,7 +32,7 @@ public class Com4jPtcimIterator implements Iterator<Com4jPtcimObject> {
 	 * @param owner the owner
 	 * @param association the association
 	 */
-	public Com4jPtcimIterator(Com4jPtcimObject source) {
+	public PtcimIterator(PtcimObject source) {
 		super();
 		this.source = source;
 		// Make sure the iterator is at the beginning of the collection
@@ -54,8 +54,8 @@ public class Com4jPtcimIterator implements Iterator<Com4jPtcimObject> {
 	 * @see java.util.Iterator#next()
 	 */
 	@Override
-	public Com4jPtcimObject next() {
-		next = new Com4jPtcimObject(source.nextItem().queryInterface(IAutomationCaseObject.class));
+	public PtcimObject next() {
+		next = new PtcimObject(source.nextItem().queryInterface(IAutomationCaseObject.class));
 		String strId = (String) next.property("Id", null);
 		next.setId(strId);
 		return next;

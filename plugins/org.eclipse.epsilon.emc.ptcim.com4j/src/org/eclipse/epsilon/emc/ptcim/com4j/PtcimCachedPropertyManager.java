@@ -7,24 +7,24 @@ import java.util.WeakHashMap;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
-public class Com4jPtcimCachedPropertyManager extends Com4jPtcimPropertyManager {
+public class PtcimCachedPropertyManager extends PtcimPropertyManager {
 	
-public static final Com4jPtcimCachedPropertyManager INSTANCE = new Com4jPtcimCachedPropertyManager();
+public static final PtcimCachedPropertyManager INSTANCE = new PtcimCachedPropertyManager();
 	
 	private static final Object ASSOCIATION_ROLE = "Association";
 	
-	public Com4jPtcimCachedPropertyManager getInstance() {
+	public PtcimCachedPropertyManager getInstance() {
 		System.out.println("This runs with a cached property manager.");
 		return INSTANCE;
 	}
 	
-	public WeakHashMap<String, Com4jPtcimProperty> elementPropertiesNamesCache = new WeakHashMap<String, Com4jPtcimProperty>();
+	public WeakHashMap<String, PtcimProperty> elementPropertiesNamesCache = new WeakHashMap<String, PtcimProperty>();
 	
-	public Com4jPtcimProperty getPtcProperty(Com4jPtcimObject object, String property) {
+	public PtcimProperty getPtcProperty(PtcimObject object, String property) {
 		List<Object> args = new ArrayList<Object>();
 		args.add("All Property Descriptors");
 		String descriptors = null;
-		Com4jPtcimProperty prop = null;
+		PtcimProperty prop = null;
 		String typeDotPropertyNameId = buildCachedTypePropertyIdentifier(object, property);
 		prop = elementPropertiesNamesCache.get(typeDotPropertyNameId);
 		if (prop == null) {
@@ -53,7 +53,7 @@ public static final Com4jPtcimCachedPropertyManager INSTANCE = new Com4jPtcimCac
 					if (multy.contains("+")) {
 						isMultiple = true;
 					}
-					prop = new Com4jPtcimProperty(name, isPublic, readOnly, isMultiple, isAssociation);
+					prop = new PtcimProperty(name, isPublic, readOnly, isMultiple, isAssociation);
 					elementPropertiesNamesCache.put(buildCachedTypePropertyIdentifier(object, property), prop);
 					break;
 				}

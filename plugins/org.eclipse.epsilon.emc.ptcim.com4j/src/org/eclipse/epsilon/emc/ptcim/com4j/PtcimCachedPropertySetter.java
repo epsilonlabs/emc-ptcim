@@ -2,10 +2,10 @@ package org.eclipse.epsilon.emc.ptcim.com4j;
 
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 
-public class Com4jPtcimCachedPropertySetter extends Com4jPtcimPropertySetter {
-	private final Com4jPtcimModel model;
+public class PtcimCachedPropertySetter extends PtcimPropertySetter {
+	private final PtcimModel model;
 	
-	public Com4jPtcimCachedPropertySetter(Com4jPtcimPropertyManager manager, Com4jPtcimModel model) {
+	public PtcimCachedPropertySetter(PtcimPropertyManager manager, PtcimModel model) {
 		super.setManager(manager);
 		this.model = model;
 		//System.out.println("Just created a cached setter...");
@@ -17,7 +17,7 @@ public class Com4jPtcimCachedPropertySetter extends Com4jPtcimPropertySetter {
 	@Override		
 	public void invoke(Object value) throws EolRuntimeException {	
 		super.invoke(value);
-		String elementPropertyIdentifier = super.getManager().buildCachedElementPropertyIdentifier((Com4jPtcimObject) object, property);
+		String elementPropertyIdentifier = super.getManager().buildCachedElementPropertyIdentifier((PtcimObject) object, property);
 		model.propertiesValuesCache.put(elementPropertyIdentifier, value);
 	}		
 }
