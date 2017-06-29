@@ -24,7 +24,18 @@ import com4j.EventCookie;
 public class PtcimObject implements IAutomationCaseObject {
 
 	private String id;
-	private final IAutomationCaseObject theIaco; 
+	private IAutomationCaseObject theIaco; 
+	
+	public void setTheIaco(IAutomationCaseObject theIaco) {
+		this.theIaco = theIaco;
+	}
+
+
+	public IAutomationCaseObject getTheIaco() {
+		return theIaco;
+	}
+
+
 	public PtcimObject(IAutomationCaseObject iaco) {
 		this.theIaco = iaco;
 	}

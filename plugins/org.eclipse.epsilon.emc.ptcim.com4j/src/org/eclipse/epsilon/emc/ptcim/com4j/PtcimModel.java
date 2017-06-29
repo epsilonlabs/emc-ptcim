@@ -185,26 +185,18 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		if ((parameters == null) || parameters.isEmpty()) {
 			return super.createInstance(type);
 		}
-		Object newInstance = null;
+		PtcimObject newInstance = null;
 		Iterator<Object> it = parameters.iterator();
 		Object parent = it.next();
 		PtcimObject comParent = (PtcimObject) parent;
 		if (parameters.size() == 1) {		// Add
-			try {
-				newInstance = comParent.add(type, null);
-				setNewInstanceId(newInstance);
-			} catch (EolInternalException e) {
-				throw new EolModelElementTypeNotFoundException(this.name, type);
-			}
+			newInstance.setTheIaco(comParent.add(type, null).queryInterface(IAutomationCaseObject.class));
+			setNewInstanceId(newInstance);
 		}
 		else {								// AddByType
 			Object association = it.next();
-			try {
-				newInstance = comParent.addByType(type, association.toString());
-				setNewInstanceId(newInstance);
-			} catch (EolInternalException e) {
-				throw new EolModelElementTypeNotFoundException(this.name, type);
-			}
+			newInstance.setTheIaco(comParent.addByType(type, association.toString()).queryInterface(IAutomationCaseObject.class));
+			setNewInstanceId(newInstance);
 		}
 		return newInstance;
 	}
@@ -224,14 +216,9 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		if (!isInstantiable(type)) {
 			throw new EolNotInstantiableModelElementTypeException(getName(), type);
 		}
-		Object newInstance = null;
-		try {
-			newInstance = model.add(type, null);
-			setNewInstanceId(newInstance);
-		} catch (EolInternalException e) {
-			throw new EolModelElementTypeNotFoundException(getName(), type);
-		}
-		return (PtcimObject) newInstance;
+		PtcimObject newInstance = new PtcimObject(model.add(type, null).queryInterface(IAutomationCaseObject.class));
+		setNewInstanceId(newInstance);
+		return newInstance;
 	}
 	
 	/**
@@ -611,9 +598,9 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	 * @param newInstance
 	 * @throws EpsilonCOMException
 	 */
-	private void setNewInstanceId(Object newInstance) throws EolInternalException {
-		String id = (String) ((PtcimObject) newInstance).property("Id", null);
-		((PtcimObject) newInstance).setId(id);
+	private void setNewInstanceId(PtcimObject newInstance) {
+		String id = (String) newInstance.property("Id", null);
+		newInstance.setId(id);
 	}
 	
 	/* (non-Javadoc)
