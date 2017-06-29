@@ -55,11 +55,10 @@ public class PtcimCollection extends AbstractList<PtcimObject> implements IAbstr
 	@Override
 	public boolean add(PtcimObject e) {
 		assert e.getId() != null;
-		List<Object> args = new ArrayList<Object>();
-		args.add(association);
-		args.add(e);
+		owner.add(association, e);
 		return true;
 	}
+	
 	/**
 	 * Important:  If you remove objects from an association that has its Propagate Delete flag set to TRUE,
 	 * the objects will be deleted from the model. For example, a Class is related to its child Attributes
