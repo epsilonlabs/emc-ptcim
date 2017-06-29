@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.epsilon.common.dt.modelType">
       <modelType
-            class="org.eclipse.epsilon.emc.ptcim.PtcimModel"
+            class="org.eclipse.epsilon.emc.ptcim.com4j.PtcimModel"
             dialog="org.eclipse.epsilon.emc.ptcim.dt.PtcimModelConfigurationDialog"
             icon="images/ptc.gif"
             label="PTC IM Model"

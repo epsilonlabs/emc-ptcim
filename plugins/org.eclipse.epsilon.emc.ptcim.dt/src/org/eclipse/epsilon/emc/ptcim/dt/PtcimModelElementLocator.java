@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.epsilon.common.dt.locators.IModelElementLocator;
-import org.eclipse.epsilon.emc.ptcim.PtcimModel;
-import org.eclipse.epsilon.emc.ptcim.PtcimObject;
-import org.eclipse.epsilon.emc.ptcim.PtcimUserInterface;
+import org.eclipse.epsilon.emc.ptcim.com4j.PtcimModel;
+import org.eclipse.epsilon.emc.ptcim.com4j.PtcimObject;
+import org.eclipse.epsilon.emc.ptcim.com4j.PtcimUserInterface;
 import org.eclipse.epsilon.eol.models.IModel;
 
 /**
@@ -56,17 +56,17 @@ public class PtcimModelElementLocator implements IModelElementLocator {
 		args.clear();
 		args.add("Using Diagram");
 		PtcimObject diag;
-		diag = (PtcimObject) item.invoke("Item", args);
+		diag = (PtcimObject) item.item("Using Diagram", null);
 		if (diag != null) {
-			String diagId = (String) diag.getAttribute("Property", "Id");
+			String diagId = (String) diag.property("Id", null);
 			//String diagId = diag.getId();
 			args.clear();
 			args.add("Representing Symbol");
 			PtcimObject objSymbol;
-			objSymbol = (PtcimObject) item.invoke("Item", args);
+			objSymbol = (PtcimObject) item.item("Representing Symbol", null);
 			// FIXME What if the objSymbol does not exist? Test for Null
 			//String symboldId = objSymbol.getId();
-			String symboldId = (String) objSymbol.getAttribute("Property", "Id");
+			String symboldId = (String) objSymbol.property("Id", null);
 			args.clear();
 			args.add(diagId);
 			studio.openDiagram(diagId);

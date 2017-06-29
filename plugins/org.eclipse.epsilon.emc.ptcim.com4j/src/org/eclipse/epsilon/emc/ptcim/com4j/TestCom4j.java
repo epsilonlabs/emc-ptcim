@@ -12,7 +12,7 @@ public class TestCom4j {
 		// It also generates a ClassFactory which creates a singleton class of the top COM object.
 		// All the other methods available in the 3 interfaces are calling the appropriate COM method using the COM4J library at runtime.
 		IAutomationCaseObject co = ClassFactory.createCCaseProjects();
-		for (int i=0;i<10000;i++) {
+		for (int i=0;i<1;i++) {
 			Com4jObject hsuvProject = co.item("Project", "HSUV");
 			IAutomationCaseObject hsuvProjectCaseObject = hsuvProject.queryInterface(IAutomationCaseObject.class);
 			Object id =  hsuvProjectCaseObject.property("id", null);
@@ -20,13 +20,17 @@ public class TestCom4j {
 			Object name = hsuvProjectCaseObject.property("name", null);
 			
 			IAutomationCaseObject trafficLightsProject = co.item("Project", "Traffic Lights").queryInterface(IAutomationCaseObject.class);
+			//IAutomationCaseObject trafficLightsProject = co.item("Reference", "\\\\Enabler\\DESKTOP-V4OK65F\\Examples\\Traffic Lights").queryInterface(IAutomationCaseObject.class);
 			id =  trafficLightsProject.property("id", null);
 			description = trafficLightsProject.property("description", null);
 			name = trafficLightsProject.property("name", null);
-			
 			IAutomationCaseObject trafficLightsDictionary = trafficLightsProject.item("Dictionary", "Dictionary").queryInterface(IAutomationCaseObject.class);
 			IAutomationCaseObject lightsClass = trafficLightsDictionary.item("Class", "Lights").queryInterface(IAutomationCaseObject.class);
+			IAutomationCaseObject scopingItem = lightsClass.item("Scoping Item", null).queryInterface(IAutomationCaseObject.class);
+			System.out.println(scopingItem.property("Name", null));
 			Object lightsClassDescription = lightsClass.property("description", null);
+			IArtisanModelFileDialog fileDialogue = ClassFactory.createArtisanModelFileDialog();
+			fileDialogue.create(true);
 		}
 		long elapsed = System.nanoTime() - start;
 		System.out.println("Elapsed: " + elapsed/1000000000.0 + " secs");
