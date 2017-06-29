@@ -79,10 +79,10 @@ public class PtcimCollectionSelectOneOperation extends SelectOneOperation {
 		String value = String.valueOf(attributevalue);
 		PtcimObject comresult = null;
 		if ("name".equals(attributename.toLowerCase())) {		// Name is the default Id
-			comresult = (PtcimObject) target.getOwner().item(target.getAssociation(), value);
+			comresult = new PtcimObject(target.getOwner().item(target.getAssociation(), value).queryInterface(IAutomationCaseObject.class));
 		}
 		else {
-			comresult = (PtcimObject) target.getOwner().itemEx(target.getAssociation(), value, attributename);
+			comresult = new PtcimObject(target.getOwner().itemEx(target.getAssociation(), value, attributename).queryInterface(IAutomationCaseObject.class));
 		}
 		if (comresult != null) {
 			String strId = (String) comresult.property("Id", null);

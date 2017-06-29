@@ -87,8 +87,7 @@ public class PtcimCollectionSelectOperation extends SelectOperation {
 		}
 		if (attributevalue != null) {
 			assert attributevalue instanceof String;
-			PtcimObject comresult = null;
-			comresult = (PtcimObject) target.getOwner().items(target.getAssociation(), attributevalue);
+			PtcimObject comresult = new PtcimObject(target.getOwner().items(target.getAssociation(), attributevalue).queryInterface(IAutomationCaseObject.class));
 			Collection<PtcimObject> result = comresult.wrapInFilteredColleciton(target.getAssociation());
 			return (Collection<PtcimObject>) result;
 			
