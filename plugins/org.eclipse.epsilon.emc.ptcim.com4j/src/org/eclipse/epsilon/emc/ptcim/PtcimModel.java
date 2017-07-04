@@ -253,7 +253,6 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 				// TODO: Discuss with Dimitris about store on disposal strategy
 			}
 		}
-		theProject.disconnect();
 	}
 
 	/**

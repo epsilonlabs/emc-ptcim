@@ -39,13 +39,6 @@ public class PtcimFrameworkFactory {
 	}
 	*/
 	public void shutdown() {
-		/*
-		try {
-			userInterface.disconnect();
-		} catch (EolInternalException e) {
-			e.printStackTrace();
-		}
-		*/
 		try {
 			fileDialog.disconnect();
 		} catch (EolInternalException e1) {
@@ -59,10 +52,5 @@ public class PtcimFrameworkFactory {
 		} else {
 			return (PtcimPropertyManager) new PtcimPropertyManager();
 		}
-	}
-
-	public void startup() throws EolInternalException {
-		//coInitialize();
-		
 	}
 }

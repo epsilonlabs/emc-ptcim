@@ -38,7 +38,6 @@ public class PtcimFilteredCollection extends AbstractCollection<PtcimObject> {
 	public void disconnect() throws EolInternalException {
 		try {
 			System.out.println("Closing");
-			//comObject.close();
 		} catch (Exception e) {
 			throw new EolInternalException(e);
 		}

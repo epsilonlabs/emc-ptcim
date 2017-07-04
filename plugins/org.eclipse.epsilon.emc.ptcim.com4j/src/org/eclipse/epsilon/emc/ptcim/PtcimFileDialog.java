@@ -31,7 +31,6 @@ public class PtcimFileDialog extends Observable{
 
 	public void disconnect() throws EolInternalException {
 		if (isConnected) {
-			//dialog.disconnect();
 			isConnected = false;
 		}
 	}
@@ -39,7 +38,6 @@ public class PtcimFileDialog extends Observable{
 	public String openDialog() throws EolInternalException {
 		try {			
 			new Thread (new Runnable() {
-				
 				@Override
 				public void run() {
 					String ref = dialog.create(true);
@@ -47,11 +45,11 @@ public class PtcimFileDialog extends Observable{
 					notifyObservers(ref);
 				}
 			}).start();
-			return (String) "hhh";
+			return (String) "";
 		} catch (Exception e) {
 			throw new EolInternalException(e);
 		} finally {
-			System.out.println("finally");
+			System.out.println("");
 		}
 	}
 

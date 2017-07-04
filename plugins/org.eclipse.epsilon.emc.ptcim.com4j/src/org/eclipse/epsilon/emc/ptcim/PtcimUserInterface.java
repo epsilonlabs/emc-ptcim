@@ -35,7 +35,6 @@ public class PtcimUserInterface {
 
 	public void disconnect() throws EolInternalException {
 		if (isConnected) {
-			studio.disconnect();
 			isConnected = false;
 		}
 	}

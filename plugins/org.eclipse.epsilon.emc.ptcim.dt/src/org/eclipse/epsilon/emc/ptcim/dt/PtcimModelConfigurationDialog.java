@@ -85,11 +85,6 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	boolean isConnected = false;
 	public PtcimModelConfigurationDialog() {
 		factory = new PtcimFrameworkFactory();
-		try {
-			factory.startup();
-		} catch (EolInternalException e) {
-			throw new IllegalStateException(e);
-		}
 		// Com4j commands should be invoked by a new thread
 		try {
 			new Thread(new Runnable() {
@@ -182,11 +177,9 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 										showErrorMsg(res);
 									}
 								}
-								current.disconnect();
 							}
 							selection.disconnect();
 						}
-						ap.disconnect();
 					}
 				}
 			}

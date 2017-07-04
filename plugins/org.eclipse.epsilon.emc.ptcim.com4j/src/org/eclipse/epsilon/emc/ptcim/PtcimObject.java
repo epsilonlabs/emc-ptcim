@@ -112,17 +112,10 @@ public class PtcimObject implements IAutomationCaseObject {
 		return new PtcimFilteredCollection(this, association);
 	}
 
-	public void disconnect() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
 	@Override
 	public <T> EventCookie advise(Class<T> arg0, T arg1) {
 		return theIaco.advise(arg0, arg1);
 	}
-
 
 	@Override
 	public void dispose() {
@@ -130,48 +123,40 @@ public class PtcimObject implements IAutomationCaseObject {
 		
 	}
 
-
 	@Override
 	public ComThread getComThread() {
 		return theIaco.getComThread();
 	}
-
 
 	@Override
 	public long getIUnknownPointer() {
 		return theIaco.getIUnknownPointer();
 	}
 
-
 	@Override
 	public long getPointer() {
 		return theIaco.getPointer();
 	}
-
 
 	@Override
 	public int getPtr() {
 		return theIaco.getPtr();
 	}
 
-
 	@Override
 	public <T extends Com4jObject> boolean is(Class<T> arg0) {
 		return theIaco.is(arg0);
 	}
-
 
 	@Override
 	public <T extends Com4jObject> T queryInterface(Class<T> arg0) {
 		return queryInterface(arg0);
 	}
 
-
 	@Override
 	public void setName(String arg0) {
 		theIaco.setName(arg0);
 	}
-
 
 	@Override
 	public void property(Object type, Object index, Object retval) {
@@ -179,138 +164,115 @@ public class PtcimObject implements IAutomationCaseObject {
 		
 	}
 
-
 	@Override
 	public Object property(Object type, Object index) {
 		return theIaco.property(type, index);
 	}
-
 
 	@Override
 	public Com4jObject item(String role, Object index) {
 		return theIaco.item(role, index);
 	}
 
-
 	@Override
 	public Com4jObject items(String role, Object index) {
 		return theIaco.items(role, index);
 	}
-
 
 	@Override
 	public Com4jObject add(String role, Object value) {
 		return theIaco.add(role, value);
 	}
 
-
 	@Override
 	public void remove(String role, Object index) {
 		theIaco.remove(role, index);
 	}
-
 
 	@Override
 	public Com4jObject link(String role, Object index) {
 		return theIaco.link(role, index);
 	}
 
-
 	@Override
 	public void resetQueryItems() {
 		theIaco.resetQueryItems();
 	}
-
 
 	@Override
 	public Com4jObject nextItem() {
 		return theIaco.nextItem();
 	}
 
-
 	@Override
 	public int moreItems() {
 		return theIaco.moreItems();
 	}
-
 
 	@Override
 	public void propertySet(Object type, Object index, Object data) {
 		theIaco.propertySet(type, index, data);
 	}
 
-
 	@Override
 	public Object propertyGet(Object type, Object index) {
 		return theIaco.propertyGet(type, index);
 	}
-
 
 	@Override
 	public Iterator<Com4jObject> iterator() {
 		return theIaco.iterator();
 	}
 
-
 	@Override
 	public Com4jObject findObject(String itemId) {
 		return theIaco.findObject(itemId);
 	}
-
 
 	@Override
 	public Object getClassProperties(String className, Object index) {
 		return theIaco.getClassProperties(className, index);
 	}
 
-
 	@Override
 	public void checkLicenses(int bCheck) {
 		theIaco.checkLicenses(bCheck);
 	}
-
 
 	@Override
 	public Com4jObject itemByID(String id) {
 		return theIaco.itemByID(id);
 	}
 
-
 	@Override
 	public Com4jObject itemEx(String role, Object index, Object searchProperty) {
 		return theIaco.itemEx(role, index, searchProperty);
 	}
-
 
 	@Override
 	public void refresh() {
 		theIaco.refresh();
 	}
 
-
 	@Override
 	public void export(String directory) {
 		theIaco.export(directory);
 	}
-
 
 	@Override
 	public void _import(String directory) {
 		theIaco._import(directory);
 	}
 
-
 	@Override
 	public void diff(String directory) {
 		theIaco.diff(directory);
 	}
 
-
 	@Override
 	public Object itemCount(String role) {
 		return theIaco.itemCount(role);
 	}
-
 
 	@Override
 	public void reorderItem(String role, Com4jObject pObject, Com4jObject pPredecessorObject,
@@ -318,12 +280,10 @@ public class PtcimObject implements IAutomationCaseObject {
 		theIaco.reorderItem(role, pObject, pPredecessorObject, pSuccessorObject);
 	}
 
-
 	@Override
 	public Object getExtendedClassProperties(String className) {
 		return theIaco.getExtendedClassProperties(className);
 	}
-
 
 	@Override
 	public Com4jObject addDirected(String role, Com4jObject pHint) {
@@ -340,30 +300,25 @@ public class PtcimObject implements IAutomationCaseObject {
 		theIaco.delete();
 	}
 
-
 	@Override
 	public String displayName(String tagName) {
 		return theIaco.displayName(tagName);
 	}
-
 
 	@Override
 	public Com4jObject createClone(Com4jObject pCloneThis) {
 		return theIaco.createClone(pCloneThis);
 	}
 
-
 	@Override
 	public void merge(Com4jObject pSrcItem) {
 		theIaco.merge(pSrcItem);
 	}
 
-
 	@Override
 	public Com4jObject addByType(String type, String role) {
 		return theIaco.addByType(type, role);
 	}
-
 
 	@Override
 	public int isConnectedTo(String role, Com4jObject pOtherObject) {
