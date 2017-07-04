@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.epsilon.common.dt.locators.IModelElementLocator;
-import org.eclipse.epsilon.emc.ptcim.com4j.PtcimModel;
-import org.eclipse.epsilon.emc.ptcim.com4j.PtcimObject;
-import org.eclipse.epsilon.emc.ptcim.com4j.PtcimUserInterface;
+import org.eclipse.epsilon.emc.ptcim.PtcimModel;
+import org.eclipse.epsilon.emc.ptcim.PtcimObject;
+import org.eclipse.epsilon.emc.ptcim.PtcimUserInterface;
 import org.eclipse.epsilon.eol.models.IModel;
 
 /**

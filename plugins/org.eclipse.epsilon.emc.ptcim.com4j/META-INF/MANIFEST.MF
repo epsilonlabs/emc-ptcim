@@ -1,15 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Com4j
-Bundle-SymbolicName: org.eclipse.epsilon.emc.ptcim.com4j;singleton:=true
+Bundle-SymbolicName: org.eclipse.epsilon.emc.ptcim;singleton:=true
 Bundle-Version: 0.2.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: com4j,
- org.eclipse.epsilon.emc.ptcim.com4j
+ org.eclipse.epsilon.emc.ptcim
 Require-Bundle: org.eclipse.epsilon.eol.dt,
  org.eclipse.epsilon.evl.dt,
  org.eclipse.epsilon.evl.engine
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.epsilon.emc.ptcim.com4j
+Import-Package: org.eclipse.epsilon.emc.ptcim
 Bundle-ClassPath: com4j.jar,
  .

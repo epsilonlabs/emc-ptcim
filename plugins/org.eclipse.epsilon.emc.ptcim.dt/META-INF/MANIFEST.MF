@@ -8,7 +8,7 @@ Require-Bundle: org.eclipse.epsilon.common.dt,
  org.eclipse.epsilon.evl.dt,
  org.eclipse.epsilon.evl.engine,
  org.eclipse.epsilon.eol.dt,
- org.eclipse.epsilon.emc.ptcim.com4j
+ org.eclipse.epsilon.emc.ptcim
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.epsilon.emc.ptcim.dt
