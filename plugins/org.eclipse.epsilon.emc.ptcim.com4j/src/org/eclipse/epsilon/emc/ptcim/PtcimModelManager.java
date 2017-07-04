@@ -32,6 +32,14 @@ public class PtcimModelManager {
 	 * repositories that are bookmarked in your Model Explorer.
 	 */
 	private IAutomationCaseObject projects;
+	public IAutomationCaseObject getProjects() {
+		return projects;
+	}
+
+	public void setProjects(IAutomationCaseObject projects) {
+		this.projects = projects;
+	}
+
 	boolean isConnected = false;
 
 	public void connect(boolean fromUI) throws EolInternalException {
@@ -49,16 +57,17 @@ public class PtcimModelManager {
 	public PtcimCollection getActiveDagrams() throws EolInternalException {
 		PtcimObject comCollection = new PtcimObject(
 				projects.items("Active Diagram", null).queryInterface(IAutomationCaseObject.class));
-		return new PtcimCollection(comCollection, (PtcimObject) projects, "ActiveDiagram");
+		return new PtcimCollection(comCollection, new PtcimObject(projects), "ActiveDiagram");
 	}
 
 	public PtcimCollection getActiveItems() throws EolInternalException {
 		PtcimObject comCollection = new PtcimObject(
 				projects.items("Active Dictionary Item", null).queryInterface(IAutomationCaseObject.class));
-		return new PtcimCollection(comCollection, (PtcimObject) projects, "Active Dictionary Item");
+		return new PtcimCollection(comCollection, new PtcimObject(projects), "Active Dictionary Item");
 	}
 
 	public PtcimObject getActiveProject() throws EolInternalException {
+		System.out.println("Projects: " + projects);
 		return new PtcimObject(projects.item("Active Project", null).queryInterface(IAutomationCaseObject.class));
 	}
 
@@ -94,7 +103,7 @@ public class PtcimModelManager {
 		return new PtcimObject(projects.item("Project", title).queryInterface(IAutomationCaseObject.class));
 	}
 
-	public PtcimCollection getProjects() throws EolInternalException {
+	public PtcimCollection getAllProjects() throws EolInternalException {
 		PtcimObject comCollection = new PtcimObject(
 				projects.items("Project", null).queryInterface(IAutomationCaseObject.class));
 		return new PtcimCollection(comCollection, (PtcimObject) projects, "Project");

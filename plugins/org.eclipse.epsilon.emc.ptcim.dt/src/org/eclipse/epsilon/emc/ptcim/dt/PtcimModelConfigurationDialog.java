@@ -85,24 +85,26 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	boolean isConnected = false;
 	public PtcimModelConfigurationDialog() {
 		factory = new PtcimFrameworkFactory();
-		// Com4j commands should be invoked by a new thread
-		try {
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					projects = ClassFactory.createCCaseProjects();
-					if (PtcimFileDialog.dialog == null) {
-						PtcimFileDialog.dialog = ClassFactory.createArtisanModelFileDialog();
-					}
-					isConnected = true;
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				projects = ClassFactory.createCCaseProjects();
+				if (PtcimFileDialog.dialog == null) {
+					PtcimFileDialog.dialog = ClassFactory.createArtisanModelFileDialog();
 				}
-			}).start();
-			// We need to know if the whole process was triggered by the UI or not. This is done by passing an attribute to the model manager. 
-			// Here we know that this is accessed if and only if the UI was used so we pass the 'true' value for the fromUI parameter.
-			manager = factory.getModelManager(true);
-		} catch (EolInternalException e) {
-			throw new IllegalStateException(e);
-		}
+				isConnected = true;
+				try {
+					manager = factory.getModelManager(true);
+				} catch (EolInternalException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				manager.setProjects(ClassFactory.createCCaseProjects());
+			}
+		}).start();
+		// We need to know if the whole process was triggered by the UI or not. This is done by passing an attribute to the model manager. 
+		// Here we know that this is accessed if and only if the UI was used so we pass the 'true' value for the fromUI parameter.
+		
 	}
 
 	/*
@@ -133,55 +135,70 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		selectedElementFindIdButton.setToolTipText("Opens the current (or last) opened model and locates the current"
 				+ " (or last) selected element. The model information would be updated to match the project.");
 		selectedElementFindIdButton.setEnabled(false);
+		
+		selectedElementNameAndTypeLabel = new Label(groupContent, SWT.NONE);
+		selectedElementNameAndTypeLabel.setText("");
+
+		selectedElementNameAndTypeTextLabel = new Label(groupContent, SWT.NONE);
+		selectedElementNameAndTypeTextLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		selectedElementNameAndTypeTextLabel.setEnabled(true);
+		
 		selectedElementFindIdButton.addListener(SWT.Selection, new Listener() {
 
 			@Override
 			public void handleEvent(Event event) {
 				selectedElementIdText.setText("");
-				if (manager != null) {
-					PtcimObject ap = null;
-					try {
-						ap = manager.getActiveProject();
-					} catch (EolInternalException e) {
-						showErrorMsg("Failed to get active project. Make sure the PTC IM Molder is opened and the"
-								+ " desired model loaded, and that an element is selected.");
-					}
-					if (ap != null) {
-						PtcimCollection selection = null;
-						try {
-							selection = manager.getActiveItems();
-						} catch (EolInternalException e1) {
-							showErrorMsg("Failed to connect to the PTC IM Modeler.");
-						}
-						if (selection != null) {
-							Iterator<PtcimObject> it = selection.iterator();
-							boolean seletionExists = true;
-							if (!it.hasNext()) {
-								showErrorMsg("There is no element selected.");
-								seletionExists = false;
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						if (manager != null) {
+							PtcimObject ap = null;
+							try {
+								ap = manager.getActiveProject();
+							} catch (EolInternalException e) {
+								showErrorMsg("Failed to get active project. Make sure the PTC IM Molder is opened and the"
+										+ " desired model loaded, and that an element is selected.");
 							}
-							if (seletionExists) {
-								PtcimObject current = it.next();
-								Object id = null;
-								Object name = null;
-								Object type = null;
-								id = current.property("Id", null);
-								name = current.property("Name", null);
-								type = current.property("Type", null);
-								if ((id != null) && (name != null) && (type != null)) {
-									selectedElementIdText.setText((String) id);
-									String displayedNameAndText = (String) name + " (" + (String) type + ")";
-									selectedElementNameAndTypeTextLabel.setText(displayedNameAndText);
-									String res = setProjectPropertiesText(ap);
-									if (res.length() > 0) {
-										showErrorMsg(res);
+							if (ap != null) {
+								PtcimCollection selection = null;
+								try {
+									selection = manager.getActiveItems();
+								} catch (EolInternalException e1) {
+									showErrorMsg("Failed to connect to the PTC IM Modeler.");
+								}
+								if (selection != null) {
+									Iterator<PtcimObject> it = selection.iterator();
+									boolean seletionExists = true;
+									if (!it.hasNext()) {
+										showErrorMsg("There is no element selected.");
+										seletionExists = false;
 									}
+									if (seletionExists) {
+										PtcimObject current = it.next();
+										final String id = current.property("Id", null).toString();
+										final String name = current.property("Name", null).toString();
+										final String type = current.property("Type", null).toString();
+										if ((id != null) && (name != null) && (type != null)) {
+											Display.getDefault().asyncExec(new Runnable() {
+											    public void run() {
+											    	selectedElementIdText.setText((String) id);
+											    	String displayedNameAndText = (String) name + " (" + (String) type + ")";
+											    	selectedElementNameAndTypeTextLabel.setText(displayedNameAndText);
+											    	
+											    }
+											});
+											String res = setProjectPropertiesText(ap);
+									    	if (res.length() > 0) {
+									    		showErrorMsg(res);
+									    	}
+										}
+									}
+									selection.disconnect();
 								}
 							}
-							selection.disconnect();
 						}
-					}
-				}
+				    }
+				}).start();
 			}
 
 			private void showErrorMsg(String localizedMessage) {
@@ -192,13 +209,6 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 				messageBox.open();
 			}
 		});
-
-		selectedElementNameAndTypeLabel = new Label(groupContent, SWT.NONE);
-		selectedElementNameAndTypeLabel.setText("");
-
-		selectedElementNameAndTypeTextLabel = new Label(groupContent, SWT.NONE);
-		selectedElementNameAndTypeTextLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		selectedElementNameAndTypeTextLabel.setEnabled(true);
 	}
 
 	/*
@@ -343,8 +353,8 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		fromSelectionButtonData.horizontalSpan = 2;
 		fromSelectionCheckbox.setLayoutData(fromSelectionButtonData);
 
-		groupContent.layout();
-		groupContent.pack();
+		groupContent.layout(true, true);
+		groupContent.pack(true);
 	}
 
 	private void enableElementId(boolean enabled) {
@@ -383,7 +393,6 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		if (properties == null)
 			return;
 		referenceText.setText(properties.getProperty(PtcimModel.PROPERTY_MODEL_REFERENCE));
-		System.out.println("Reference text: " + referenceText);
 		serverText.setText(properties.getProperty(PtcimModel.PROPERTY_SERVER_NAME));
 		repositoryText.setText(properties.getProperty(PtcimModel.PROPERTY_REPOSITORY_NAME));
 		versionText.setText(properties.getProperty(PtcimModel.PROPERTY_VERSION_NUMBER));
@@ -403,11 +412,14 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 
 	private String setProjectPropertiesText(PtcimObject ap) {
 		// Get current project information
-		String ref = null;
-		ref = (String) ap.property("Reference", null);
-		if (ref != null) {
-			modelReferenceToFields(ref);
-		}
+		String ref = (String) ap.property("Reference", null);
+		Display.getDefault().asyncExec(new Runnable() {
+		    public void run() {
+				if (ref != null) {
+					modelReferenceToFields(ref);
+				}
+		    }
+		});
 		return "";
 	}
 

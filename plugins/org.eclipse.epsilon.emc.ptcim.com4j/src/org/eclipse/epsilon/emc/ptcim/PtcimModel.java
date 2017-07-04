@@ -285,7 +285,9 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 			if ("Package".equals(type)) {	// Important: When you retrieve the type of a Package, it is returned as Category.
 				type = "Category";
 			}
+			System.out.println("Hi!!! " + type + " " + selectedElementId);
 			PtcimObject root = (PtcimObject) getElementById(selectedElementId);
+			System.out.println(root);
 			List<PtcimObject> result = getOwnedContents(root, type);
 			return result;
 		}
@@ -332,15 +334,18 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		return Collections.emptyList();
 	}
 
-	private List<PtcimObject>  filterByType(List<PtcimObject> ptcCollection, String type) {
+	private List<PtcimObject> filterByType(List<PtcimObject> ptcCollection, String type) {
 		List<PtcimObject> result = new ArrayList<PtcimObject>();
 		Iterator<PtcimObject> it = ptcCollection.iterator();
 		while (it.hasNext()) {
 			PtcimObject e = it.next();
 			Object etype = null;
-			etype = e.property("Type", null);
-			if (type.equals(etype)) {
-				result.add(e);
+			try {
+				etype = e.property("Type", null);
+				if (type.equals(etype)) {
+					result.add(e);
+				}
+			} catch (com4j.ComException exc) {
 			}
 		}
 		return result;
