@@ -2,96 +2,71 @@ package org.eclipse.epsilon.emc.ptcim.test;
 
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.epsilon.emc.ptcim.IAutomationCaseObject;
 import org.eclipse.epsilon.emc.ptcim.PtcimObject;
-import org.eclipse.epsilon.eol.exceptions.EolInternalException;
-import org.jawin.COMException;
-import org.jawin.DispatchPtr;
-import org.jawin.win32.Ole32;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class AttributeRelatedTests {
 	
-	private PtcimObject model;
-	private DispatchPtr theProject;
+	PtcimObject theProject, theDictionary, softwarePackage;
 	
 	@Before
 	public void setUp() throws Exception {
 		theProject = Utilities.getProject("Traffic Lights");
-		DispatchPtr modelptr = Utilities.load(theProject);
-		model = new PtcimObject(modelptr);
-	}
+		theDictionary = new PtcimObject(theProject.item("Dictionary", null).queryInterface(IAutomationCaseObject.class));
+		softwarePackage = new PtcimObject(theDictionary.item("Package", "Software").queryInterface(IAutomationCaseObject.class));
 
-	@After
-	public void tearDown() throws Exception {
-		try {
-			Ole32.CoUninitialize();
-		} catch (COMException e) {
-			throw new EolInternalException(e);
-		}
 	}
 		
 	@Test
-	public void testPropertyGetter() throws COMException {
-		DispatchPtr softwarePackage = (DispatchPtr) model.invoke("Item", "Package", "Software");
-		String strObjId = (String) softwarePackage.get("Property", "Id");
+	public void testPropertyGetter() {
+		String strObjId = (String) softwarePackage.property("Id", null);
 		assertEquals("80a27e73-0121-436a-abf7-1e01ebb33c7e", strObjId);
-		System.out.println("Test property getter: Success");
 	}
 	
 	@Test
-	public void testPropertySetter() throws COMException {
-		DispatchPtr softwarePackage = (DispatchPtr) model.invoke("Item", "Package", "Software");
-		softwarePackage.invokeN("PropertySet", new Object[] {"Description", 0, "Test 2"});
-		String strObjDescription = (String) softwarePackage.get("Property", "Description");
-		assertEquals("Test 2", strObjDescription);
+	public void testPropertySetter() {
+		softwarePackage.propertySet("Description", 0, "New Description");
+		String strObjDescription = (String) softwarePackage.property("Description", null);
+		assertEquals("New Description", strObjDescription);
 		// Reset back
-		softwarePackage.invokeN("PropertySet", new Object[] {"Description", 0, "Test"});
-		System.out.println("Test property setter: Success");
+		softwarePackage.propertySet("Description", 0, "Test");
 	}
 	
 	@Test
-	public void testPropertyGetterTwiceSameElementSamePropertyNoChange() throws COMException {
-		DispatchPtr softwarePackage = (DispatchPtr) model.invoke("Item", "Package", "Software");
-		String strObjId = (String) softwarePackage.get("Property", "Id");
+	public void testPropertyGetterTwiceSameElementSamePropertyNoChange() {
+		String strObjId = (String) softwarePackage.property("Id", null);
 		assertEquals("80a27e73-0121-436a-abf7-1e01ebb33c7e", strObjId);
-		strObjId = (String) softwarePackage.get("Property", "Id");
+		strObjId = (String) softwarePackage.property("Id", null);
 		assertEquals("80a27e73-0121-436a-abf7-1e01ebb33c7e", strObjId);
-		System.out.println("Test property getter twice same element, same property, no change: Success");
 	}
 	
 	@Test
-	public void testPropertyGetterTwiceSameElementSamePropertyWithChange() throws COMException {
-		DispatchPtr softwarePackage = (DispatchPtr) model.invoke("Item", "Package", "Software");
-		String strObjDescription = (String) softwarePackage.get("Property", "Description");
+	public void testPropertyGetterTwiceSameElementSamePropertyWithChange() {
+		String strObjDescription = (String) softwarePackage.property("Description", null);
 		assertEquals("Test", strObjDescription);
-		softwarePackage.invokeN("PropertySet", new Object[] {"Description", 0, "Test 2"});
-		strObjDescription = (String) softwarePackage.get("Property", "Description");
-		assertEquals("Test 2", strObjDescription);
+		softwarePackage.propertySet("Description", 0, "New Description");
+		strObjDescription = (String) softwarePackage.property("Description", null);
+		assertEquals("New Description", strObjDescription);
 		// Reset back
-		softwarePackage.invokeN("PropertySet", new Object[] {"Description", 0, "Test"});
-		System.out.println("Test property getter twice same element, same property, with change: Success");
+		softwarePackage.propertySet("Description", 0, "Test");
 	}
 	
 	@Test
-	public void testPropertyGetterTwiceSameElementDifferentProperty() throws COMException {
-		DispatchPtr softwarePackage = (DispatchPtr) model.invoke("Item", "Package", "Software");
-		String strObjDescription = (String) softwarePackage.get("Property", "Description");
+	public void testPropertyGetterTwiceSameElementDifferentProperty() {
+		String strObjDescription = (String) softwarePackage.property("Description", null);
 		assertEquals("Test", strObjDescription);
-		String strObjId = (String) softwarePackage.get("Property", "Id");
+		String strObjId = (String) softwarePackage.property("Id", null);
 		assertEquals("80a27e73-0121-436a-abf7-1e01ebb33c7e", strObjId);
-		System.out.println("Test property getter twice same element, different property: Success");
 	}
 	
 	@Test
-	public void testPropertyGetterTwiceDifferentElement() throws COMException {
-		DispatchPtr softwarePackage = (DispatchPtr) model.invoke("Item", "Package", "Software");
-		String strObjDescription = (String) softwarePackage.get("Property", "Description");
+	public void testPropertyGetterTwiceDifferentElement() {
+		String strObjDescription = (String) softwarePackage.property("Description", null);
 		assertEquals("Test", strObjDescription);
-		DispatchPtr hardwarePackage = (DispatchPtr) model.invoke("Item", "Package", "Hardware");
-		String strObjId = (String) hardwarePackage.get("Property", "Id");
+		PtcimObject hardwarePackage = new PtcimObject(theDictionary.item("Package", "Hardware").queryInterface(IAutomationCaseObject.class));
+		String strObjId = (String) hardwarePackage.property("Id", null);
 		assertEquals("fda68d40-8346-400c-bf40-70f24c80465d", strObjId);
-		System.out.println("Test property getter twice different element: Success");
 	}
 }

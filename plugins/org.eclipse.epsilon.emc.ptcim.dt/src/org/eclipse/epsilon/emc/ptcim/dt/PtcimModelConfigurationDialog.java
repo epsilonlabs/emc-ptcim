@@ -140,7 +140,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		selectedElementNameAndTypeLabel.setText("");
 
 		selectedElementNameAndTypeTextLabel = new Label(groupContent, SWT.NONE);
-		selectedElementNameAndTypeTextLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		selectedElementNameAndTypeTextLabel.setLayoutData(twoCol);
 		selectedElementNameAndTypeTextLabel.setEnabled(true);
 		
 		selectedElementFindIdButton.addListener(SWT.Selection, new Listener() {
