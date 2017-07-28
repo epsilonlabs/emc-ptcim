@@ -547,31 +547,30 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	@Override
 	protected void loadModel() throws EolModelLoadingException {
 		if (isInitialized()) {
-
-			PtcimModelManager manager;
-			try {
-				manager = factory.getModelManager(false);
-			} catch (EolInternalException e1) {
-				throw new EolModelLoadingException(e1, this);
-			}
-			if  (readOnLoad) {
+				PtcimModelManager manager;
 				try {
-					if (server.length() == 0) {
-						theProject = manager.getProjectByTitle(modelId);
-					}
-					else {
-						theProject = manager.getProjectByReference(modelId, server, repository, version);
-					}
-				} catch (EolInternalException e) {
-					throw new EolModelLoadingException(e, this);
+					manager = factory.getModelManager(false);
+				} catch (Exception e1) {
+					throw new EolModelLoadingException(e1, this);
 				}
-
-			}
-			else if (storeOnDisposal) {
-				// TODO Decide how the readOnLoad/storeOnDisposal flags control how the model is either
-				// loaded or created. 
-			}
-			loadDictionary();
+				if  (readOnLoad) {
+					try {
+						if (server.length() == 0) {
+							theProject = manager.getProjectByTitle(modelId);
+						}
+						else {
+							theProject = manager.getProjectByReference(modelId, server, repository, version);
+						}
+					} catch (EolInternalException e) {
+						throw new EolModelLoadingException(e, this);
+					}
+				}
+				else if (storeOnDisposal) {
+					// TODO Decide how the readOnLoad/storeOnDisposal flags control how the model is either
+					// loaded or created. 
+				}
+				loadDictionary();
+			//}
 		}
 	}
 

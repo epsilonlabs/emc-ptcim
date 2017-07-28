@@ -8,7 +8,6 @@ import com4j.*;
 public abstract class ClassFactory {
   private ClassFactory() {} // instanciation is not allowed
 
-
   /**
    * Enterprise CaseProjects Class
    */

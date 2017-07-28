@@ -1,10 +1,7 @@
 package org.eclipse.epsilon.emc.ptcim;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
 public class PtcimPropertyManager {
 	

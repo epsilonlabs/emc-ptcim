@@ -11,12 +11,9 @@
 package org.eclipse.epsilon.emc.ptcim;
 
 import java.util.AbstractList;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
-import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.execute.operations.AbstractOperation;
 import org.eclipse.epsilon.eol.execute.operations.declarative.IAbstractOperationContributor;
 

@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.epsilon.emc.ptcim;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
 import com4j.Com4jObject;
 import com4j.ComThread;

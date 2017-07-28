@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.WeakHashMap;
 
-import org.eclipse.epsilon.eol.exceptions.EolInternalException;
-
 public class PtcimCachedPropertyManager extends PtcimPropertyManager {
 	
 public static final PtcimCachedPropertyManager INSTANCE = new PtcimCachedPropertyManager();

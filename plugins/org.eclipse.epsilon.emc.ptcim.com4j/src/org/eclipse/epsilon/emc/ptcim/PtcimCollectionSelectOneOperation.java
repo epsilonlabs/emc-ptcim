@@ -10,15 +10,11 @@
  *******************************************************************************/
 package org.eclipse.epsilon.emc.ptcim;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.epsilon.eol.dom.EqualsOperatorExpression;
 import org.eclipse.epsilon.eol.dom.Expression;
 import org.eclipse.epsilon.eol.dom.NameExpression;
 import org.eclipse.epsilon.eol.dom.OperatorExpression;
 import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
-import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.context.Variable;

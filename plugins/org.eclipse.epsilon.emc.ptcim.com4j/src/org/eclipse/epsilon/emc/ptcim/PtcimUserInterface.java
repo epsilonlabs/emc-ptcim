@@ -47,7 +47,6 @@ public class PtcimUserInterface {
 			return false;
 		}
 		else {
-			// FIXME See how boolean values are returned and wrap in a java boolean
 			return true;
 		}
 	}

@@ -11,9 +11,6 @@
 package org.eclipse.epsilon.emc.ptcim;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
-
-import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
 public class PtcimIterator implements Iterator<PtcimObject> {
 	

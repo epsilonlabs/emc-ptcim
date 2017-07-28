@@ -1,10 +1,5 @@
 package org.eclipse.epsilon.emc.ptcim;		
 		
-import java.util.ArrayList;		
-import java.util.List;		
-		
-import org.eclipse.epsilon.eol.exceptions.EolIllegalPropertyAssignmentException;
-import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolReadOnlyPropertyException;		
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;		
 import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertySetter;		

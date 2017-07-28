@@ -27,7 +27,7 @@ public class PtcimFrameworkFactory {
 		return fileDialog;
 	}
 
-	public PtcimModelManager getModelManager(boolean fromUI) throws EolInternalException {
+	public PtcimModelManager getModelManager(boolean fromUI) throws Exception {
 		modelManager.connect(fromUI);
 		return modelManager;
 	}

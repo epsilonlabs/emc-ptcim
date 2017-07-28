@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
-
 import com4j.Holder;
 
 public class PtcimFileDialog extends Observable{
@@ -24,9 +22,7 @@ public class PtcimFileDialog extends Observable{
 	 * a model, it notifies the UI to populate the model configuration with the model details (e.g., server, repository, etc.)
 	 */
 	public void connect(Observer o) throws EolInternalException {
-		
-		this.addObserver(o);
-
+			this.addObserver(o);
 	}
 
 	public void disconnect() throws EolInternalException {
@@ -46,6 +42,7 @@ public class PtcimFileDialog extends Observable{
 				}
 			}).start();
 			return (String) "";
+					
 		} catch (Exception e) {
 			throw new EolInternalException(e);
 		} finally {
