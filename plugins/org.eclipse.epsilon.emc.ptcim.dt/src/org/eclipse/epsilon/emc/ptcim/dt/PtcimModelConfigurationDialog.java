@@ -11,10 +11,17 @@
  ******************************************************************************/
 package org.eclipse.epsilon.emc.ptcim.dt;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.ForkJoinPool;
+
+import javax.swing.JOptionPane;
 
 import org.eclipse.epsilon.common.dt.launching.dialogs.AbstractCachedModelConfigurationDialog;
 import org.eclipse.epsilon.emc.ptcim.ClassFactory;
@@ -26,6 +33,7 @@ import org.eclipse.epsilon.emc.ptcim.PtcimModel;
 import org.eclipse.epsilon.emc.ptcim.PtcimModelManager;
 import org.eclipse.epsilon.emc.ptcim.PtcimObject;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
+import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -88,18 +96,44 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				projects = ClassFactory.createCCaseProjects();
-				if (PtcimFileDialog.dialog == null) {
-					PtcimFileDialog.dialog = ClassFactory.createArtisanModelFileDialog();
-				}
-				isConnected = true;
 				try {
-					manager = factory.getModelManager(true);
-				} catch (EolInternalException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					projects = ClassFactory.createCCaseProjects();
+					if (PtcimFileDialog.dialog == null) {
+						PtcimFileDialog.dialog = ClassFactory.createArtisanModelFileDialog();
+					}
+					isConnected = true;
+					try {
+						manager = factory.getModelManager(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					manager.setProjects(ClassFactory.createCCaseProjects());
+				} catch (Exception e1) {
+					Object[] options = {"Close", "Read more..."};
+					int n = JOptionPane.showOptionDialog(null,
+					    "Running the driver from 64-bit Java needs some registry changes. Click the read more button to read more.",
+					    "64-bit compatibility [CCaseObject]",
+					    JOptionPane.YES_NO_OPTION,
+					    JOptionPane.INFORMATION_MESSAGE,
+					    null,     //do not use a custom Icon
+					    options,  //the titles of buttons
+					    options[0]); //default button title
+					if (n == 1) {
+						try {
+							Desktop.getDesktop().browse(new URL("https://github.com/epsilonlabs/emc-ptcim/blob/master/README.md#running-from-64-bit-java-environments").toURI());
+						} catch (MalformedURLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (URISyntaxException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					
 				}
-				manager.setProjects(ClassFactory.createCCaseProjects());
 			}
 		}).start();
 		// We need to know if the whole process was triggered by the UI or not. This is done by passing an attribute to the model manager. 
@@ -114,7 +148,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	 */
 	@Override
 	public boolean close() {
-		manager.disconnect();
+		//manager.disconnect();
 		factory.shutdown();
 		return super.close();
 	}
