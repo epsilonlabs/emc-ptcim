@@ -14,8 +14,6 @@ import java.util.Observer;
 
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
-import com4j.NativeType;
-
 public class PtcimFrameworkFactory {
 	
 	private PtcimModelManager modelManager = new PtcimModelManager();
