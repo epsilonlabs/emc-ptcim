@@ -292,8 +292,8 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		openButton.setText("Open Model");
 		openButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		Observer o = this;	
-		
+		final Observer o = this;	
+
 		openButton.addListener(SWT.Selection, new Listener() {
 
 			@Override
@@ -446,7 +446,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 
 	private String setProjectPropertiesText(PtcimObject ap) {
 		// Get current project information
-		String ref = (String) ap.property("Reference", null);
+		final String ref = (String) ap.property("Reference", null);
 		Display.getDefault().asyncExec(new Runnable() {
 		    public void run() {
 				if (ref != null) {
@@ -494,9 +494,10 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	// We need to run the population of the UI from the default display thread because this is the only thread that can update Java SWT UIs.
 	@Override
 	public void update(Observable o, Object arg) {
+		final String theReference = (String) arg;
 		Display.getDefault().asyncExec(new Runnable() {
 		    public void run() {
-				modelReferenceToFields(((String)arg));
+				modelReferenceToFields((theReference));
 		    }
 		});
 	}
