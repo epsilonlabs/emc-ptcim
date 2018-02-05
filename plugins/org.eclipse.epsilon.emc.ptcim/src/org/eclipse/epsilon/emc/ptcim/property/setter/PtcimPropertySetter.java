@@ -1,7 +1,10 @@
-package org.eclipse.epsilon.emc.ptcim;		
+package org.eclipse.epsilon.emc.ptcim.property.setter;		
 		
-import org.eclipse.epsilon.eol.exceptions.EolReadOnlyPropertyException;		
-import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;		
+import org.eclipse.epsilon.emc.ptcim.PtcimObject;
+import org.eclipse.epsilon.emc.ptcim.property.PtcimProperty;
+import org.eclipse.epsilon.emc.ptcim.property.manager.PtcimPropertyManager;
+import org.eclipse.epsilon.eol.exceptions.EolReadOnlyPropertyException;
+import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertySetter;		
 		
 public class PtcimPropertySetter extends AbstractPropertySetter {		
@@ -23,7 +26,6 @@ public class PtcimPropertySetter extends AbstractPropertySetter {
 	public PtcimPropertySetter() {}
 	
 	public PtcimPropertySetter(PtcimPropertyManager manager) {
-		//System.out.println("Just created a normal setter...");
 		this.manager = manager;
 	}
 		
@@ -32,7 +34,6 @@ public class PtcimPropertySetter extends AbstractPropertySetter {
 	 */		
 	@Override		
 	public void invoke(Object value) throws EolRuntimeException {		
-		
 		comProperty = manager.getPtcProperty((PtcimObject) object, property);		
 		if (comProperty != null) {		
 			super.setProperty(property);		

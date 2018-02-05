@@ -1,4 +1,7 @@
-package org.eclipse.epsilon.emc.ptcim;
+package org.eclipse.epsilon.emc.ptcim.util;
+
+import org.eclipse.epsilon.emc.ptcim.util.com4j.IArtisanModelFileDialog;
+import org.eclipse.epsilon.emc.ptcim.util.com4j.IAutomationCaseObject;
 
 import com4j.*;
 

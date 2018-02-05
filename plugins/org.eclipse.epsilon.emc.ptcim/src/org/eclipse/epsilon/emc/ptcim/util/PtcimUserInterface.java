@@ -8,11 +8,12 @@
  * Contributors:
  *     Horacio Hoyos - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.emc.ptcim;
+package org.eclipse.epsilon.emc.ptcim.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.epsilon.emc.ptcim.PtcimObject;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
 public class PtcimUserInterface {

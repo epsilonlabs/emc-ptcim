@@ -8,10 +8,13 @@
  * Contributors:
  *     Horacio Hoyos - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.emc.ptcim;
+package org.eclipse.epsilon.emc.ptcim.util;
 
 import java.util.Observer;
 
+import org.eclipse.epsilon.emc.ptcim.models.PtcimModelManager;
+import org.eclipse.epsilon.emc.ptcim.property.manager.PtcimCachedPropertyManager;
+import org.eclipse.epsilon.emc.ptcim.property.manager.PtcimPropertyManager;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
 public class PtcimFrameworkFactory {

@@ -5,12 +5,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.eclipse.epsilon.emc.ptcim.PtcimModel;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 import org.eclipse.epsilon.evl.EvlModule;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 
 import org.eclipse.epsilon.common.util.StringProperties;
+import org.eclipse.epsilon.emc.ptcim.models.PtcimModel;
 
 public class EvlStandalone {
 	

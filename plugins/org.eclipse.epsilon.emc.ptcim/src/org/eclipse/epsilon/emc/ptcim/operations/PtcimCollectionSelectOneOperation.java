@@ -8,10 +8,10 @@
  * Contributors:
  *     Horacio Hoyos - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.emc.ptcim;
+package org.eclipse.epsilon.emc.ptcim.operations;
 
-import java.util.Collection;
-
+import org.eclipse.epsilon.emc.ptcim.PtcimObject;
+import org.eclipse.epsilon.emc.ptcim.operations.contributors.PtcimCollectionOperationContributor;
 import org.eclipse.epsilon.eol.dom.EqualsOperatorExpression;
 import org.eclipse.epsilon.eol.dom.Expression;
 import org.eclipse.epsilon.eol.dom.NameExpression;
@@ -20,27 +20,27 @@ import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.context.Variable;
-import org.eclipse.epsilon.eol.execute.operations.declarative.SelectOperation;
+import org.eclipse.epsilon.eol.execute.operations.declarative.SelectOneOperation;
 
 /**
- * The Class OptimisableCollectionSelectOperation allows the Artisan Model to provide
- * optimized execution of select queries by name using Items automation calls.  
+ * The class allows the Artisan Model to provide
+ * optimized execution of selectOne queries by attribute value using
+ * ItemEx automation calls.  
  */
-public class PtcimCollectionSelectOperation extends SelectOperation {
+public class PtcimCollectionSelectOneOperation extends SelectOneOperation {
 	
 	private IEolContext context;
 	private Variable iterator;
 
 	@Override
-	public Object execute(Object target, Variable iterator, Expression ast, IEolContext context,
-			boolean returnOnFirstMatch) throws EolRuntimeException {
-		if (!(target instanceof PtcimCollection)) {
-			return super.execute(target, iterator, ast, context, returnOnFirstMatch);
+	public Object execute(Object target, Variable iterator, Expression ast, IEolContext context) throws EolRuntimeException {
+		if (!(target instanceof PtcimCollectionOperationContributor)) {
+			return super.execute(target, iterator, ast, context);
 		}
 		try {
 			this.context = context;
 			this.iterator = iterator;
-			return decomposeAST((PtcimCollection) target, ast,returnOnFirstMatch);
+			return decomposeAST((PtcimCollectionOperationContributor) target, ast);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -48,28 +48,20 @@ public class PtcimCollectionSelectOperation extends SelectOperation {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	protected Collection<PtcimObject> decomposeAST(PtcimCollection target, Expression ast, boolean returnOnFirstMatch) throws Exception {
-
+	protected Object decomposeAST(PtcimCollectionOperationContributor target, Expression ast) throws Exception {
 		if (isOptimisable(ast)) {
-			return optimisedExecution(target, ast, returnOnFirstMatch);
+			return optimisedExecution(target, ast);
 		} else {
-			Object ret = super.execute(target, iterator, (Expression) ast, context, returnOnFirstMatch);
-			return (Collection<PtcimObject>) ret;
-
+			Object ret = super.execute(target, iterator, (Expression) ast, context);
+			return ret;
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private Collection<PtcimObject> optimisedExecution(PtcimCollection target, Expression ast, boolean returnOnFirstMatch) throws EolRuntimeException {
+	private Object optimisedExecution(PtcimCollectionOperationContributor target, Expression ast) throws EolRuntimeException {
 		// NOTE: this assumes that isOptimisable(ast) returned true
 		final OperatorExpression opExp = (OperatorExpression) ast;
 		final PropertyCallExpression lOperand = (PropertyCallExpression) opExp.getFirstOperand();
 		final String attributename = lOperand.getPropertyNameExpression().getName();
-		// FIXME Think there are some types that have another default
-		if (!"name".equals(attributename.toLowerCase())) {		// Name is the default Id
-			return (Collection<PtcimObject>) super.execute(target, iterator, (Expression) ast, context, returnOnFirstMatch);
-		}
 		final Expression valueAST = opExp.getSecondOperand();
 		Object attributevalue = null;
 		try {
@@ -82,20 +74,24 @@ public class PtcimCollectionSelectOperation extends SelectOperation {
 					+ "\ncannot be evaluated using database indexing,\nas the iterator variable of the current select operation ("
 					+ iterator.getName() + ") is not used in this process.\nDefaulting to Epsion's select");
 		}
-		if (attributevalue != null) {
-			assert attributevalue instanceof String;
-			PtcimObject comresult = new PtcimObject(target.getOwner().items(target.getAssociation(), attributevalue).queryInterface(IAutomationCaseObject.class));
-			Collection<PtcimObject> result = comresult.wrapInFilteredColleciton(target.getAssociation());
-			return (Collection<PtcimObject>) result;
-			
-		} else {
-			return (Collection<PtcimObject>) super.execute(target, iterator, (Expression) ast, context, returnOnFirstMatch);
+		String value = String.valueOf(attributevalue);
+		PtcimObject comresult = null;
+		if ("name".equals(attributename.toLowerCase())) {		// Name is the default Id
+			comresult = target.getOwner().item(target.getAssociation(), value);
 		}
+		else {
+			comresult = target.getOwner().itemEx(target.getAssociation(), value, attributename);
+		}
+		if (comresult != null) {
+			String strId = (String) comresult.property("Id", null);
+			comresult.setId(strId);
+		}
+		return comresult;
 	}
 	
 	/**
-	 * We can only optimize select expressions in which the condition of the form:
-	 * iterator.Name = "value"
+	 * We can only optimize selectOne expressions in which the condition of the form:
+	 * iterator.property = "value"
 	 * 
 	 * @param ast
 	 * @return
@@ -117,6 +113,7 @@ public class PtcimCollectionSelectOperation extends SelectOperation {
 				return false;
 			}
 			final PropertyCallExpression lOperand = (PropertyCallExpression) rawLOperand;
+
 			// L2. Check that we're using the iterator
 			final Expression rawTargetExpression = lOperand.getTargetExpression();
 			if (!(lOperand.getTargetExpression() instanceof NameExpression)) {
@@ -126,9 +123,12 @@ public class PtcimCollectionSelectOperation extends SelectOperation {
 			if (!iterator.getName().equals(nameExpression.getName())) {
 				return false;
 			}
-			// We cant validate the right unless we execute it, and then it would mean double execution of a probably complex expression
-			//final Expression rawROperand = opExp.getSecondOperand();
-			//return rawROperand instanceof StringLiteral;
+			// RIGHT - we should have a value (String)
+			// final Expression rawROperand = opExp.getSecondOperand();
+			// return (rawROperand instanceof StringLiteral)
+			//		|| (rawROperand instanceof BooleanLiteral)
+			//		|| (rawROperand instanceof IntegerLiteral)
+			//		|| (rawROperand instanceof RealLiteral);
 			return true;
 		} catch (Exception e) {
 			return false;

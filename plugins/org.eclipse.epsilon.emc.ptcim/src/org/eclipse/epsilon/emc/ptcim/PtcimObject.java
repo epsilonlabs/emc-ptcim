@@ -1,55 +1,57 @@
-/*******************************************************************************
- * Copyright (c) 2016 University of York
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Hoacio Hoyos Rodriguez - Initial API and implementation
- *******************************************************************************/
 package org.eclipse.epsilon.emc.ptcim;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.epsilon.emc.ptcim.operations.contributors.PtcimCollectionOperationContributor;
+import org.eclipse.epsilon.emc.ptcim.util.com4j.IAutomationCaseObject;
+
 import com4j.Com4jObject;
+import com4j.ComException;
 import com4j.ComThread;
 import com4j.EventCookie;
 
-public class PtcimObject implements IAutomationCaseObject {
+//Alternative PtcimObject
+public class PtcimObject {
 
 	private String id;
-	private IAutomationCaseObject theIaco; 
-	
-	public void setTheIaco(IAutomationCaseObject theIaco) {
-		this.theIaco = theIaco;
-	}
-
-
-	public IAutomationCaseObject getTheIaco() {
-		return theIaco;
-	}
-
+	private InnerAutomationCaseObject iaco;
 
 	public PtcimObject(IAutomationCaseObject iaco) {
-		this.theIaco = iaco;
+		this.iaco = new InnerAutomationCaseObject(iaco);
 	}
 
-	
+	public void setTheIaco(IAutomationCaseObject theIaco) {
+		getInner().setTheIaco(theIaco);
+	}
+
+	public IAutomationCaseObject getTheIaco() {
+		return getInner().getTheIaco();
+	}
+
+	private static PtcimObject createFromCom4j(Com4jObject object) {
+		return new PtcimObject(object.queryInterface(IAutomationCaseObject.class));
+	}
+
+	private InnerAutomationCaseObject getInner() {
+		return this.iaco;
+	}
+
 	public String getType() {
 		String strType = null;
-		strType = (String) theIaco.property("Type", null);
+		strType = (String) getInner().getTheIaco().property("Type", null);
 		return strType;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (theIaco == obj)
+		if (getInner().getTheIaco() == obj)
 			return true;
 		if (obj == null)
 			return false;
@@ -67,9 +69,10 @@ public class PtcimObject implements IAutomationCaseObject {
 	public String getId() {
 		return id;
 	}
-	
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -87,239 +90,598 @@ public class PtcimObject implements IAutomationCaseObject {
 		}
 		this.id = id;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jawin.COMPtr#toString()
 	 */
 	@Override
 	public String toString() {
 		if (id != null) {
 			return id;
-		}
-		else {
+		} else {
 			return super.toString();
 		}
 	}
-	
+
 	public List<PtcimObject> wrapInCollection(PtcimObject owner, String association) {
-		return new PtcimCollection(this, owner, association);
+		return new PtcimCollectionOperationContributor(this, owner, association);
 	}
-	
+
 	public Collection<PtcimObject> wrapInFilteredColleciton(String association) {
 		return new PtcimFilteredCollection(this, association);
 	}
 
-	@Override
+	// Wrappers
+
 	public <T> EventCookie advise(Class<T> arg0, T arg1) {
-		return theIaco.advise(arg0, arg1);
+		return getInner().advise(arg0, arg1);
 	}
 
-	@Override
 	public void dispose() {
-		theIaco.dispose();
-		
+		getInner().dispose();
 	}
 
-	@Override
 	public ComThread getComThread() {
-		return theIaco.getComThread();
+		return getInner().getComThread();
 	}
 
-	@Override
 	public long getIUnknownPointer() {
-		return theIaco.getIUnknownPointer();
+		return getInner().getIUnknownPointer();
 	}
 
-	@Override
 	public long getPointer() {
-		return theIaco.getPointer();
+		return getInner().getPointer();
 	}
 
-	@Override
 	public int getPtr() {
-		return theIaco.getPtr();
+		return getInner().getPtr();
 	}
 
-	@Override
 	public <T extends Com4jObject> boolean is(Class<T> arg0) {
-		return theIaco.is(arg0);
+		return getInner().is(arg0); // FIXME should be PtcimObject instead of Com4j
 	}
 
-	@Override
-	public <T extends Com4jObject> T queryInterface(Class<T> arg0) {
-		return queryInterface(arg0);
-	}
-
-	@Override
 	public void setName(String arg0) {
-		theIaco.setName(arg0);
+		getInner().setName(arg0);
 	}
 
-	@Override
 	public void property(Object type, Object index, Object retval) {
-		theIaco.property(type, index, retval);
-		
+		getInner().property(type, index, retval);
 	}
 
-	@Override
 	public Object property(Object type, Object index) {
-		return theIaco.property(type, index);
+		return getInner().property(type, index);
 	}
 
-	@Override
-	public Com4jObject item(String role, Object index) {
-		return theIaco.item(role, index);
+	public PtcimObject item(String role, Object index) {
+		return PtcimObject.createFromCom4j(getInner().item(role, index).queryInterface(IAutomationCaseObject.class));
 	}
 
-	@Override
-	public Com4jObject items(String role, Object index) {
-		return theIaco.items(role, index);
+	public PtcimObject items(String role, Object index) {
+		return PtcimObject.createFromCom4j(getInner().item(role, index).queryInterface(IAutomationCaseObject.class));
 	}
 
-	@Override
-	public Com4jObject add(String role, Object value) {
-		return theIaco.add(role, value);
+	public PtcimObject add(String role, Object value) {
+		return PtcimObject.createFromCom4j(getInner().add(role, value).queryInterface(IAutomationCaseObject.class));
 	}
 
-	@Override
 	public void remove(String role, Object index) {
-		theIaco.remove(role, index);
+		getInner().remove(role, index);
 	}
 
-	@Override
-	public Com4jObject link(String role, Object index) {
-		return theIaco.link(role, index);
+	public PtcimObject link(String role, Object index) {
+		return PtcimObject.createFromCom4j(getInner().link(role, index).queryInterface(IAutomationCaseObject.class));
 	}
 
-	@Override
 	public void resetQueryItems() {
-		theIaco.resetQueryItems();
+		getInner().resetQueryItems();
 	}
 
-	@Override
-	public Com4jObject nextItem() {
-		return theIaco.nextItem();
+	public PtcimObject nextItem() {
+		return PtcimObject.createFromCom4j(getInner().nextItem().queryInterface(IAutomationCaseObject.class));
 	}
 
-	@Override
 	public int moreItems() {
-		return theIaco.moreItems();
+		return getInner().moreItems();
 	}
 
-	@Override
 	public void propertySet(Object type, Object index, Object data) {
-		theIaco.propertySet(type, index, data);
+		getInner().propertySet(type, index, data);
 	}
 
-	@Override
 	public Object propertyGet(Object type, Object index) {
-		return theIaco.propertyGet(type, index);
+		return getInner().propertyGet(type, index);
 	}
 
-	@Override
-	public Iterator<Com4jObject> iterator() {
-		return theIaco.iterator();
+	public Iterator<PtcimObject> iterator() {
+		return new Iterator<PtcimObject>() {
+
+			Iterator<Com4jObject> iterator = getInner().iterator();
+
+			@Override
+			public boolean hasNext() {
+				return iterator.hasNext();
+			}
+
+			@Override
+			public PtcimObject next() {
+				return PtcimObject.createFromCom4j(iterator.next());
+			}
+		};
 	}
 
-	@Override
-	public Com4jObject findObject(String itemId) {
-		return theIaco.findObject(itemId);
+	public PtcimObject findObject(String itemId) {
+		return PtcimObject.createFromCom4j(getInner().findObject(itemId).queryInterface(IAutomationCaseObject.class));
 	}
 
-	@Override
 	public Object getClassProperties(String className, Object index) {
-		return theIaco.getClassProperties(className, index);
+		return getInner().getClassProperties(className, index);
 	}
 
-	@Override
 	public void checkLicenses(int bCheck) {
-		theIaco.checkLicenses(bCheck);
+		getInner().checkLicenses(bCheck);
 	}
 
-	@Override
-	public Com4jObject itemByID(String id) {
-		return theIaco.itemByID(id);
+	public PtcimObject itemByID(String id) {
+		return PtcimObject.createFromCom4j(getInner().itemByID(id).queryInterface(IAutomationCaseObject.class));
 	}
 
-	@Override
-	public Com4jObject itemEx(String role, Object index, Object searchProperty) {
-		return theIaco.itemEx(role, index, searchProperty);
+	public PtcimObject itemEx(String role, Object index, Object searchProperty) {
+		return PtcimObject.createFromCom4j(
+				getInner().itemEx(role, index, searchProperty).queryInterface(IAutomationCaseObject.class));
 	}
 
-	@Override
 	public void refresh() {
-		theIaco.refresh();
+		getInner().refresh();
 	}
 
-	@Override
 	public void export(String directory) {
-		theIaco.export(directory);
+		getInner().export(directory);
 	}
 
-	@Override
 	public void _import(String directory) {
-		theIaco._import(directory);
+		getInner()._import(directory);
 	}
 
-	@Override
 	public void diff(String directory) {
-		theIaco.diff(directory);
+		getInner().diff(directory);
 	}
 
-	@Override
 	public Object itemCount(String role) {
-		return theIaco.itemCount(role);
+		return getInner().itemCount(role);
 	}
 
-	@Override
-	public void reorderItem(String role, Com4jObject pObject, Com4jObject pPredecessorObject,
-			Com4jObject pSuccessorObject) {
-		theIaco.reorderItem(role, pObject, pPredecessorObject, pSuccessorObject);
+	public void reorderItem(String role, PtcimObject pObject, PtcimObject pPredecessorObject,
+			PtcimObject pSuccessorObject) {
+		getInner().reorderItem(role, pObject.getInner(), pPredecessorObject.getInner(), pSuccessorObject.getInner());
 	}
 
-	@Override
 	public Object getExtendedClassProperties(String className) {
-		return theIaco.getExtendedClassProperties(className);
+		return getInner().getExtendedClassProperties(className);
 	}
 
-	@Override
-	public Com4jObject addDirected(String role, Com4jObject pHint) {
-		return theIaco.addDirected(role, pHint);
+	public PtcimObject addDirected(String role, PtcimObject pHint) {
+		return PtcimObject.createFromCom4j(
+				getInner().addDirected(role, pHint.getInner()).queryInterface(IAutomationCaseObject.class));
 	}
 
-	@Override
 	public void exportEx(String directory, int bDoSubDirs) {
-		theIaco.exportEx(directory, bDoSubDirs);
+		getInner().exportEx(directory, bDoSubDirs);
 	}
 
-	@Override
 	public void delete() {
-		theIaco.delete();
+		getInner().delete();
 	}
 
-	@Override
 	public String displayName(String tagName) {
-		return theIaco.displayName(tagName);
+		return getInner().displayName(tagName);
 	}
 
-	@Override
-	public Com4jObject createClone(Com4jObject pCloneThis) {
-		return theIaco.createClone(pCloneThis);
+	public PtcimObject createClone(PtcimObject pCloneThis) {
+		return null;
 	}
 
-	@Override
-	public void merge(Com4jObject pSrcItem) {
-		theIaco.merge(pSrcItem);
+	public void merge(PtcimObject pSrcItem) {
+		getInner().merge(pSrcItem.getInner());
+
 	}
 
-	@Override
-	public Com4jObject addByType(String type, String role) {
-		return theIaco.addByType(type, role);
+	public PtcimObject addByType(String type, String role) {
+		return PtcimObject
+				.createFromCom4j(getInner().addByType(type, role).queryInterface(IAutomationCaseObject.class));
 	}
 
-	@Override
-	public int isConnectedTo(String role, Com4jObject pOtherObject) {
-		return theIaco.isConnectedTo(role, pOtherObject);
+	public int isConnectedTo(String role, PtcimObject pOtherObject) {
+		return getInner().isConnectedTo(role, pOtherObject.getInner());
 	}
-	
+
+	private class InnerAutomationCaseObject implements IAutomationCaseObject {
+
+		private IAutomationCaseObject theIaco;
+
+		public InnerAutomationCaseObject(IAutomationCaseObject theIaco) {
+			this.theIaco = theIaco;
+		}
+
+		public IAutomationCaseObject getTheIaco() {
+			return theIaco;
+		}
+
+		public void setTheIaco(IAutomationCaseObject theIaco) {
+			this.theIaco = theIaco;
+		}
+
+		@Override
+		public <T> EventCookie advise(Class<T> arg0, T arg1) {
+			try {
+				return theIaco.advise(arg0, arg1);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public void dispose() {
+			theIaco.dispose();
+
+		}
+
+		@Override
+		public ComThread getComThread() {
+			try {
+				return theIaco.getComThread();
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public long getIUnknownPointer() {
+			try {
+				return theIaco.getIUnknownPointer();
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public long getPointer() {
+			try {
+				return theIaco.getPointer();
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public int getPtr() {
+			try {
+				return theIaco.getPtr();
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public <T extends Com4jObject> boolean is(Class<T> arg0) {
+			try {
+				return theIaco.is(arg0);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public <T extends Com4jObject> T queryInterface(Class<T> arg0) {
+			return queryInterface(arg0);
+		}
+
+		@Override
+		public void setName(String arg0) {
+			theIaco.setName(arg0);
+		}
+
+		@Override
+		public void property(Object type, Object index, Object retval) {
+			theIaco.property(type, index, retval);
+
+		}
+
+		@Override
+		public Object property(Object type, Object index) {
+			try {
+				return theIaco.property(type, index);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public Com4jObject item(String role, Object index) {
+			try {
+				return theIaco.item(role, index);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public Com4jObject items(String role, Object index) {
+			try {
+				return theIaco.items(role, index);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public Com4jObject add(String role, Object value) {
+			try {
+				return theIaco.add(role, value);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public void remove(String role, Object index) {
+			theIaco.remove(role, index);
+		}
+
+		@Override
+		public Com4jObject link(String role, Object index) {
+			try {
+				return theIaco.link(role, index);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public void resetQueryItems() {
+			theIaco.resetQueryItems();
+		}
+
+		@Override
+		public Com4jObject nextItem() {
+			try {
+				return theIaco.nextItem();
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public int moreItems() {
+			try {
+				return theIaco.moreItems();
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public void propertySet(Object type, Object index, Object data) {
+			theIaco.propertySet(type, index, data);
+		}
+
+		@Override
+		public Object propertyGet(Object type, Object index) {
+			try {
+				return theIaco.propertyGet(type, index);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public Iterator<Com4jObject> iterator() {
+			try {
+				return theIaco.iterator();
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public Com4jObject findObject(String itemId) {
+			try {
+				return theIaco.findObject(itemId);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public Object getClassProperties(String className, Object index) {
+			try {
+				return theIaco.getClassProperties(className, index);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public void checkLicenses(int bCheck) {
+			theIaco.checkLicenses(bCheck);
+		}
+
+		@Override
+		public Com4jObject itemByID(String id) {
+			try {
+				return theIaco.itemByID(id);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public Com4jObject itemEx(String role, Object index, Object searchProperty) {
+			try {
+				return theIaco.itemEx(role, index, searchProperty);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public void refresh() {
+			theIaco.refresh();
+		}
+
+		@Override
+		public void export(String directory) {
+			theIaco.export(directory);
+		}
+
+		@Override
+		public void _import(String directory) {
+			theIaco._import(directory);
+		}
+
+		@Override
+		public void diff(String directory) {
+			theIaco.diff(directory);
+		}
+
+		@Override
+		public Object itemCount(String role) {
+			try {
+				return theIaco.itemCount(role);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public void reorderItem(String role, Com4jObject pObject, Com4jObject pPredecessorObject,
+				Com4jObject pSuccessorObject) {
+			theIaco.reorderItem(role, pObject, pPredecessorObject, pSuccessorObject);
+		}
+
+		@Override
+		public Object getExtendedClassProperties(String className) {
+			try {
+				return theIaco.getExtendedClassProperties(className);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public Com4jObject addDirected(String role, Com4jObject pHint) {
+			try {
+				return theIaco.addDirected(role, pHint);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public void exportEx(String directory, int bDoSubDirs) {
+			theIaco.exportEx(directory, bDoSubDirs);
+		}
+
+		@Override
+		public void delete() {
+			theIaco.delete();
+		}
+
+		@Override
+		public String displayName(String tagName) {
+			try {
+				return theIaco.displayName(tagName);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public Com4jObject createClone(Com4jObject pCloneThis) {
+			try {
+				return theIaco.createClone(pCloneThis);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public void merge(Com4jObject pSrcItem) {
+			theIaco.merge(pSrcItem);
+		}
+
+		@Override
+		public Com4jObject addByType(String type, String role) {
+			try {
+				return theIaco.addByType(type, role);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		@Override
+		public int isConnectedTo(String role, Com4jObject pOtherObject) {
+			try {
+				return theIaco.isConnectedTo(role, pOtherObject);
+			} catch (ComException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+	}
+
 }

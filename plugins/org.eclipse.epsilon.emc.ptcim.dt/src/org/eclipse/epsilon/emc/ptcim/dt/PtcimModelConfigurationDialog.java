@@ -19,21 +19,18 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.ForkJoinPool;
 
 import javax.swing.JOptionPane;
 
 import org.eclipse.epsilon.common.dt.launching.dialogs.AbstractCachedModelConfigurationDialog;
-import org.eclipse.epsilon.emc.ptcim.ClassFactory;
-import org.eclipse.epsilon.emc.ptcim.IAutomationCaseObject;
-import org.eclipse.epsilon.emc.ptcim.PtcimCollection;
-import org.eclipse.epsilon.emc.ptcim.PtcimFileDialog;
-import org.eclipse.epsilon.emc.ptcim.PtcimFrameworkFactory;
-import org.eclipse.epsilon.emc.ptcim.PtcimModel;
-import org.eclipse.epsilon.emc.ptcim.PtcimModelManager;
 import org.eclipse.epsilon.emc.ptcim.PtcimObject;
+import org.eclipse.epsilon.emc.ptcim.models.PtcimModel;
+import org.eclipse.epsilon.emc.ptcim.models.PtcimModelManager;
+import org.eclipse.epsilon.emc.ptcim.operations.contributors.PtcimCollectionOperationContributor;
+import org.eclipse.epsilon.emc.ptcim.util.ClassFactory;
+import org.eclipse.epsilon.emc.ptcim.util.PtcimFileDialog;
+import org.eclipse.epsilon.emc.ptcim.util.PtcimFrameworkFactory;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
-import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -58,46 +55,36 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 
 	private PtcimFrameworkFactory factory;
 
-	protected Label fileTextLabel;
 	protected Text fileText;
-	protected Label profileDirectoriesLabel;
 	protected Text profileDirectoriesText;
-	protected Label profileWorkspaceDirectoriesLabel;
 	protected Text profileWorkspaceDirectoriesText;
 	protected Button browseModelFile;
 	protected Button ignoreArgoUmlProfiles;
-	protected Label referenceLabel;
 	protected Text referenceText;
 	private Text serverText;
-	private Label serverLabel;
 	private Text repositoryText;
-	private Label repositoryLabel;
-	private Label versionLabel;
 	private Text versionText;
 	private Button fromSelectionCheckbox;
-	private Label fromSelectionLabel;
-	private Label selectedElementIdLabel;
 	private Button selectedElementFindIdButton;
-	private Text selectedElementIdText;
-	private Label selectedElementNameAndTypeLabel;
 	private Label selectedElementNameAndTypeTextLabel;
+	private Text selectedElementIdText;
 	private Button propertiesAttributesCacheEnabledCheckbox;
-	private Label propertiesAttributesCacheEnabledLabel;
 	private Button propertiesValuesCacheEnabledCheckbox;
-	private Label propertiesValuesCacheEnabledLabel;
-
+	
 	PtcimModelManager manager = null;
 
 	private GridData twoCol;
-	private IAutomationCaseObject projects;
 	boolean isConnected = false;
+	//private IAutomationCaseObject projects;
+
+	
 	public PtcimModelConfigurationDialog() {
 		factory = new PtcimFrameworkFactory();
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					projects = ClassFactory.createCCaseProjects();
+					//projects = ClassFactory.createCCaseProjects();
 					if (PtcimFileDialog.dialog == null) {
 						PtcimFileDialog.dialog = ClassFactory.createArtisanModelFileDialog();
 					}
@@ -122,13 +109,10 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 						try {
 							Desktop.getDesktop().browse(new URL("https://github.com/epsilonlabs/emc-ptcim/blob/master/README.md#running-from-64-bit-java-environments").toURI());
 						} catch (MalformedURLException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (URISyntaxException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -154,7 +138,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	}
 
 	private void createdSelectedElement(final Composite parent, final Composite groupContent) {
-		selectedElementIdLabel = new Label(groupContent, SWT.NONE);
+		Label selectedElementIdLabel = new Label(groupContent, SWT.NONE);
 		selectedElementIdLabel.setText("Id of the root element:");
 
 		selectedElementIdText = new Text(groupContent, SWT.BORDER);
@@ -170,7 +154,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 				+ " (or last) selected element. The model information would be updated to match the project.");
 		selectedElementFindIdButton.setEnabled(false);
 		
-		selectedElementNameAndTypeLabel = new Label(groupContent, SWT.NONE);
+		Label selectedElementNameAndTypeLabel = new Label(groupContent, SWT.NONE);
 		selectedElementNameAndTypeLabel.setText("");
 
 		selectedElementNameAndTypeTextLabel = new Label(groupContent, SWT.NONE);
@@ -194,7 +178,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 										+ " desired model loaded, and that an element is selected.");
 							}
 							if (ap != null) {
-								PtcimCollection selection = null;
+								PtcimCollectionOperationContributor selection = null;
 								try {
 									selection = manager.getActiveItems();
 								} catch (EolInternalException e1) {
@@ -266,7 +250,6 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 	 */
 	@Override
 	protected void createNameAliasGroup(final Composite parent) {
-		// FIXME All labels can be local
 		final Composite groupContent = createGroupContainer(parent, "Identification", 3);
 		GridData oneCol = new GridData(GridData.FILL_HORIZONTAL);
 		twoCol = new GridData(GridData.FILL_HORIZONTAL);
@@ -281,7 +264,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		aliasesText = new Text(groupContent, SWT.BORDER);
 		aliasesText.setLayoutData(twoCol);
 
-		referenceLabel = new Label(groupContent, SWT.NONE);
+		Label referenceLabel = new Label(groupContent, SWT.NONE);
 		referenceLabel.setText("Reference: ");
 		referenceLabel.setToolTipText("This is the title/id of the model in the PTC IM repository");
 
@@ -302,7 +285,6 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 				try {
 					diag = factory.getFileDialogManager(o);
 				} catch (EolInternalException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 					return;
 				}
@@ -310,7 +292,6 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 				try {
 					ref = diag.openDialog();
 				} catch (EolInternalException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					return;
 				}
@@ -320,21 +301,21 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 			}
 		});
 
-		serverLabel = new Label(groupContent, SWT.NONE);
+		Label serverLabel = new Label(groupContent, SWT.NONE);
 		serverLabel.setText("Server: ");
 		serverLabel.setToolTipText("Leave blank to open the model by title.");
 
 		serverText = new Text(groupContent, SWT.BORDER);
 		serverText.setLayoutData(twoCol);
 
-		repositoryLabel = new Label(groupContent, SWT.NONE);
+		Label repositoryLabel = new Label(groupContent, SWT.NONE);
 		repositoryLabel.setText("Repository: ");
 		repositoryLabel.setToolTipText("Leave blank to open the model by title.");
 
 		repositoryText = new Text(groupContent, SWT.BORDER);
 		repositoryText.setLayoutData(twoCol);
 
-		versionLabel = new Label(groupContent, SWT.NONE);
+		Label versionLabel = new Label(groupContent, SWT.NONE);
 		versionLabel.setText("Version: ");
 		versionLabel.setToolTipText(
 				"Leave blank to open the latest version of the model. This option can oly be used to open models by refernce(id)");
@@ -342,7 +323,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 		versionText = new Text(groupContent, SWT.BORDER);
 		versionText.setLayoutData(twoCol);
 
-		propertiesAttributesCacheEnabledLabel = new Label(groupContent, SWT.NONE);
+		Label propertiesAttributesCacheEnabledLabel = new Label(groupContent, SWT.NONE);
 		propertiesAttributesCacheEnabledLabel.setText("Enable properties' attributes cache: ");
 
 		propertiesAttributesCacheEnabledCheckbox = new Button(groupContent, SWT.CHECK);
@@ -351,7 +332,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 				"If checked, Epsilon scripts will create and populate a cache with the attributes retrieved for each property.");
 		propertiesAttributesCacheEnabledCheckbox.setSelection(false);
 
-		propertiesValuesCacheEnabledLabel = new Label(groupContent, SWT.NONE);
+		Label propertiesValuesCacheEnabledLabel = new Label(groupContent, SWT.NONE);
 		propertiesValuesCacheEnabledLabel.setText("Enable properties' values cache: ");
 
 		propertiesValuesCacheEnabledCheckbox = new Button(groupContent, SWT.CHECK);
@@ -360,7 +341,7 @@ public class PtcimModelConfigurationDialog extends AbstractCachedModelConfigurat
 				"If checked, Epsilon scripts will create and populate a cache with the values retrieved for each property.");
 		propertiesValuesCacheEnabledCheckbox.setSelection(false);
 
-		fromSelectionLabel = new Label(groupContent, SWT.NONE);
+		Label fromSelectionLabel = new Label(groupContent, SWT.NONE);
 		fromSelectionLabel.setText("Select element as root: ");
 
 		fromSelectionCheckbox = new Button(groupContent, SWT.CHECK);

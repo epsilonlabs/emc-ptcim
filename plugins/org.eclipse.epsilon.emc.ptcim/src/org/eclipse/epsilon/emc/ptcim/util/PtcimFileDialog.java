@@ -1,9 +1,11 @@
-package org.eclipse.epsilon.emc.ptcim;
+package org.eclipse.epsilon.emc.ptcim.util;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+
+import org.eclipse.epsilon.emc.ptcim.util.com4j.IArtisanModelFileDialog;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import com4j.Holder;
 

@@ -1,13 +1,16 @@
-package org.eclipse.epsilon.emc.ptcim;
+package org.eclipse.epsilon.emc.ptcim.property.manager;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.eclipse.epsilon.emc.ptcim.PtcimObject;
+import org.eclipse.epsilon.emc.ptcim.property.PtcimProperty;
 
 public class PtcimPropertyManager {
 	
 	public static final PtcimPropertyManager INSTANCE = new PtcimPropertyManager();
 	
-	private static final Object ASSOCIATION_ROLE = "Association";
+	protected static final Object ASSOCIATION_ROLE = "Association";
 	
 	public PtcimPropertyManager getInstance() {
 		System.out.println("This runs with a normal property manager.");
@@ -45,15 +48,11 @@ public class PtcimPropertyManager {
 				break;
 			}
 		}
- 		return prop;
+		return prop;
  	}
 	
-	private boolean nameMatches(String name, String property) {
-	 	String noBlanks = name.replaceAll("\\s","");
-	 	return noBlanks.compareToIgnoreCase(property) == 0;
-	}
 		 
- 	private String unQuote(String name) {
+ 	protected String unQuote(String name) {
  		return name.replaceAll("^\"|\"$", "");
  	}
  	
@@ -62,12 +61,16 @@ public class PtcimPropertyManager {
  	public static String normalise(String theString) {
  		return theString.replaceAll("\\s", "").toLowerCase();
  	}
-	
+
+ 	protected boolean nameMatches(String name, String property) {
+	 	return normalise(name).compareToIgnoreCase(normalise(property)) == 0;
+	}
+
  	public String buildCachedTypePropertyIdentifier(PtcimObject object, String property) {
- 		return ((PtcimObject) object).getType() + "." + property;
+ 		return normalise( ((PtcimObject) object).getType() + "." + property );
  	}
  	
  	public String buildCachedElementPropertyIdentifier(PtcimObject object, String property) {
- 		return ((PtcimObject) object).getId() + "." + property;
+ 		return normalise( ((PtcimObject) object).getId() + "." + property );
  	}
 }

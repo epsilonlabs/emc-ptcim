@@ -1,3 +1,4 @@
+package org.eclipse.epsilon.emc.ptcim;
 /*******************************************************************************
  * Copyright (c) 2016 University of York
  * All rights reserved. This program and the accompanying materials
@@ -8,7 +9,7 @@
  * Contributors:
  *     Hoacio Hoyos Rodriguez - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.emc.ptcim;
+
 
 import java.util.Iterator;
 
@@ -52,7 +53,7 @@ public class PtcimIterator implements Iterator<PtcimObject> {
 	 */
 	@Override
 	public PtcimObject next() {
-		next = new PtcimObject(source.nextItem().queryInterface(IAutomationCaseObject.class));
+		next = source.nextItem();
 		String strId = (String) next.property("Id", null);
 		next.setId(strId);
 		return next;

@@ -1,12 +1,16 @@
- package org.eclipse.epsilon.emc.ptcim;		
+ package org.eclipse.epsilon.emc.ptcim.property.getter;		
  		
- import java.util.ArrayList;		
- import java.util.List;
+ import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.epsilon.emc.ptcim.PtcimProperty;
+import org.eclipse.epsilon.emc.ptcim.PtcimObject;
+import org.eclipse.epsilon.emc.ptcim.operations.contributors.PtcimCollectionOperationContributor;
+import org.eclipse.epsilon.emc.ptcim.property.PtcimProperty;
+import org.eclipse.epsilon.emc.ptcim.property.manager.PtcimPropertyManager;
+import org.eclipse.epsilon.emc.ptcim.util.com4j.IAutomationCaseObject;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
- import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;		
- import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter;		
+import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter;
  		
  public class PtcimPropertyGetter extends AbstractPropertyGetter {		
  		
@@ -34,37 +38,37 @@ import org.eclipse.epsilon.eol.exceptions.EolInternalException;
  	@Override		
  	public Object invoke(Object object, String property) throws EolRuntimeException {		
  		PtcimObject jObject = (PtcimObject) object;		
- 		Object o = null;		
+ 		Object invokedObject = null;		
  		try {		
- 			PtcimProperty p = manager.getPtcProperty(jObject, property);		
- 			if (p == null) {		
+ 			PtcimProperty ptcimPorperty = manager.getPtcProperty(jObject, property);		
+ 			if (ptcimPorperty == null) {		
  				throw new EolRuntimeException("No such property");		
  			}		
- 			if (p.isAssociation()) {		
+ 			if (ptcimPorperty.isAssociation()) {		
  				List<Object> args = new ArrayList<Object>();		
  				args.add(property);		
- 				if (p.isMultiple()) {		
- 					PtcimCollection elements;		
- 					Object res = new PtcimObject(jObject.items(property, null).queryInterface(IAutomationCaseObject.class));		
+ 				if (ptcimPorperty.isMultiple()) {		
+ 					PtcimCollectionOperationContributor elements;		
+ 					Object res = jObject.items(property, null);		
 					assert res instanceof PtcimObject;		
-					elements = new PtcimCollection((PtcimObject) res, jObject, property);		
- 					o = elements;		
+					elements = new PtcimCollectionOperationContributor((PtcimObject) res, jObject, property);		
+ 					invokedObject = elements;		
  				}		
  				else {		
- 					o = new PtcimObject(jObject.item(property, null).queryInterface(IAutomationCaseObject.class));		
-					if ( o instanceof PtcimObject) {		
-						String strId = (String) ((PtcimObject) o).property("Id", null);		
-						((PtcimObject) o).setId(strId);		
+ 					invokedObject = jObject.item(property, null);		
+					if ( invokedObject instanceof PtcimObject) {		
+						String strId = (String) ((PtcimObject) invokedObject).property("Id", null);		
+						((PtcimObject) invokedObject).setId(strId);		
 					}		
  				}		
  			}		
  			else {		
- 				o = jObject.property(property, null);		
+ 				invokedObject = jObject.property(property, null);		
  			}		
  		} catch (EolInternalException e) {		
  			throw new EolRuntimeException(e.getMessage());		
- 		}		
- 		return o;		
+ 		} 
+ 		return invokedObject;		
  	}		
  			
  	/* (nonJavadoc)		

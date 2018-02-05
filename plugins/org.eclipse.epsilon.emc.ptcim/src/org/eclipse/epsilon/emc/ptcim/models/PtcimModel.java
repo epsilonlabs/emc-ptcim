@@ -8,7 +8,7 @@
  * Contributors:
  *     Hoacio Hoyos Rodriguez - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.emc.ptcim;
+package org.eclipse.epsilon.emc.ptcim.models;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,9 +17,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.WeakHashMap;
 
-import com4j.Com4jObject;
-
 import org.eclipse.epsilon.common.util.StringProperties;
+import org.eclipse.epsilon.emc.ptcim.PtcimObject;
+import org.eclipse.epsilon.emc.ptcim.property.getter.PtcimCachedPropertyGetter;
+import org.eclipse.epsilon.emc.ptcim.property.getter.PtcimPropertyGetter;
+import org.eclipse.epsilon.emc.ptcim.property.manager.PtcimPropertyManager;
+import org.eclipse.epsilon.emc.ptcim.property.setter.PtcimCachedPropertySetter;
+import org.eclipse.epsilon.emc.ptcim.property.setter.PtcimPropertySetter;
+import org.eclipse.epsilon.emc.ptcim.util.PtcimFrameworkFactory;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundException;
@@ -100,7 +105,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	private String selectedElementId;
 	private boolean propertiesAttributesCacheEnabled;
 	private boolean propertiesValuesCacheEnabled;
-	
+		
 	public void setModelId(String modelId) {
 		this.modelId = modelId;
 	}
@@ -159,7 +164,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	protected Collection<PtcimObject> allContentsFromModel() {
 		assert model != null;
 		Collection<PtcimObject> elements;
-		PtcimObject res = new PtcimObject(model.items("", null).queryInterface(IAutomationCaseObject.class));
+		PtcimObject res = model.items("", null);
 		elements = res.wrapInCollection(model, "");
 		return (Collection<PtcimObject>) elements;
 	}
@@ -190,12 +195,12 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		Object parent = it.next();
 		PtcimObject comParent = (PtcimObject) parent;
 		if (parameters.size() == 1) {		// Add
-			newInstance.setTheIaco(comParent.add(type, null).queryInterface(IAutomationCaseObject.class));
+			newInstance = new PtcimObject(comParent.add(type, null).getTheIaco());
 			setNewInstanceId(newInstance);
 		}
 		else {								// AddByType
 			Object association = it.next();
-			newInstance.setTheIaco(comParent.addByType(type, association.toString()).queryInterface(IAutomationCaseObject.class));
+			newInstance =  new PtcimObject(comParent.addByType(type, association.toString()).getTheIaco());
 			setNewInstanceId(newInstance);
 		}
 		return newInstance;
@@ -216,7 +221,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		if (!isInstantiable(type)) {
 			throw new EolNotInstantiableModelElementTypeException(getName(), type);
 		}
-		PtcimObject newInstance = new PtcimObject(model.add(type, null).queryInterface(IAutomationCaseObject.class));
+		PtcimObject newInstance = model.add(type, null);
 		setNewInstanceId(newInstance);
 		return newInstance;
 	}
@@ -250,7 +255,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	protected void disposeModel() {
 		if (isInitialized()) {
 			if (!storeOnDisposal) {
-				// TODO: Discuss with Dimitris about store on disposal strategy
+				// TODO Discuss with Dimitris about store on disposal strategy
 			}
 		}
 	}
@@ -276,9 +281,8 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		assert model != null;
 		if (!fromSelection) {
 			List<? extends PtcimObject> elements;
-			PtcimObject res;
-			res = new PtcimObject(model.items(type, null).queryInterface(IAutomationCaseObject.class));	//, byRefArgs);
-			elements = res.wrapInCollection(model, type);
+			PtcimObject res = model.items(type, null);	//, byRefArgs);
+			elements = (List<PtcimObject>) res.wrapInCollection(model, type);
 			return (List<PtcimObject>) elements;
 		}
 		else {
@@ -327,7 +331,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		List<Object> args = new ArrayList<Object>();
 		args.add(asocName);
 		PtcimObject res = null;
-		res = new PtcimObject(root.items(asocName, null).queryInterface(IAutomationCaseObject.class));
+		res = root.items(asocName, null);
 		if (res != null) {
 			return res.wrapInCollection(root, asocName);
 		}
@@ -376,15 +380,10 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	 */
 	@Override
 	public Object getElementById(String id) {
-		Com4jObject res_ = null;
 		PtcimObject res = null;
 		try {
-			res_ = theProject.itemByID(id);
-			if (res_ != null) {
-				res = new PtcimObject(res_.queryInterface(IAutomationCaseObject.class));
-				if (res != null)
-					res.setId(id);
-			}
+			res = theProject.itemByID(id);
+			if (res != null) res.setId(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -538,7 +537,7 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 	}
 	
 	public void loadDictionary() throws EolModelLoadingException {
-		model = new PtcimObject(theProject.item("Dictionary", "Dictionary").queryInterface(IAutomationCaseObject.class));
+		model = theProject.item("Dictionary", "Dictionary");
 	}
 
 	/* (non-Javadoc)
@@ -623,4 +622,5 @@ public class PtcimModel extends CachedModel<PtcimObject> {
 		// FIXME We could do a CloneModel?
 		throw new UnsupportedOperationException("Artisan models are updated per invocation.");
 	}
+
 }

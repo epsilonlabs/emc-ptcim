@@ -8,7 +8,7 @@
  * Contributors:
  *     Horacio Hoyos - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.emc.ptcim;
+package org.eclipse.epsilon.emc.ptcim.property;
 
 
 /**

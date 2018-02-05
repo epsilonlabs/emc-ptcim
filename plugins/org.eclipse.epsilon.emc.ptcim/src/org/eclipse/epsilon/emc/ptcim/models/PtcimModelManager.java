@@ -8,7 +8,7 @@
  * Contributors:
  *     Horacio Hoyos - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.emc.ptcim;
+package org.eclipse.epsilon.emc.ptcim.models;
 
 import java.awt.Desktop;
 import java.io.IOException;
@@ -19,6 +19,10 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import org.eclipse.epsilon.emc.ptcim.PtcimObject;
+import org.eclipse.epsilon.emc.ptcim.operations.contributors.PtcimCollectionOperationContributor;
+import org.eclipse.epsilon.emc.ptcim.util.ClassFactory;
+import org.eclipse.epsilon.emc.ptcim.util.com4j.IAutomationCaseObject;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 
 public class PtcimModelManager {
@@ -61,13 +65,10 @@ public class PtcimModelManager {
 						try {
 							Desktop.getDesktop().browse(new URL("https://github.com/epsilonlabs/emc-ptcim/blob/master/README.md#running-from-64-bit-java-environments").toURI());
 						} catch (MalformedURLException e1) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (IOException e1) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (URISyntaxException e1) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -77,16 +78,16 @@ public class PtcimModelManager {
 		}
 	}
 
-	public PtcimCollection getActiveDagrams() throws EolInternalException {
+	public PtcimCollectionOperationContributor getActiveDagrams() throws EolInternalException {
 		PtcimObject comCollection = new PtcimObject(
 				projects.items("Active Diagram", null).queryInterface(IAutomationCaseObject.class));
-		return new PtcimCollection(comCollection, new PtcimObject(projects), "ActiveDiagram");
+		return new PtcimCollectionOperationContributor(comCollection, new PtcimObject(projects), "ActiveDiagram");
 	}
 
-	public PtcimCollection getActiveItems() throws EolInternalException {
+	public PtcimCollectionOperationContributor getActiveItems() throws EolInternalException {
 		PtcimObject comCollection = new PtcimObject(
 				projects.items("Active Dictionary Item", null).queryInterface(IAutomationCaseObject.class));
-		return new PtcimCollection(comCollection, new PtcimObject(projects), "Active Dictionary Item");
+		return new PtcimCollectionOperationContributor(comCollection, new PtcimObject(projects), "Active Dictionary Item");
 	}
 
 	public PtcimObject getActiveProject() throws EolInternalException {
@@ -94,18 +95,18 @@ public class PtcimModelManager {
 		return new PtcimObject(projects.item("Active Project", null).queryInterface(IAutomationCaseObject.class));
 	}
 
-	public PtcimCollection getActiveSelectinContext() throws EolInternalException {
+	public PtcimCollectionOperationContributor getActiveSelectionContext() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Selection Context");
 		PtcimObject comCollection = new PtcimObject(
 				projects.items("Active Selection Context", args).queryInterface(IAutomationCaseObject.class));
-		return new PtcimCollection(comCollection, (PtcimObject) projects, "Active Selection Context");
+		return new PtcimCollectionOperationContributor(comCollection, (PtcimObject) projects, "Active Selection Context");
 	}
 
-	public PtcimCollection getActiveSymbols() throws EolInternalException {
+	public PtcimCollectionOperationContributor getActiveSymbols() throws EolInternalException {
 		PtcimObject comCollection = new PtcimObject(
 				projects.items("Active Symbol", null).queryInterface(IAutomationCaseObject.class));
-		return new PtcimCollection(comCollection, (PtcimObject) projects, "Active Symbol");
+		return new PtcimCollectionOperationContributor(comCollection, (PtcimObject) projects, "Active Symbol");
 	}
 
 	public PtcimObject getProjectByReference(String id, String server, String repository, String version)
@@ -124,14 +125,14 @@ public class PtcimModelManager {
 		return new PtcimObject(projects.item("Project", title).queryInterface(IAutomationCaseObject.class));
 	}
 
-	public PtcimCollection getAllProjects() throws EolInternalException {
+	public PtcimCollectionOperationContributor getAllProjects() throws EolInternalException {
 		PtcimObject comCollection = new PtcimObject(
 				projects.items("Project", null).queryInterface(IAutomationCaseObject.class));
-		return new PtcimCollection(comCollection, (PtcimObject) projects, "Project");
+		return new PtcimCollectionOperationContributor(comCollection, (PtcimObject) projects, "Project");
 	}
 
 	public void disconnect() {
-		// TODO Auto-generated method stub
+		// TODO do something?
 
 	}
 }

@@ -13,8 +13,10 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
 @RunWith(Suite.class)
-@SuiteClasses({AttributeRelatedTests.class,
+@SuiteClasses({
+	AttributeRelatedTests.class,
 	AssociationRelatedTests.class,
+	OperationContributorTests.class,
 	ElementRelatedTests.class})
 public class PtcimTestSuite {
 

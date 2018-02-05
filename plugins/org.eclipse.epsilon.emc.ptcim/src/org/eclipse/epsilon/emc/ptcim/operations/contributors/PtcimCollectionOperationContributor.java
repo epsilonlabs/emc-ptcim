@@ -8,12 +8,16 @@
  * Contributors:
  *     Hoacio Hoyos Rodriguez - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.emc.ptcim;
+package org.eclipse.epsilon.emc.ptcim.operations.contributors;
 
 import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.epsilon.emc.ptcim.PtcimIterator;
+import org.eclipse.epsilon.emc.ptcim.PtcimObject;
+import org.eclipse.epsilon.emc.ptcim.operations.PtcimCollectionSelectOneOperation;
+import org.eclipse.epsilon.emc.ptcim.operations.PtcimCollectionSelectOperation;
 import org.eclipse.epsilon.eol.execute.operations.AbstractOperation;
 import org.eclipse.epsilon.eol.execute.operations.declarative.IAbstractOperationContributor;
 
@@ -23,7 +27,7 @@ import org.eclipse.epsilon.eol.execute.operations.declarative.IAbstractOperation
  * unexpected results. Collections that are a result of a filtered Items only
  * provide iteration. 
  */
-public class PtcimCollection extends AbstractList<PtcimObject> implements IAbstractOperationContributor {
+public class PtcimCollectionOperationContributor extends AbstractList<PtcimObject> implements IAbstractOperationContributor {
 	
 	/** The object that points to the collection. */
 	private final PtcimObject comObject;
@@ -41,7 +45,7 @@ public class PtcimCollection extends AbstractList<PtcimObject> implements IAbstr
 	 * @param owner the owner
 	 * @param association the association
 	 */
-	public PtcimCollection(PtcimObject comCollection, PtcimObject owner, String association) {
+	public PtcimCollectionOperationContributor(PtcimObject comCollection, PtcimObject owner, String association) {
 		assert comCollection instanceof PtcimObject;
 		assert owner instanceof PtcimObject;
 		this.comObject = (PtcimObject) comCollection;
@@ -195,7 +199,6 @@ public class PtcimCollection extends AbstractList<PtcimObject> implements IAbstr
 	}
 
 	public void disconnect() {
-		// TODO Auto-generated method stub
-		
+		// TODO do something?
 	}
 }
