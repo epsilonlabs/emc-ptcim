@@ -46,10 +46,8 @@ public class PtcimCollectionOperationContributor extends AbstractList<PtcimObjec
 	 * @param association the association
 	 */
 	public PtcimCollectionOperationContributor(PtcimObject comCollection, PtcimObject owner, String association) {
-		assert comCollection instanceof PtcimObject;
-		assert owner instanceof PtcimObject;
-		this.comObject = (PtcimObject) comCollection;
-		this.owner = (PtcimObject) owner;
+		this.comObject = comCollection;
+		this.owner = owner;
 		this.association = association;
 	}
 
@@ -145,8 +143,7 @@ public class PtcimCollectionOperationContributor extends AbstractList<PtcimObjec
 
 	@Override
 	public Iterator<PtcimObject> iterator() {
-		Iterator<PtcimObject> iterator = new PtcimIterator(comObject);
-		return iterator;
+		return new PtcimIterator(comObject);
 	}
 	
 	@Override
@@ -180,8 +177,7 @@ public class PtcimCollectionOperationContributor extends AbstractList<PtcimObjec
 
 	@Override
 	public int size() {
-		Object resCount;
-		resCount = owner.itemCount(association);
+		Object resCount = owner.itemCount(association);
 		// itemCount return long. Danger for integer overflow here.
 		return Integer.parseInt(resCount.toString());
 	}

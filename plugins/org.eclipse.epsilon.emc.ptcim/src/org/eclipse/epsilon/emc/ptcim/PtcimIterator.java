@@ -34,7 +34,7 @@ public class PtcimIterator implements Iterator<PtcimObject> {
 		super();
 		this.source = source;
 		// Make sure the iterator is at the beginning of the collection
-		source.resetQueryItems();
+		this.source.resetQueryItems();
 	}
 
 	/* (non-Javadoc)
@@ -42,9 +42,7 @@ public class PtcimIterator implements Iterator<PtcimObject> {
 	 */
 	@Override
 	public boolean hasNext() {
-		Object more;
-		more = source.moreItems();
-		int val = (Integer)more;
+		int val = (Integer) source.moreItems();
 		return val != 0;
 	}
 

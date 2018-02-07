@@ -32,13 +32,13 @@ public class PtcimModelManager {
 	 * the Project objects you can read, that is, the Models available in the
 	 * repositories that are bookmarked in your Model Explorer.
 	 */
-	private IAutomationCaseObject projects;
-	public IAutomationCaseObject getProjects() {
+	private PtcimObject projects;
+	public PtcimObject getProjects() {
 		return projects;
 	}
 
 	public void setProjects(IAutomationCaseObject projects) {
-		this.projects = projects;
+		this.projects = PtcimObject.create(projects);
 	}
 
 	boolean isConnected = false;
@@ -49,7 +49,7 @@ public class PtcimModelManager {
 				isConnected = true;
 			} else {
 				try {
-					projects = ClassFactory.createCCaseProjects();
+					projects = PtcimObject.create(ClassFactory.createCCaseProjects());
 					isConnected = true;
 				} catch (Exception e) {
 					Object[] options = {"Close", "Read more..."};
@@ -78,61 +78,52 @@ public class PtcimModelManager {
 		}
 	}
 
+	public PtcimObject getActiveProject() throws EolInternalException {
+		System.out.println("Projects: " + projects);
+		return projects.item("Active Project", null);
+	}
+
+	public PtcimObject getProjectByReference(String id, String server, String repository, String version)
+			throws EolInternalException {
+		String modelPath = "\\\\Enabler\\" + server + "\\" + repository + "\\" + id;
+		if (version.length() > 0) {
+			modelPath += "\\" + version;
+		}
+		return projects.item("Reference", modelPath);
+	}
+
+	public PtcimObject getProjectByTitle(String title) throws EolInternalException {
+		return projects.item("Project", title);
+	}
+
 	public PtcimCollectionOperationContributor getActiveDagrams() throws EolInternalException {
-		PtcimObject comCollection = new PtcimObject(
-				projects.items("Active Diagram", null).queryInterface(IAutomationCaseObject.class));
-		return new PtcimCollectionOperationContributor(comCollection, new PtcimObject(projects), "ActiveDiagram");
+		PtcimObject comCollection = projects.items("Active Diagram", null);
+		return new PtcimCollectionOperationContributor(comCollection, projects, "ActiveDiagram");
 	}
 
 	public PtcimCollectionOperationContributor getActiveItems() throws EolInternalException {
-		PtcimObject comCollection = new PtcimObject(
-				projects.items("Active Dictionary Item", null).queryInterface(IAutomationCaseObject.class));
-		return new PtcimCollectionOperationContributor(comCollection, new PtcimObject(projects), "Active Dictionary Item");
-	}
-
-	public PtcimObject getActiveProject() throws EolInternalException {
-		System.out.println("Projects: " + projects);
-		return new PtcimObject(projects.item("Active Project", null).queryInterface(IAutomationCaseObject.class));
+		PtcimObject comCollection = projects.items("Active Dictionary Item", null);
+		return new PtcimCollectionOperationContributor(comCollection, projects, "Active Dictionary Item");
 	}
 
 	public PtcimCollectionOperationContributor getActiveSelectionContext() throws EolInternalException {
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add("Active Selection Context");
-		PtcimObject comCollection = new PtcimObject(
-				projects.items("Active Selection Context", args).queryInterface(IAutomationCaseObject.class));
-		return new PtcimCollectionOperationContributor(comCollection, (PtcimObject) projects, "Active Selection Context");
+		PtcimObject comCollection = projects.items("Active Selection Context", args);
+		return new PtcimCollectionOperationContributor(comCollection, projects, "Active Selection Context");
 	}
 
 	public PtcimCollectionOperationContributor getActiveSymbols() throws EolInternalException {
-		PtcimObject comCollection = new PtcimObject(
-				projects.items("Active Symbol", null).queryInterface(IAutomationCaseObject.class));
-		return new PtcimCollectionOperationContributor(comCollection, (PtcimObject) projects, "Active Symbol");
+		PtcimObject comCollection = projects.items("Active Symbol", null);
+		return new PtcimCollectionOperationContributor(comCollection, projects, "Active Symbol");
 	}
-
-	public PtcimObject getProjectByReference(String id, String server, String repository, String version)
-			throws EolInternalException {
-		IAutomationCaseObject model;
-		String modelPath = "\\\\Enabler\\" + server + "\\" + repository + "\\" + id;
-		if (version.length() > 0) {
-			modelPath += "\\" + version;
-		}
-		model = projects.item("Reference", modelPath).queryInterface(IAutomationCaseObject.class);
-		PtcimObject theModel = new PtcimObject(model);
-		return theModel;
-	}
-
-	public PtcimObject getProjectByTitle(String title) throws EolInternalException {
-		return new PtcimObject(projects.item("Project", title).queryInterface(IAutomationCaseObject.class));
-	}
-
+	
 	public PtcimCollectionOperationContributor getAllProjects() throws EolInternalException {
-		PtcimObject comCollection = new PtcimObject(
-				projects.items("Project", null).queryInterface(IAutomationCaseObject.class));
-		return new PtcimCollectionOperationContributor(comCollection, (PtcimObject) projects, "Project");
+		PtcimObject comCollection = projects.items("Project", null);
+		return new PtcimCollectionOperationContributor(comCollection, projects, "Project");
 	}
 
 	public void disconnect() {
 		// TODO do something?
-
 	}
 }

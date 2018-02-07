@@ -7,7 +7,6 @@ import org.eclipse.epsilon.emc.ptcim.PtcimObject;
 import org.eclipse.epsilon.emc.ptcim.operations.contributors.PtcimCollectionOperationContributor;
 import org.eclipse.epsilon.emc.ptcim.property.PtcimProperty;
 import org.eclipse.epsilon.emc.ptcim.property.manager.PtcimPropertyManager;
-import org.eclipse.epsilon.emc.ptcim.util.com4j.IAutomationCaseObject;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.introspection.AbstractPropertyGetter;

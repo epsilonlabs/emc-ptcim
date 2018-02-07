@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Hoacio Hoyos Rodriguez - Initial API and implementation
+ *******************************************************************************/
 package org.eclipse.epsilon.emc.ptcim;
 
 import java.util.Collection;
@@ -30,8 +40,12 @@ public class PtcimObject {
 		return getInner().getTheIaco();
 	}
 
-	private static PtcimObject createFromCom4j(Com4jObject object) {
+	public static PtcimObject create(Com4jObject object) {
 		return new PtcimObject(object.queryInterface(IAutomationCaseObject.class));
+	}
+	
+	public static PtcimObject create(IAutomationCaseObject object) {
+		return new PtcimObject(object);
 	}
 
 	private InnerAutomationCaseObject getInner() {
@@ -156,15 +170,15 @@ public class PtcimObject {
 	}
 
 	public PtcimObject item(String role, Object index) {
-		return PtcimObject.createFromCom4j(getInner().item(role, index).queryInterface(IAutomationCaseObject.class));
+		return PtcimObject.create(getInner().item(role, index).queryInterface(IAutomationCaseObject.class));
 	}
 
 	public PtcimObject items(String role, Object index) {
-		return PtcimObject.createFromCom4j(getInner().item(role, index).queryInterface(IAutomationCaseObject.class));
+		return PtcimObject.create(getInner().item(role, index).queryInterface(IAutomationCaseObject.class));
 	}
 
 	public PtcimObject add(String role, Object value) {
-		return PtcimObject.createFromCom4j(getInner().add(role, value).queryInterface(IAutomationCaseObject.class));
+		return PtcimObject.create(getInner().add(role, value).queryInterface(IAutomationCaseObject.class));
 	}
 
 	public void remove(String role, Object index) {
@@ -172,7 +186,7 @@ public class PtcimObject {
 	}
 
 	public PtcimObject link(String role, Object index) {
-		return PtcimObject.createFromCom4j(getInner().link(role, index).queryInterface(IAutomationCaseObject.class));
+		return PtcimObject.create(getInner().link(role, index).queryInterface(IAutomationCaseObject.class));
 	}
 
 	public void resetQueryItems() {
@@ -180,7 +194,7 @@ public class PtcimObject {
 	}
 
 	public PtcimObject nextItem() {
-		return PtcimObject.createFromCom4j(getInner().nextItem().queryInterface(IAutomationCaseObject.class));
+		return PtcimObject.create(getInner().nextItem().queryInterface(IAutomationCaseObject.class));
 	}
 
 	public int moreItems() {
@@ -195,7 +209,11 @@ public class PtcimObject {
 		return getInner().propertyGet(type, index);
 	}
 
-	public Iterator<PtcimObject> iterator() {
+	public Iterator<Com4jObject> iterator() {
+		return getInner().iterator();
+	}
+	
+	/*public Iterator<PtcimObject> iterator() {
 		return new Iterator<PtcimObject>() {
 
 			Iterator<Com4jObject> iterator = getInner().iterator();
@@ -207,13 +225,13 @@ public class PtcimObject {
 
 			@Override
 			public PtcimObject next() {
-				return PtcimObject.createFromCom4j(iterator.next());
+				return PtcimObject.create(iterator.next());
 			}
 		};
-	}
+	}*/
 
 	public PtcimObject findObject(String itemId) {
-		return PtcimObject.createFromCom4j(getInner().findObject(itemId).queryInterface(IAutomationCaseObject.class));
+		return PtcimObject.create(getInner().findObject(itemId).queryInterface(IAutomationCaseObject.class));
 	}
 
 	public Object getClassProperties(String className, Object index) {
@@ -225,11 +243,11 @@ public class PtcimObject {
 	}
 
 	public PtcimObject itemByID(String id) {
-		return PtcimObject.createFromCom4j(getInner().itemByID(id).queryInterface(IAutomationCaseObject.class));
+		return PtcimObject.create(getInner().itemByID(id).queryInterface(IAutomationCaseObject.class));
 	}
 
 	public PtcimObject itemEx(String role, Object index, Object searchProperty) {
-		return PtcimObject.createFromCom4j(
+		return PtcimObject.create(
 				getInner().itemEx(role, index, searchProperty).queryInterface(IAutomationCaseObject.class));
 	}
 
@@ -263,7 +281,7 @@ public class PtcimObject {
 	}
 
 	public PtcimObject addDirected(String role, PtcimObject pHint) {
-		return PtcimObject.createFromCom4j(
+		return PtcimObject.create(
 				getInner().addDirected(role, pHint.getInner()).queryInterface(IAutomationCaseObject.class));
 	}
 
@@ -290,7 +308,7 @@ public class PtcimObject {
 
 	public PtcimObject addByType(String type, String role) {
 		return PtcimObject
-				.createFromCom4j(getInner().addByType(type, role).queryInterface(IAutomationCaseObject.class));
+				.create(getInner().addByType(type, role).queryInterface(IAutomationCaseObject.class));
 	}
 
 	public int isConnectedTo(String role, PtcimObject pOtherObject) {
