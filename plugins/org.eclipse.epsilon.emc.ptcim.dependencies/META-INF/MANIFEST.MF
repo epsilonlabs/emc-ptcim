@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Dependencies
+Bundle-SymbolicName: org.eclipse.epsilon.emc.ptcim.dependencies
+Bundle-Version: 1.0.0.qualifier
+Export-Package: com4j
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

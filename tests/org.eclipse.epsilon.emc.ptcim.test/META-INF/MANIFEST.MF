@@ -6,7 +6,9 @@ Bundle-Version: 0.2.0.qualifier
 Bundle-Vendor: Epsilon Framework
 Require-Bundle: org.eclipse.epsilon.emc.ptcim,
  org.eclipse.epsilon.eol.engine,
- org.junit
+ org.junit,
+ org.eclipse.epsilon.emc.ptcim.dependencies
 Export-Package: org.eclipse.epsilon.emc.ptcim.test
 Bundle-ClassPath: com4j.jar,
  .
+Import-Package: com4j

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.epsilon.emc.ptcim.dt;
 
+import com4j.Com4jObject;
 import java.util.ArrayList;
 import java.util.List;
 
