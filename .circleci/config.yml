@@ -1,0 +1,72 @@
+# Java Maven CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-java/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: circleci/openjdk:8-jdk
+
+    working_directory: ~/repo
+
+    environment:
+      # Customize the JVM maximum heap limit
+      MAVEN_OPTS: -Xmx3200m
+    
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "pom.xml" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: mvn clean package
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+        
+      # run tests!
+      # - run: mvn integration-test
+
+      # ========================================================
+      START OF PROJECT SPECIFIC PART
+      # ========================================================
+
+      # Store the jars as artifacts to use in update site
+      - store_artifacts:
+          path: ~/repo/org.eclipse.epsilon.emc.ptcim/target/org.eclipse.epsilon.emc.ptcim-1.0.0-SNAPSHOT.jar
+          destination: plugins/org.eclipse.epsilon.emc.ptcim-1.0.0-SNAPSHOT.jar
+
+      - store_artifacts:
+          path: ~/repo/org.eclipse.epsilon.emc.ptcim.feature/target/org.eclipse.epsilon.emc.ptcim.feature-1.0.0-SNAPSHOT.jar
+          destination: features/org.eclipse.epsilon.emc.ptcim.feature-1.0.0-SNAPSHOT.jar
+      
+      - store_artifacts:
+          path: ~/repo/org.eclipse.epsilon.emc.ptcim.dt/target/org.eclipse.epsilon.emc.ptcim.dt-1.0.0-SNAPSHOT.jar
+          destination: plugins/org.eclipse.epsilon.emc.ptcim.dt-1.0.0-SNAPSHOT.jar
+      
+      - store_artifacts:
+          path: ~/repo/org.eclipse.epsilon.emc.ptcim.dependencies/target/org.eclipse.epsilon.emc.ptcim.dependencies-1.0.0-SNAPSHOT.jar
+          destination: plugins/org.eclipse.epsilon.emc.ptcim.dependencies-1.0.0-SNAPSHOT.jar
+      
+      - store_artifacts:
+          path: ~/repo/org.eclipse.epsilon.emc.ptcim.dt.feature/target/org.eclipse.epsilon.emc.ptcim.dt.feature-1.0.0-SNAPSHOT.jar
+          destination: plugins/org.eclipse.epsilon.emc.ptcim.dt.feature-1.0.0-SNAPSHOT.jar
+      
+      # ========================================================
+      END OF PROJECT SPECIFIC PART
+      # ========================================================
+
+      - store_artifacts:
+          path: ~/repo/site.xml
+          destination: site.xml
+
+      # Trigger updatesite build
+      - run: curl -X POST "https://circleci.com/api/v1.1/project/github/epsilonlabs/epsilonlabs-updatesite?circle-token=$TRIGGER_BUILD"
