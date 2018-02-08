@@ -7,7 +7,7 @@
   
   <groupId>org.eclipse.epsilon.labs</groupId>
   <!-- START OF PROJECT SPECIFIC CONFIG -->
-  <artifactId>org.eclipse.epsilon.labs.ptcim</artifactId>
+  <artifactId>parent</artifactId>
   <!-- START OF PROJECT SPECIFIC CONFIG -->
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -31,11 +31,9 @@
 
   <!-- START OF PROJECT SPECIFIC CONFIG -->
   <modules>
-    <module>org.eclipse.epsilon.emc.ptcim.dependencies</module>
-    <module>org.eclipse.epsilon.emc.ptcim</module>
-    <module>org.eclipse.epsilon.emc.ptcim.feature</module>
-    <module>org.eclipse.epsilon.emc.ptcim.dt</module>
-    <module>org.eclipse.epsilon.emc.ptcim.dt.feature</module>
+    <module>plugins</module>
+    <module>features</module>
+    <!--<module>tests</module>-->
   </modules>
   <!-- END OF PROJECT SPECIFIC CONFIG -->
 
