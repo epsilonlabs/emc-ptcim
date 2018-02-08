@@ -36,7 +36,7 @@ jobs:
       # - run: mvn integration-test
 
       # ========================================================
-      START OF PROJECT SPECIFIC PART
+      # START OF PROJECT SPECIFIC PART
       # ========================================================
 
       # Store the jars as artifacts to use in update site
@@ -61,7 +61,7 @@ jobs:
           destination: plugins/org.eclipse.epsilon.emc.ptcim.dt.feature-1.0.0-SNAPSHOT.jar
       
       # ========================================================
-      END OF PROJECT SPECIFIC PART
+      # END OF PROJECT SPECIFIC PART
       # ========================================================
 
       - store_artifacts:
