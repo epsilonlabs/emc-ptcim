@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <feature url="features/org.eclipse.epsilon.emc.ptcim.feature_1.0.0.qualifier.jar" id="org.eclipse.epsilon.emc.ptcim.feature" version="1.0.0.qualifier">
-      <category name="epsilon_ptcim"/>
-   </feature>
-   <category-def name="epsilon_ptcim" label="Epsilon PTC IM Driver"/>
-</site>

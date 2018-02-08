@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature 
+      url="features/org.eclipse.epsilon.emc.ptcim.feature_1.0.0.qualifier.jar" 
+      id="org.eclipse.epsilon.emc.ptcim.feature" 
+      version="1.0.0.qualifier">
+      <category name="PTC-IM"/>
+   </feature>
+   <feature url="features/org.eclipse.epsilon.emc.ptcim.dt.feature_1.0.0.qualifier.jar" id="org.eclipse.epsilon.emc.ptcim.dt.feature" version="1.0.0.qualifier">
+      <category name="PTC-IM"/>
+   </feature>
+   <category-def name="PTC-IM" label="PTC-IM">
+      <description>
+         JDBC Drivers
+      </description>
+   </category-def>
+</site>

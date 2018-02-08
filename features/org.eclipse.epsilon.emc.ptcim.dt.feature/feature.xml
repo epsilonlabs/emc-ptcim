@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.epsilon.emc.ptcim.feature"
-      label="EMC PTC Integrity Modeller"
+      id="org.eclipse.epsilon.emc.ptcim.dt.feature"
+      label="PTC-IM Developer Tools Feature"
       version="1.0.0.qualifier"
       provider-name="Epsilon Framework">
 
    <description>
-      Epsilon EMC driver for PTC Integrity Modeler
+      Epsilon EMC driver for PTC Integrity Modeler development tools.
    </description>
 
    <copyright>
       Copyright (c) 2008 The University of York.
 Contributors: Dimitrios Kolovos and others.
-
-This project uses the Com4j library which is available under the BSD-2 license.
+This project uses the Com4j library which is available under
+the BSD-2 license.
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
@@ -90,19 +90,14 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </license>
 
    <requires>
+      <import plugin="org.eclipse.epsilon.common.dt"/>
+      <import plugin="org.eclipse.epsilon.eol.dt"/>
+      <import plugin="org.eclipse.epsilon.emc.ptcim"/>
       <import plugin="org.eclipse.epsilon.emc.ptcim.dependencies"/>
-      <import plugin="org.eclipse.epsilon.eol.engine"/>
    </requires>
 
    <plugin
-         id="org.eclipse.epsilon.emc.ptcim"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.epsilon.dependencies"
+         id="org.eclipse.epsilon.emc.ptcim.dt"
          download-size="0"
          install-size="0"
          version="0.0.0"
