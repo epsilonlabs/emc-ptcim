@@ -41,23 +41,23 @@ jobs:
 
       # Store the jars as artifacts to use in update site
       - store_artifacts:
-          path: ~/repo/org.eclipse.epsilon.emc.ptcim/target/org.eclipse.epsilon.emc.ptcim-1.0.0-SNAPSHOT.jar
+          path: ~/repo/plugins/org.eclipse.epsilon.emc.ptcim/target/org.eclipse.epsilon.emc.ptcim-1.0.0-SNAPSHOT.jar
           destination: plugins/org.eclipse.epsilon.emc.ptcim-1.0.0-SNAPSHOT.jar
 
       - store_artifacts:
-          path: ~/repo/org.eclipse.epsilon.emc.ptcim.feature/target/org.eclipse.epsilon.emc.ptcim.feature-1.0.0-SNAPSHOT.jar
+          path: ~/repo/features/org.eclipse.epsilon.emc.ptcim.feature/target/org.eclipse.epsilon.emc.ptcim.feature-1.0.0-SNAPSHOT.jar
           destination: features/org.eclipse.epsilon.emc.ptcim.feature-1.0.0-SNAPSHOT.jar
       
       - store_artifacts:
-          path: ~/repo/org.eclipse.epsilon.emc.ptcim.dt/target/org.eclipse.epsilon.emc.ptcim.dt-1.0.0-SNAPSHOT.jar
+          path: ~/repo/plugins/org.eclipse.epsilon.emc.ptcim.dt/target/org.eclipse.epsilon.emc.ptcim.dt-1.0.0-SNAPSHOT.jar
           destination: plugins/org.eclipse.epsilon.emc.ptcim.dt-1.0.0-SNAPSHOT.jar
       
       - store_artifacts:
-          path: ~/repo/org.eclipse.epsilon.emc.ptcim.dependencies/target/org.eclipse.epsilon.emc.ptcim.dependencies-1.0.0-SNAPSHOT.jar
+          path: ~/repo/plugins/org.eclipse.epsilon.emc.ptcim.dependencies/target/org.eclipse.epsilon.emc.ptcim.dependencies-1.0.0-SNAPSHOT.jar
           destination: plugins/org.eclipse.epsilon.emc.ptcim.dependencies-1.0.0-SNAPSHOT.jar
       
       - store_artifacts:
-          path: ~/repo/org.eclipse.epsilon.emc.ptcim.dt.feature/target/org.eclipse.epsilon.emc.ptcim.dt.feature-1.0.0-SNAPSHOT.jar
+          path: ~/repo/features/org.eclipse.epsilon.emc.ptcim.dt.feature/target/org.eclipse.epsilon.emc.ptcim.dt.feature-1.0.0-SNAPSHOT.jar
           destination: plugins/org.eclipse.epsilon.emc.ptcim.dt.feature-1.0.0-SNAPSHOT.jar
       
       # ========================================================
