@@ -12,6 +12,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.epsilon.emc.ptcim.dt
 Bundle-Vendor: Epsilon Framework
-Bundle-ClassPath: .,
- com4j.jar
-Import-Package: com4j
+Bundle-ClassPath: .
+Import-Package: com4j,
+ com4j.util, 
+ com4j.stdole	

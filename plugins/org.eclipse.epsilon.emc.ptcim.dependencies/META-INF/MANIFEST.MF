@@ -1,8 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Dependencies
-Bundle-SymbolicName: org.eclipse.epsilon.emc.ptcim.dependencies
+Bundle-SymbolicName: org.eclipse.epsilon.emc.ptcim.dependencies;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Export-Package: com4j
+Export-Package: com4j,
+ com4j.stdole,
+ com4j.util
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Bundle-Classpath: lib/com4j.jar
+Bundle-Classpath: com4j.jar
+Bundle-ActivationPolicy: lazy
