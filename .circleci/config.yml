@@ -45,10 +45,6 @@ jobs:
           destination: plugins/org.eclipse.epsilon.emc.ptcim-1.0.0-SNAPSHOT.jar
 
       - store_artifacts:
-          path: ~/repo/features/org.eclipse.epsilon.emc.ptcim.feature/target/org.eclipse.epsilon.emc.ptcim.feature-1.0.0-SNAPSHOT.jar
-          destination: features/org.eclipse.epsilon.emc.ptcim.feature-1.0.0-SNAPSHOT.jar
-      
-      - store_artifacts:
           path: ~/repo/plugins/org.eclipse.epsilon.emc.ptcim.dt/target/org.eclipse.epsilon.emc.ptcim.dt-1.0.0-SNAPSHOT.jar
           destination: plugins/org.eclipse.epsilon.emc.ptcim.dt-1.0.0-SNAPSHOT.jar
       
@@ -57,8 +53,12 @@ jobs:
           destination: plugins/org.eclipse.epsilon.emc.ptcim.dependencies-1.0.0-SNAPSHOT.jar
       
       - store_artifacts:
+          path: ~/repo/features/org.eclipse.epsilon.emc.ptcim.feature/target/org.eclipse.epsilon.emc.ptcim.feature-1.0.0-SNAPSHOT.jar
+          destination: features/org.eclipse.epsilon.emc.ptcim.feature-1.0.0-SNAPSHOT.jar
+      
+      - store_artifacts:
           path: ~/repo/features/org.eclipse.epsilon.emc.ptcim.dt.feature/target/org.eclipse.epsilon.emc.ptcim.dt.feature-1.0.0-SNAPSHOT.jar
-          destination: plugins/org.eclipse.epsilon.emc.ptcim.dt.feature-1.0.0-SNAPSHOT.jar
+          destination: features/org.eclipse.epsilon.emc.ptcim.dt.feature-1.0.0-SNAPSHOT.jar
       
       # ========================================================
       # END OF PROJECT SPECIFIC PART
