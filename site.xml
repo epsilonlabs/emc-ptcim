@@ -11,7 +11,7 @@
    </feature>
    <category-def name="PTC-IM" label="PTC-IM">
       <description>
-         JDBC Drivers
+         PTC-IM Drivers
       </description>
    </category-def>
 </site>
