@@ -49,8 +49,7 @@ public class PtcimPropertyManager {
  	}
 	
 	private boolean nameMatches(String name, String property) {
-	 	String noBlanks = name.replaceAll("\\s","");
-	 	return noBlanks.compareToIgnoreCase(property) == 0;
+	 	return normalise(name).compareTo(normalise(property)) == 0;
 	}
 		 
  	private String unQuote(String name) {
@@ -64,10 +63,10 @@ public class PtcimPropertyManager {
  	}
 	
  	public String buildCachedTypePropertyIdentifier(PtcimObject object, String property) {
- 		return ((PtcimObject) object).getType() + "." + property;
+ 		return ((PtcimObject) object).getType() + "." + normalise(property);
  	}
  	
  	public String buildCachedElementPropertyIdentifier(PtcimObject object, String property) {
- 		return ((PtcimObject) object).getId() + "." + property;
+ 		return ((PtcimObject) object).getId() + "." + normalise(property);
  	}
 }
