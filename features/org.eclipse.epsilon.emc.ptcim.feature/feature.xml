@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.epsilon.emc.ptcim.feature"
       label="PTC Integrity Modeller Feature"
-      version="1.0.1.qualifier"
+      version="1.0.0.qualifier"
       provider-name="Epsilon Framework">
 
    <description>
