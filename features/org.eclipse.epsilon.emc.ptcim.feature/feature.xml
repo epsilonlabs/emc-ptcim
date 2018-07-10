@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.epsilon.emc.ptcim.feature"
       label="PTC Integrity Modeller Feature"
-      version="1.0.0.qualifier"
+      version="1.0.1.qualifier"
       provider-name="Epsilon Framework">
 
    <description>
@@ -103,6 +103,13 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="org.eclipse.epsilon.emc.ptcim.dependencies"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.epsilon.emc.ptcim.dt"
          download-size="0"
          install-size="0"
          version="0.0.0"
